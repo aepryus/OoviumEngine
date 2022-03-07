@@ -19,10 +19,10 @@ public final class Mech: Aexel, TowerDelegate, Mechlike {
 	@objc public var resultChain: Chain = Chain()
 	@objc public var inputs: [Input] = []
 
-	var tower: Tower!
+	public var tower: Tower!
 //	var token: FunctionToken!
 
-	var resultTower: Tower {
+	public var resultTower: Tower {
 		return resultChain.tower
 	}
 	var resultToken: Token {
@@ -58,13 +58,13 @@ public final class Mech: Aexel, TowerDelegate, Mechlike {
 		return key
 	}
 	
-	func add(input: Input) {
+	public func add(input: Input) {
 		add(input)
 		input.tower.web = web
 		inputs.append(input)
 		aether.register(tower: input.tower)
 	}
-	func addInput() {
+	public func addInput() {
 		var name: String = ""
 		if inputs.count < 4 {
 			name = ["x", "y", "z", "w"][inputs.count]
@@ -75,7 +75,7 @@ public final class Mech: Aexel, TowerDelegate, Mechlike {
 		add(input: input)
 		functionToken.params = inputs.count
 	}
-	func removeInput() {
+	public func removeInput() {
 		let input = inputs.removeLast()
 		remove(input)
 		aether.deregister(tower: input.tower)

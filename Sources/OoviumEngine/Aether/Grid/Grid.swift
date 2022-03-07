@@ -9,7 +9,7 @@
 import Acheron
 import Foundation
 
-enum EqualMode {
+public enum EqualMode {
 	case close, down, right
 	
 	var next: EqualMode {
@@ -29,7 +29,7 @@ public final class Grid: Aexel {
 	@objc public var columns: [Column] = []
 	@objc public var cells: [Cell] = []
 	
-	var equalMode: EqualMode = .close
+	public var equalMode: EqualMode = .close
 	
 	var hasFooter: Bool {
 		return columns.first { $0.aggregate != .none && $0.aggregate != .running } != nil

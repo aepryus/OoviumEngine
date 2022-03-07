@@ -19,7 +19,7 @@ public final class Input: Domain, TowerDelegate {
 	}
 	var def: Def = RealDef.def
 	
-	lazy var tower: Tower = {Tower(aether: mech.aether, token: mech.aether.variableToken(tag: "\(mech.name).\(name)"), delegate: self)}()
+	public lazy var tower: Tower = {Tower(aether: mech.aether, token: mech.aether.variableToken(tag: "\(mech.name).\(name)"), delegate: self)}()
 	
 	init(mech: Mech, name: String) {
 		self.name = name
