@@ -44,7 +44,7 @@ protocol Levelable: Token { var level: TokenLevel { get } }
 protocol Defable: Token { var def: Def? { get set } }
 
 public class TowerToken: Token, Labelable, Defable {
-	var label: String
+	public var label: String
 	var def: Def? = nil
 
 	fileprivate init(type: TokenType, tag: String, label: String? = nil) {

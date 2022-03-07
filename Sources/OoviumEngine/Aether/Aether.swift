@@ -64,7 +64,7 @@ import Foundation
 		towers.forEach { $0.buildStream() }
 		QbuildMemory()
 	}
-	func evaluate(towers: Set<Tower>) {
+	public func evaluate(towers: Set<Tower>) {
 //		towers.forEach { AEMemoryUnfix(memory, $0.index) }
 		towers.forEach { $0.delegate.resetWorker(tower: $0) }
 		var progress: Bool
@@ -77,7 +77,7 @@ import Foundation
 	public func evaluate() {
 		evaluate(towers: Set(towers.values))
 	}
-	func evaluate(from: Tower) {
+	public func evaluate(from: Tower) {
 		evaluate(towers: from.allDownstream())
 	}
 
