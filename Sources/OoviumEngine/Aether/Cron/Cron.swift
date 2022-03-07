@@ -46,9 +46,9 @@ public final class Cron: Aexel, TowerDelegate {
 		return whileChain.tower
 	}
 	
-	var t: Double = 0
-	var dt: Double = 1
-	var sealed: Bool = true
+	public var t: Double = 0
+	public var dt: Double = 1
+	public var sealed: Bool = true
 	
 	public func reset() {
 		if endMode == .stop || endMode == .repeat || endMode == .bounce {

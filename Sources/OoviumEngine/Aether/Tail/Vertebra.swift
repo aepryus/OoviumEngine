@@ -25,7 +25,7 @@ public final class Vertebra: Domain, TowerDelegate {
 		}
 	}
 		
-	lazy var tower: Tower = {Tower(aether: tail.aether, token: tail.aether.variableToken(tag: "\(tail.name).\(name)"), delegate: self)}()
+	public lazy var tower: Tower = {Tower(aether: tail.aether, token: tail.aether.variableToken(tag: "\(tail.name).\(name)"), delegate: self)}()
 
 // Inits ===========================================================================================
 	init(tail: Tail, name: String) {

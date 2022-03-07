@@ -35,8 +35,8 @@ public final class Column: Domain, TowerDelegate {
 	
 	fileprivate lazy var header: Header = Header()
 	
-	lazy var tower: Tower = Tower(aether: grid.aether, token: grid.aether.variableToken(tag: "Gr\(grid.no).Co\(no)"), delegate: header)
-	lazy var token: VariableToken = grid.aether.variableToken(tag: "Gr\(grid.no).Co\(no)", label: name)
+	public lazy var tower: Tower = Tower(aether: grid.aether, token: grid.aether.variableToken(tag: "Gr\(grid.no).Co\(no)"), delegate: header)
+	public lazy var token: VariableToken = grid.aether.variableToken(tag: "Gr\(grid.no).Co\(no)", label: name)
 	public lazy var footerTower: Tower = Tower(aether: grid.aether, token: grid.aether.variableToken(tag: "Gr\(grid.no).Ft\(no)"), delegate: self)
 	
 	public var grid: Grid {

@@ -227,7 +227,7 @@ public final class Tower: Hashable, CustomStringConvertible {
 
 		return true
 	}
-	func trigger() {
+	public func trigger() {
 		aether.evaluate(from: self)
 	}
 	
