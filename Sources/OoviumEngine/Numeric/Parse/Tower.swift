@@ -196,7 +196,7 @@ public final class Tower: Hashable, CustomStringConvertible {
 	func buildStream() {
 		delegate.buildUpstream(tower: self)
 	}
-	func buildTask() {
+	public func buildTask() {
 		AETaskRelease(task)
 		delegate.buildWorker(tower: self)
 	}
