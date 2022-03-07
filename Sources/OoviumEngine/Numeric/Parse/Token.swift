@@ -107,7 +107,7 @@ class PropertyToken: TowerToken {
 	}
 }
 
-class Token: Hashable {
+public class Token: Hashable {
 	let type: TokenType
 	var tag: String
 
@@ -122,10 +122,10 @@ class Token: Hashable {
 	var display: String { return tag }
 
 // Hashable ========================================================================================
-	static func == (left: Token, right: Token) -> Bool {
+	public static func == (left: Token, right: Token) -> Bool {
 		return left === right
 	}
-	func hash(into hasher: inout Hasher) {
+	public func hash(into hasher: inout Hasher) {
 		 hasher.combine(ObjectIdentifier(self))
 	}
 
