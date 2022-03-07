@@ -15,18 +15,18 @@ public final class Gate: Aexel, TowerDelegate {
 	@objc public var thenChain: Chain!
 	@objc public var elseChain: Chain!
 	
-	var ifTower: Tower {
+	public var ifTower: Tower {
 		return ifChain.tower
 	}
-	var thenTower: Tower {
+	public var thenTower: Tower {
 		return thenChain.tower
 	}
-	var elseTower: Tower {
+	public var elseTower: Tower {
 		return elseChain.tower
 	}
-	lazy var resultTower: Tower = {Tower(aether: aether, token: aether.variableToken(tag: "GtR_\(no)"), delegate: self)}()
+	public lazy var resultTower: Tower = {Tower(aether: aether, token: aether.variableToken(tag: "GtR_\(no)"), delegate: self)}()
 	
-	var token: Token {
+	public var token: Token {
 		return resultTower.variableToken
 	}
 

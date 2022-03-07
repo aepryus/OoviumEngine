@@ -50,7 +50,7 @@ public final class Cron: Aexel, TowerDelegate {
 	var dt: Double = 1
 	var sealed: Bool = true
 	
-	func reset() {
+	public func reset() {
 		if endMode == .stop || endMode == .repeat || endMode == .bounce {
 			dt = (stopTower.value - startTower.value)/(stepsTower.value-1)
 		} else {
@@ -59,7 +59,7 @@ public final class Cron: Aexel, TowerDelegate {
 		t = startTower.value
 		sealed = true
 	}
-	func increment() -> Bool {
+	public func increment() -> Bool {
 		if sealed {
 			sealed = false
 		} else if (endMode == .stop && t+dt > stopTower.value) || (endMode == .while && whileTower.value == 0) {
