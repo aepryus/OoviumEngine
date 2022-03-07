@@ -53,20 +53,20 @@ public final class Tail: Aexel, TowerDelegate, Mechlike {
 		AERecipeRelease(recipe)
 	}
 
-	var key: String {
+	public var key: String {
 		var key: String = "\(super.name);"
 		vertebras.forEach {_ in key += "num;"}
 		return key
 	}
 
-	func add(vertebra: Vertebra) {
+	public func add(vertebra: Vertebra) {
 		add(vertebra)
 		vertebra.tower.web = web
 		vertebras.append(vertebra)
 		aether.register(tower: vertebra.tower)
 		aether.register(tower: vertebra.chain.tower)
 	}
-	func addVertebra() -> Vertebra {
+	public func addVertebra() -> Vertebra {
 		var name: String = ""
 		if vertebras.count < 4 {
 			name = ["x", "y", "z", "w"][vertebras.count]
@@ -78,7 +78,7 @@ public final class Tail: Aexel, TowerDelegate, Mechlike {
 		functionToken.params = vertebras.count
 		return vertebra
 	}
-	func removeVertebra() {
+	public func removeVertebra() {
 		let vertebra = vertebras.removeLast()
 		remove(vertebra)
 		aether.deregister(tower: vertebra.tower)
