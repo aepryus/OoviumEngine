@@ -109,16 +109,16 @@ public final class Tower: Hashable, CustomStringConvertible {
 		downstream.insert(tower)
 		tower.upstream.insert(self)
 	}
-	func detach(_ tower: Tower) {
+	public func detach(_ tower: Tower) {
 		downstream.remove(tower)
 		tower.upstream.remove(self)
 	}
-	func abstract() {
+	public func abstract() {
 		abstractUp()
 		downstream.forEach {$0.upstream.remove(self)}
 		downstream.removeAll()
 	}
-	func abstractUp() {
+	public func abstractUp() {
 		upstream.forEach {$0.downstream.remove(self)}
 		upstream.removeAll()
 	}
@@ -128,12 +128,12 @@ public final class Tower: Hashable, CustomStringConvertible {
 		towers.insert(self)
 		downstream.forEach { $0.loadDownstream(into: &towers) }
 	}
-	func allDownstream() -> Set<Tower> {
+	public func allDownstream() -> Set<Tower> {
 		var towers: Set<Tower> = Set()
 		loadDownstream(into: &towers)
 		return towers
 	}
-	func downstream(contains: Tower) -> Bool {
+	public func downstream(contains: Tower) -> Bool {
 		if self === contains {return true}
 		guard tailForWeb == nil else {return false}
 		for tower in downstream {
@@ -144,7 +144,7 @@ public final class Tower: Hashable, CustomStringConvertible {
 		return false
 	}
 	
-	func towersDestinedFor() -> Set<Tower> {
+	public func towersDestinedFor() -> Set<Tower> {
 		var result = Set<Tower>()
 		guard web != nil else {return result}
 		result.insert(self)
@@ -165,10 +165,10 @@ public final class Tower: Hashable, CustomStringConvertible {
 		}
 		return false
 	}
-	func stronglyLinked(override: Tower?) -> Set<Tower> {
+	public func stronglyLinked(override: Tower?) -> Set<Tower> {
 		return towersDestinedFor().filter {$0.isStronglyLinked(to: self, override: override)}
 	}
-	func stronglyLinked() -> Set<Tower> {
+	public func stronglyLinked() -> Set<Tower> {
 		return stronglyLinked(override: nil)
 	}
 
