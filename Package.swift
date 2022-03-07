@@ -15,7 +15,7 @@ let package = Package(
 		.package(url: "https://github.com/aepryus/Acheron.git", from: "1.0.0"),
     ],
     targets: [
-		.target(name: "Aegean", publicHeadersPath: "Aegean.h"),
+		.target(name: "Aegean"),
 		.target(name: "OoviumEngine", dependencies: ["Acheron", "Aegean"]),
         .executableTarget(name: "Oov", dependencies: ["OoviumEngine"]),
         .testTarget(name: "OoviumEngineTests", dependencies: ["OoviumEngine"]),
