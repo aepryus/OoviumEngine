@@ -43,7 +43,7 @@ protocol Paramsable: Token { var params: Int { get set } }
 protocol Levelable: Token { var level: TokenLevel { get } }
 protocol Defable: Token { var def: Def? { get set } }
 
-class TowerToken: Token, Labelable, Defable {
+public class TowerToken: Token, Labelable, Defable {
 	var label: String
 	var def: Def? = nil
 
@@ -53,28 +53,28 @@ class TowerToken: Token, Labelable, Defable {
 	}
 }
 
-class DigitToken: Token {
+public class DigitToken: Token {
 	init(tag: String) { super.init(type: .digit, tag: tag) }
 }
 class CharacterToken: Token {
 	init(tag: String) { super.init(type: .character, tag: tag) }
 }
-class SeparatorToken: Token {
+public class SeparatorToken: Token {
 	init(tag: String) { super.init(type: .separator, tag: tag) }
 }
-class ConstantToken: Token, Defable {
+public class ConstantToken: Token, Defable {
 	var def: Def? = nil
 
 	init(tag: String) {
 		super.init(type: .constant, tag: tag)
 	}
 }
-class UnaryToken: Token {
+public class UnaryToken: Token {
 	init(tag: String) {
 		super.init(type: .unary, tag: tag)
 	}
 }
-class OperatorToken: Token, Labelable, Levelable {
+public class OperatorToken: Token, Labelable, Levelable {
 	var label: String
 	let level: TokenLevel
 
@@ -85,7 +85,7 @@ class OperatorToken: Token, Labelable, Levelable {
 	}
 	override var display: String { return label }
 }
-class FunctionToken: TowerToken, Paramsable {
+public class FunctionToken: TowerToken, Paramsable {
 	var params: Int
 	let recipe: String?
 	init(tag: String, label: String? = nil, params: Int = 1, recipe: String? = nil) {
@@ -95,13 +95,13 @@ class FunctionToken: TowerToken, Paramsable {
 	}
 	override var display: String { "\(tag)(" }
 }
-class VariableToken: TowerToken {
+public class VariableToken: TowerToken {
 	init(tag: String, label: String? = nil) {
 		super.init(type: .variable, tag: tag, label: label)
 	}
 	override var display: String { return label }
 }
-class PropertyToken: TowerToken {
+public class PropertyToken: TowerToken {
 	init(tag: String, label: String? = nil) {
 		super.init(type: .property, tag: tag)
 	}
