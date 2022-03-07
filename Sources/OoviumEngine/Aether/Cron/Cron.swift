@@ -24,8 +24,8 @@ public final class Cron: Aexel, TowerDelegate {
 	@objc public var endMode: OOEndMode = .stop
 	@objc public var exposed: Bool = true
 
-	lazy var tower: Tower = Tower(aether: aether, token: aether.variableToken(tag: "Cr_\(no)"), delegate: self)
-	var token: Token {return tower.variableToken}
+	public lazy var tower: Tower = Tower(aether: aether, token: aether.variableToken(tag: "Cr_\(no)"), delegate: self)
+	public var token: Token {return tower.variableToken}
 
 	var startTower: Tower {
 		return startChain.tower
