@@ -21,7 +21,7 @@ public final class Object: Aexel {
 	var tower: Tower {
 		return chain.tower
 	}
-	var token: VariableToken {
+	public var token: VariableToken {
 		return tower.variableToken
 	}
 	

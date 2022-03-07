@@ -86,7 +86,7 @@ public final class Column: Domain, TowerDelegate {
 		fatalError()
 	}
 	
-	func render() {
+	public func render() {
 		if aggregate == .none {
 			grid.aether.deregister(tower: footerTower)
 		} else {
@@ -122,7 +122,7 @@ public final class Column: Domain, TowerDelegate {
 	}
 	
 	// Other ===========================================================================================
-	func disseminate() {
+	public func disseminate() {
 		guard chain.tokens.count > 0 else {return}
 		
 		if aggregate != .running {

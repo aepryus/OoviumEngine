@@ -53,7 +53,7 @@ import Foundation
 		AEMemoryRelease(oldMemory)
 //		AEMemoryPrint(memory)
 	}
-	func buildMemory() {
+	public func buildMemory() {
 		QbuildMemory()
 		Set(towers.values).filter { $0.variableToken.type == .variable }.forEach { $0.buildTask() }
 	}
@@ -90,21 +90,21 @@ import Foundation
 		buildMemory()
 		evaluate(towers: aexel.towers)
 	}
-	func removeAexel(_ aexel: Aexel) {
+	public func removeAexel(_ aexel: Aexel) {
 		aexel.towers.forEach { deregister(tower: $0) }
 		remove(aexel)
 		aexels.remove(object: aexel)
 	}
-	func removeAexels(_ aexels: [Aexel]) {
+	public func removeAexels(_ aexels: [Aexel]) {
 		aexels.forEach {$0.towers.forEach {deregister(tower: $0)}}
 		aexels.forEach {remove($0)}
 		aexels.forEach {self.aexels.remove(object: $0)}
 		buildMemory()
 	}
-	func removeAllAexels() {
+	public func removeAllAexels() {
 		removeAexels(aexels)
 	}
-	func aexel(type: String, no: Int) -> Aexel? {
+	public func aexel(type: String, no: Int) -> Aexel? {
 		return aexels.first(where: {$0.type == type && $0.no == no})
 	}
 	

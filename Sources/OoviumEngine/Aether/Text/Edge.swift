@@ -12,10 +12,10 @@ import Foundation
 public final class Edge: Domain {
 	@objc public var textNo: Int = 0
 	
-	var text: Text {
+	public var text: Text {
 		return parent! as! Text
 	}
-	var other: Text {
+	public var other: Text {
 		return text.aether.aexel(type: "text", no: textNo)! as! Text
 	}
 	
