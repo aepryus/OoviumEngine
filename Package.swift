@@ -8,7 +8,7 @@ let package = Package(
 		.iOS(.v11), .macOS(.v10_13)
     ],
     products: [
-		.library(name: "OoviumEngine", targets: ["OoviumEngine"]),
+		.library(name: "OoviumEngine", targets: ["OoviumEngine", "Aegean"]),
 		.executable(name: "oov", targets: ["Oov"]),
     ],
     dependencies: [
