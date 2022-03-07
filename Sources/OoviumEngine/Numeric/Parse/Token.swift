@@ -34,7 +34,7 @@ public enum TokenType: Int {
 public enum TokenLevel: Int {
 	case add, multiply, power, compare, gate
 }
-enum TokenStatus {
+public enum TokenStatus {
 	case ok, invalid, deleted, blocked
 }
 
@@ -83,7 +83,7 @@ public class OperatorToken: Token, Labelable, Levelable {
 		self.level = level
 		super.init(type: .operator, tag: tag)
 	}
-	override var display: String { return label }
+	public override var display: String { return label }
 }
 public class FunctionToken: TowerToken, Paramsable {
 	var params: Int
@@ -93,13 +93,13 @@ public class FunctionToken: TowerToken, Paramsable {
 		self.recipe = recipe
 		super.init(type: .function, tag: tag, label: label)
 	}
-	override var display: String { "\(tag)(" }
+	public override var display: String { "\(tag)(" }
 }
 public class VariableToken: TowerToken {
 	init(tag: String, label: String? = nil) {
 		super.init(type: .variable, tag: tag, label: label)
 	}
-	override var display: String { return label }
+	public override var display: String { return label }
 }
 public class PropertyToken: TowerToken {
 	init(tag: String, label: String? = nil) {
@@ -108,10 +108,10 @@ public class PropertyToken: TowerToken {
 }
 
 public class Token: Hashable {
-	let type: TokenType
+	public let type: TokenType
 	var tag: String
 
-	var status: TokenStatus = .ok
+	public var status: TokenStatus = .ok
 
 	fileprivate init(type: TokenType, tag: String) {
 		self.type = type
@@ -119,7 +119,7 @@ public class Token: Hashable {
 	}
 
 	var key: String { "\(type.rawValue):\(tag)" }
-	var display: String { return tag }
+	public var display: String { return tag }
 
 // Hashable ========================================================================================
 	public static func == (left: Token, right: Token) -> Bool {

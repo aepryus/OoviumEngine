@@ -45,8 +45,8 @@ class Funnel {
 
 public final class Tower: Hashable, CustomStringConvertible {
 	unowned let aether: Aether
-	let variableToken: VariableToken
-	let functionToken: FunctionToken?
+	public let variableToken: VariableToken
+	public let functionToken: FunctionToken?
 	unowned let delegate: TowerDelegate
 
 	var upstream: WeakSet<Tower> = WeakSet<Tower>()

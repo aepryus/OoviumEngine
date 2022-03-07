@@ -36,7 +36,7 @@ import Foundation
 
 	deinit { AEMemoryRelease(memory) }
 
-	var aethers: [Aether] {
+	public var aethers: [Aether] {
 		return [self] + aexels.compactMap { ($0 as? Also)?.alsoAether }
 	}
 	
@@ -224,13 +224,13 @@ import Foundation
 	}
 
 // MARK: - Tokens ==================================================================================
-	func register(token: TowerToken) {
+	public func register(token: TowerToken) {
 		tokens[token.key] = token
 	}
-	func token(type: TokenType, tag: String) -> TowerToken? {
+	public func token(type: TokenType, tag: String) -> TowerToken? {
 		return tokens["\(type.rawValue):\(tag)"]
 	}
-	func token(key: String) -> Token {
+	public func token(key: String) -> Token {
 		var token: Token? = tokens[key]
 		if let token = token { return token }
 		token = Token.token(key: key)
@@ -250,39 +250,39 @@ import Foundation
 		tokens[key] = token as? TowerToken
 		return token!
 	}
-	func buildTokens(chain: Chain) {
+	public func buildTokens(chain: Chain) {
 		guard let keys = chain.loadedKeys else { return }
 		keys.forEach { chain.tokens.append(token(key: $0)) }
 		chain.loadedKeys = nil
 	}
-	func buildTokens() {
+	public func buildTokens() {
 		aexels.forEach { $0.towers.forEach {
 			guard let chain = $0.delegate as? Chain else { return }
 			buildTokens(chain: chain)
 		} }
 	}
 
-	func rekey(token: TowerToken, tag:String) {
+	public func rekey(token: TowerToken, tag:String) {
 		tokens[token.key] = nil
 		token.tag = tag
 		tokens[token.key] = token
 	}
 
-	func variableToken(tag: String, label: String? = nil) -> VariableToken {
+	public func variableToken(tag: String, label: String? = nil) -> VariableToken {
 		return tokens["\(TokenType.variable.rawValue):\(tag)"] as? VariableToken ?? {
 			let token = VariableToken(tag: tag, label: label)
 			register(token: token)
 			return token
 		}()
 	}
-	func functionToken(tag: String, label: String? = nil, recipe: String? = nil) -> FunctionToken {
+	public func functionToken(tag: String, label: String? = nil, recipe: String? = nil) -> FunctionToken {
 		return tokens["\(TokenType.function.rawValue):\(tag)"] as? FunctionToken ?? {
 			let token = FunctionToken(tag: tag, label: label, recipe: recipe)
 			register(token: token)
 			return token
 		}()
 	}
-	func wipe(token: Token) {
+	public func wipe(token: Token) {
 		tokens[token.key] = nil
 	}
 
