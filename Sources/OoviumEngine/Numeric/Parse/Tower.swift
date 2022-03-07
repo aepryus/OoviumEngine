@@ -96,7 +96,7 @@ public final class Tower: Hashable, CustomStringConvertible {
 	var value: Double {
 		return AEMemoryValue(aether.memory, index)
 	}
-	var obje: Obje {
+	public var obje: Obje {
 		return Obje(memory: aether.memory, index: index)
 	}
 	
