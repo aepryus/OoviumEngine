@@ -9,10 +9,10 @@
 import Acheron
 import Foundation
 
-final class Field: Domain {
-	@objc dynamic var name: String = ""
-	@objc dynamic var typeName: String = ""
-	@objc dynamic var orderNo: Int = 0
+public final class Field: Domain {
+	@objc public dynamic var name: String = ""
+	@objc public dynamic var typeName: String = ""
+	@objc public dynamic var orderNo: Int = 0
 	
 	var def: Def = RealDef.def
 

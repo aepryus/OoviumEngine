@@ -11,9 +11,9 @@ import Acheron
 import Foundation
 
 public final class Gate: Aexel, TowerDelegate {
-	@objc var ifChain: Chain!
-	@objc var thenChain: Chain!
-	@objc var elseChain: Chain!
+	@objc public var ifChain: Chain!
+	@objc public var thenChain: Chain!
+	@objc public var elseChain: Chain!
 	
 	var ifTower: Tower {
 		return ifChain.tower
@@ -63,7 +63,7 @@ public final class Gate: Aexel, TowerDelegate {
 	}
 	
 // Aexel ===========================================================================================
-	override var towers: Set<Tower> {
+	public override var towers: Set<Tower> {
 		return Set<Tower>([ifTower, thenTower, elseTower, resultTower])
 	}
 	

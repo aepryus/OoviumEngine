@@ -9,8 +9,8 @@
 import Acheron
 import Foundation
 
-final class Input: Domain, TowerDelegate {
-	@objc dynamic var name: String = "" {
+public final class Input: Domain, TowerDelegate {
+	@objc public dynamic var name: String = "" {
 		didSet {
 			guard let mech = parent as? Mech else {return}
 			mech.aether.rekey(token: tower.variableToken, tag: "\(mech.name).\(name)")
@@ -19,7 +19,7 @@ final class Input: Domain, TowerDelegate {
 	}
 	var def: Def = RealDef.def
 	
-	lazy var tower: Tower = {Tower(aether: mech.aether, token: mech.aether.variableToken(tag: "\(mech.name).\(name)"), delegate: self)}()
+	public lazy var tower: Tower = {Tower(aether: mech.aether, token: mech.aether.variableToken(tag: "\(mech.name).\(name)"), delegate: self)}()
 	
 	init(mech: Mech, name: String) {
 		self.name = name
@@ -36,12 +36,12 @@ final class Input: Domain, TowerDelegate {
 	}
 	
 // Events ==========================================================================================
-	override func onLoad() {
+	public override func onLoad() {
 		tower.web = mech.web
 	}
 
 // Domain ==========================================================================================
-	override public var properties: [String] {
+	public override var properties: [String] {
 		return super.properties + ["name"]
 	}
 	

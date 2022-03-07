@@ -10,83 +10,53 @@ import Aegean
 import Acheron
 import Foundation
 
-@objc enum OOAggregate: Int {
+@objc public enum OOAggregate: Int {
 	case none, sum, average, running, count, match
 }
-@objc enum OOJustify: Int {
+@objc public enum OOJustify: Int {
 	case left, center, right
 }
 
 public final class Column: Domain, TowerDelegate {
 	@objc public var no: Int = 0
-	@objc var name: String = "" {
+	@objc public var name: String = "" {
 		didSet {
 			token.label = name
 			chain.label = name
 		}
 	}
 	var def: Def = RealDef.def
-	@objc var chain: Chain = Chain()
-	@objc var aggregate: OOAggregate = .none
-	@objc var justify: OOJustify = .right
-	@objc var format: String = ""
+	@objc public var chain: Chain = Chain()
+	@objc public var aggregate: OOAggregate = .none
+	@objc public var justify: OOJustify = .right
+	@objc public var format: String = ""
 	
-//	var _width: CGFloat? = nil
-//	var width: CGFloat {
-//		if _width == nil {
-//			renderWidth()
-//		}
-//		return _width!
-//	}
-//	var _headerWidth: CGFloat? = nil
-//	var headerWidth: CGFloat {
-//		get {
-//			if _headerWidth == nil {
-//				renderHeaderWidth()
-//			}
-//			return _headerWidth!
-//		}
-//	}
-//	var _footerWidth: CGFloat? = nil
-//	var footerWidth: CGFloat {
-//		get {
-//			renderFooterWidth()
-//			return _footerWidth!
-//		}
-//	}
 	var footerChain: Chain = Chain()
 	
 	fileprivate lazy var header: Header = Header()
 	
 	lazy var tower: Tower = Tower(aether: grid.aether, token: grid.aether.variableToken(tag: "Gr\(grid.no).Co\(no)"), delegate: header)
 	lazy var token: VariableToken = grid.aether.variableToken(tag: "Gr\(grid.no).Co\(no)", label: name)
-	lazy var footerTower: Tower = Tower(aether: grid.aether, token: grid.aether.variableToken(tag: "Gr\(grid.no).Ft\(no)"), delegate: self)
+	public lazy var footerTower: Tower = Tower(aether: grid.aether, token: grid.aether.variableToken(tag: "Gr\(grid.no).Ft\(no)"), delegate: self)
 	
-	var grid: Grid {
+	public var grid: Grid {
 		return parent as! Grid
 	}
-	var calculated: Bool {
+	public var calculated: Bool {
 		return chain.tokens.count > 0
 	}
-	var hasFooter: Bool {
+	public var hasFooter: Bool {
 		return aggregate != .none && aggregate != .running
 	}
 	
-//	var alignment: NSTextAlignment {
-//		switch justify {
-//			case .left: return .left
-//			case .center: return .center
-//			case .right: return .right
-//		}
-//	}
-	var colNo: Int {
+	public var colNo: Int {
 		for i in 0..<grid.columns.count {
 			if self === grid.columns[i] {return i}
 		}
 		fatalError()
 	}
 	
-	func render() {
+	public func render() {
 		if aggregate == .none {
 			grid.aether.deregister(tower: footerTower)
 		} else {
@@ -96,17 +66,6 @@ public final class Column: Domain, TowerDelegate {
 			grid.aether.evaluate()
 		}
 	}
-//	func renderHeaderWidth() {
-//		let pen: Pen = Pen(font: UIFont(name: "Verdana-Bold", size: 15)!)
-//		_headerWidth = (name as NSString).size(pen: pen).width+20
-//	}
-//	func renderFooterWidth() {
-//		if aggregate == .none || aggregate == .running {
-//			_footerWidth = 0
-//		} else {
-//			_footerWidth = (footerTower.obje.display as NSString).size(pen: Pen()).width + 12
-//		}
-//	}
 
 // Inits ===========================================================================================
 	public init(grid: Grid) {
@@ -122,7 +81,7 @@ public final class Column: Domain, TowerDelegate {
 	}
 	
 	// Other ===========================================================================================
-	func disseminate() {
+	public func disseminate() {
 		guard chain.tokens.count > 0 else {return}
 		
 		if aggregate != .running {
@@ -171,7 +130,7 @@ public final class Column: Domain, TowerDelegate {
 			}
 		}
 	}
-	func calculate() {
+	public func calculate() {
 		var towers: Set<Tower> = Set<Tower>()
 		for i in 0..<grid.rows {
 			let cell = grid.cell(colNo: colNo, rowNo: i)
@@ -179,16 +138,7 @@ public final class Column: Domain, TowerDelegate {
 		}
 		grid.aether.evaluate(towers: towers)
 	}
-//	func renderWidth() {
-//		var width = max(90, headerWidth)
-//		width = max(width, footerWidth)
-//		for i in 0..<grid.rows {
-//			let cell: Cell = grid.cell(colNo: colNo, rowNo: i)
-//			width = max(width, cell.width)
-//		}
-//		_width = width
-//	}
-	
+
 	// Events ==========================================================================================
 	public override func onLoad() {
 		chain.tower = tower

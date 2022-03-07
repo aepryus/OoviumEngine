@@ -9,10 +9,10 @@
 import Acheron
 import Foundation
 
-enum EqualMode {
+public enum EqualMode {
 	case close, down, right
 	
-	var next: EqualMode {
+	public var next: EqualMode {
 		switch self {
 			case .close:	return .down
 			case .down:		return .right
@@ -22,16 +22,16 @@ enum EqualMode {
 }
 
 public final class Grid: Aexel {
-	@objc var typeID: Int = 0
-	@objc var rows: Int = 0
-	@objc var exposed: Bool = true
+	@objc public var typeID: Int = 0
+	@objc public var rows: Int = 0
+	@objc public var exposed: Bool = true
 	
-	@objc var columns: [Column] = []
-	@objc var cells: [Cell] = []
+	@objc public var columns: [Column] = []
+	@objc public var cells: [Cell] = []
 	
-	var equalMode: EqualMode = .close
+	public var equalMode: EqualMode = .close
 	
-	var hasFooter: Bool {
+	public var hasFooter: Bool {
 		return columns.first { $0.aggregate != .none && $0.aggregate != .running } != nil
 	}
 
@@ -54,7 +54,7 @@ public final class Grid: Aexel {
 	}
 
 // Other ===========================================================================================
-	func numberCells() {
+	public func numberCells() {
 		for j in 0..<rows {
 			for i in 0..<columns.count {
 				let cellNo = columns.count*j+i
@@ -63,7 +63,7 @@ public final class Grid: Aexel {
 			}
 		}
 	}
-	func addRow() {
+	public func addRow() {
 		rows += 1
 		for colNo in 0 ..< columns.count {
 			let cell: Cell = Cell(grid: self)
@@ -79,7 +79,7 @@ public final class Grid: Aexel {
 			$0.render()
 		}
 	}
-	func deleteRow(rowNo: Int) {
+	public func deleteRow(rowNo: Int) {
 		rows -= 1
 		for i in 0..<columns.count {
 			let cellNo: Int = (rowNo+1)*columns.count - 1 - i
@@ -89,7 +89,7 @@ public final class Grid: Aexel {
 		numberCells()
 		aether.buildMemory()
 	}
-	func move(rowNo: Int, to: Int) {
+	public func move(rowNo: Int, to: Int) {
 		let cellNo: Int = rowNo*columns.count
 		let moving: [Cell] = Array(cells[cellNo..<(cellNo+columns.count)])
 		cells.removeSubrange(cellNo..<(cellNo+columns.count))
@@ -97,7 +97,7 @@ public final class Grid: Aexel {
 		numberCells()
 	}
 	
-	func addColumn() {
+	public func addColumn() {
 		let cc: Int = columns.count
 		
 		let column: Column = Column(grid: self)
@@ -118,7 +118,7 @@ public final class Grid: Aexel {
 		}
 		aether.buildMemory()
 	}
-	func deleteColumn(_ column: Column) {
+	public func deleteColumn(_ column: Column) {
 		let colNo: Int = column.colNo
 		for rowNo in 0..<rows {
 			let cellNo = columns.count*(rows-1-rowNo)+colNo
@@ -132,7 +132,7 @@ public final class Grid: Aexel {
 		numberCells()
 		aether.buildMemory()
 	}
-	func move(column: Column, to: Int) {
+	public func move(column: Column, to: Int) {
 		let from = column.colNo
 		columns.remove(at: from)
 		columns.insert(column, at: to)
@@ -145,21 +145,21 @@ public final class Grid: Aexel {
 		numberCells()
 	}
 	
-	func cell(colNo: Int, rowNo: Int) -> Cell {
+	public func cell(colNo: Int, rowNo: Int) -> Cell {
 		return cells[rowNo*columns.count + colNo]
 	}
-	func column(colNo: Int) -> Column? {
+	public func column(colNo: Int) -> Column? {
 		return columns[colNo]
 	}
-	func column(tag: String) -> Column? {
+	public func column(tag: String) -> Column? {
 		return columns.first {$0.token.tag == tag}
 	}
-	var maxCellNo: Int {
+	public var maxCellNo: Int {
 		var max: Int = 0
 		cells.forEach {if $0.no > max {max = $0.no}}
 		return max
 	}
-	var maxColumnNo: Int {
+	public var maxColumnNo: Int {
 		var max: Int = 0
 		columns.forEach {if $0.no > max {max = $0.no}}
 		return max
@@ -172,7 +172,7 @@ public final class Grid: Aexel {
 	}
 
 // Aexel ===========================================================================================
-	override var towers: Set<Tower> {
+	public override var towers: Set<Tower> {
 		var towers: [Tower] = []
 		cells.forEach { towers.append($0.tower) }
 //		columns.forEach { towers.append($0.tower) }

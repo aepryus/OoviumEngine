@@ -34,7 +34,7 @@ public enum TokenType: Int {
 public enum TokenLevel: Int {
 	case add, multiply, power, compare, gate
 }
-enum TokenStatus {
+public enum TokenStatus {
 	case ok, invalid, deleted, blocked
 }
 
@@ -43,8 +43,8 @@ protocol Paramsable: Token { var params: Int { get set } }
 protocol Levelable: Token { var level: TokenLevel { get } }
 protocol Defable: Token { var def: Def? { get set } }
 
-class TowerToken: Token, Labelable, Defable {
-	var label: String
+public class TowerToken: Token, Labelable, Defable {
+	public var label: String
 	var def: Def? = nil
 
 	fileprivate init(type: TokenType, tag: String, label: String? = nil) {
@@ -53,28 +53,28 @@ class TowerToken: Token, Labelable, Defable {
 	}
 }
 
-class DigitToken: Token {
+public class DigitToken: Token {
 	init(tag: String) { super.init(type: .digit, tag: tag) }
 }
 class CharacterToken: Token {
 	init(tag: String) { super.init(type: .character, tag: tag) }
 }
-class SeparatorToken: Token {
+public class SeparatorToken: Token {
 	init(tag: String) { super.init(type: .separator, tag: tag) }
 }
-class ConstantToken: Token, Defable {
+public class ConstantToken: Token, Defable {
 	var def: Def? = nil
 
 	init(tag: String) {
 		super.init(type: .constant, tag: tag)
 	}
 }
-class UnaryToken: Token {
+public class UnaryToken: Token {
 	init(tag: String) {
 		super.init(type: .unary, tag: tag)
 	}
 }
-class OperatorToken: Token, Labelable, Levelable {
+public class OperatorToken: Token, Labelable, Levelable {
 	var label: String
 	let level: TokenLevel
 
@@ -83,9 +83,9 @@ class OperatorToken: Token, Labelable, Levelable {
 		self.level = level
 		super.init(type: .operator, tag: tag)
 	}
-	override var display: String { return label }
+	public override var display: String { return label }
 }
-class FunctionToken: TowerToken, Paramsable {
+public class FunctionToken: TowerToken, Paramsable {
 	var params: Int
 	let recipe: String?
 	init(tag: String, label: String? = nil, params: Int = 1, recipe: String? = nil) {
@@ -93,25 +93,25 @@ class FunctionToken: TowerToken, Paramsable {
 		self.recipe = recipe
 		super.init(type: .function, tag: tag, label: label)
 	}
-	override var display: String { "\(tag)(" }
+	public override var display: String { "\(tag)(" }
 }
-class VariableToken: TowerToken {
+public class VariableToken: TowerToken {
 	init(tag: String, label: String? = nil) {
 		super.init(type: .variable, tag: tag, label: label)
 	}
-	override var display: String { return label }
+	public override var display: String { return label }
 }
-class PropertyToken: TowerToken {
+public class PropertyToken: TowerToken {
 	init(tag: String, label: String? = nil) {
 		super.init(type: .property, tag: tag)
 	}
 }
 
-class Token: Hashable {
-	let type: TokenType
+public class Token: Hashable {
+	public let type: TokenType
 	var tag: String
 
-	var status: TokenStatus = .ok
+	public var status: TokenStatus = .ok
 
 	fileprivate init(type: TokenType, tag: String) {
 		self.type = type
@@ -119,13 +119,13 @@ class Token: Hashable {
 	}
 
 	var key: String { "\(type.rawValue):\(tag)" }
-	var display: String { return tag }
+	public var display: String { return tag }
 
 // Hashable ========================================================================================
-	static func == (left: Token, right: Token) -> Bool {
+	public static func == (left: Token, right: Token) -> Bool {
 		return left === right
 	}
-	func hash(into hasher: inout Hasher) {
+	public func hash(into hasher: inout Hasher) {
 		 hasher.combine(ObjectIdentifier(self))
 	}
 
@@ -167,89 +167,89 @@ class Token: Hashable {
 		chain.loadedKeys = nil
 	}
 
-	static let period: DigitToken				= DigitToken(tag: ".")
-	static let zero: DigitToken					= DigitToken(tag: "0")
-	static let one: DigitToken					= DigitToken(tag: "1")
-	static let two: DigitToken					= DigitToken(tag: "2")
-	static let three: DigitToken				= DigitToken(tag: "3")
-	static let four: DigitToken					= DigitToken(tag: "4")
-	static let five: DigitToken					= DigitToken(tag: "5")
-	static let six: DigitToken					= DigitToken(tag: "6")
-	static let seven: DigitToken				= DigitToken(tag: "7")
-	static let eight: DigitToken				= DigitToken(tag: "8")
-	static let nine: DigitToken					= DigitToken(tag: "9")
+	public static let period: DigitToken			= DigitToken(tag: ".")
+	public static let zero: DigitToken				= DigitToken(tag: "0")
+	public static let one: DigitToken				= DigitToken(tag: "1")
+	public static let two: DigitToken				= DigitToken(tag: "2")
+	public static let three: DigitToken				= DigitToken(tag: "3")
+	public static let four: DigitToken				= DigitToken(tag: "4")
+	public static let five: DigitToken				= DigitToken(tag: "5")
+	public static let six: DigitToken				= DigitToken(tag: "6")
+	public static let seven: DigitToken				= DigitToken(tag: "7")
+	public static let eight: DigitToken				= DigitToken(tag: "8")
+	public static let nine: DigitToken				= DigitToken(tag: "9")
 
-	static let e: ConstantToken					= ConstantToken(tag:"e")
-	static let i: ConstantToken					= ConstantToken(tag:"i")
-	static let pi: ConstantToken				= ConstantToken(tag:"π")
-	static let yes: ConstantToken				= ConstantToken(tag:"true")
-	static let no: ConstantToken				= ConstantToken(tag:"false")
+	public static let e: ConstantToken				= ConstantToken(tag:"e")
+	public static let i: ConstantToken				= ConstantToken(tag:"i")
+	public static let pi: ConstantToken				= ConstantToken(tag:"π")
+	public static let yes: ConstantToken			= ConstantToken(tag:"true")
+	public static let no: ConstantToken				= ConstantToken(tag:"false")
 
-	static let add: OperatorToken				= OperatorToken(tag:"+", level: .add)
-	static let subtract: OperatorToken			= OperatorToken(tag:"−", level: .add)
-	static let multiply: OperatorToken			= OperatorToken(tag:"×", level: .multiply)
-	static let divide: OperatorToken			= OperatorToken(tag:"÷", level: .multiply)
-	static let dot: OperatorToken				= OperatorToken(tag:"•", level: .multiply)
-	static let mod: OperatorToken				= OperatorToken(tag:"%", level: .multiply)
-	static let power: OperatorToken				= OperatorToken(tag:"^", level: .power)
-	static let equal: OperatorToken				= OperatorToken(tag:"=", level: .compare, label: " == ")
-	static let less: OperatorToken				= OperatorToken(tag:"<", level: .compare, label: " < ")
-	static let greater: OperatorToken			= OperatorToken(tag:">", level: .compare, label: " > ")
-	static let notEqual: OperatorToken			= OperatorToken(tag:"≠", level: .compare, label: " ≠ ")
-	static let lessOrEqual: OperatorToken		= OperatorToken(tag:"≤", level: .compare, label: " ≤ ")
-	static let greaterOrEqual: OperatorToken	= OperatorToken(tag:"≥", level: .compare, label: " ≥ ")
-	static let and: OperatorToken				= OperatorToken(tag:"&&", level: .gate, label: " && ")
-	static let or: OperatorToken				= OperatorToken(tag:"||", level: .gate, label: " || ")
-	static let not: UnaryToken					= UnaryToken(tag:"!")
-	static let neg: UnaryToken					= UnaryToken(tag:"−")
+	public static let add: OperatorToken			= OperatorToken(tag:"+", level: .add)
+	public static let subtract: OperatorToken		= OperatorToken(tag:"−", level: .add)
+	public static let multiply: OperatorToken		= OperatorToken(tag:"×", level: .multiply)
+	public static let divide: OperatorToken			= OperatorToken(tag:"÷", level: .multiply)
+	public static let dot: OperatorToken			= OperatorToken(tag:"•", level: .multiply)
+	public static let mod: OperatorToken			= OperatorToken(tag:"%", level: .multiply)
+	public static let power: OperatorToken			= OperatorToken(tag:"^", level: .power)
+	public static let equal: OperatorToken			= OperatorToken(tag:"=", level: .compare, label: " == ")
+	public static let less: OperatorToken			= OperatorToken(tag:"<", level: .compare, label: " < ")
+	public static let greater: OperatorToken		= OperatorToken(tag:">", level: .compare, label: " > ")
+	public static let notEqual: OperatorToken		= OperatorToken(tag:"≠", level: .compare, label: " ≠ ")
+	public static let lessOrEqual: OperatorToken	= OperatorToken(tag:"≤", level: .compare, label: " ≤ ")
+	public static let greaterOrEqual: OperatorToken	= OperatorToken(tag:"≥", level: .compare, label: " ≥ ")
+	public static let and: OperatorToken			= OperatorToken(tag:"&&", level: .gate, label: " && ")
+	public static let or: OperatorToken				= OperatorToken(tag:"||", level: .gate, label: " || ")
+	public static let not: UnaryToken				= UnaryToken(tag:"!")
+	public static let neg: UnaryToken				= UnaryToken(tag:"−")
 
-	static let leftParen: SeparatorToken		= SeparatorToken(tag:"(")
-	static let comma: SeparatorToken			= SeparatorToken(tag:",")
-	static let rightParen: SeparatorToken		= SeparatorToken(tag:")")
-	static let bra: SeparatorToken				= SeparatorToken(tag:"[")
-	static let ket: SeparatorToken				= SeparatorToken(tag:"]")
-	static let quote: SeparatorToken			= SeparatorToken(tag:"\"")
+	public static let leftParen: SeparatorToken		= SeparatorToken(tag:"(")
+	public static let comma: SeparatorToken			= SeparatorToken(tag:",")
+	public static let rightParen: SeparatorToken	= SeparatorToken(tag:")")
+	public static let bra: SeparatorToken			= SeparatorToken(tag:"[")
+	public static let ket: SeparatorToken			= SeparatorToken(tag:"]")
+	public static let quote: SeparatorToken			= SeparatorToken(tag:"\"")
 
-	static let abs: FunctionToken				= FunctionToken(tag: "abs")
-	static let round: FunctionToken				= FunctionToken(tag: "round")
-	static let floor: FunctionToken				= FunctionToken(tag: "floor")
-	static let sqrt: FunctionToken				= FunctionToken(tag: "sqrt")
-	static let fac: FunctionToken				= FunctionToken(tag: "fac")
-	static let exp: FunctionToken				= FunctionToken(tag: "exp")
-	static let ln: FunctionToken				= FunctionToken(tag: "ln")
-	static let log: FunctionToken				= FunctionToken(tag: "log")
-	static let tenth: FunctionToken				= FunctionToken(tag: "ten")
-	static let second: FunctionToken			= FunctionToken(tag: "two")
-	static let log2: FunctionToken				= FunctionToken(tag: "log2")
-	static let sin: FunctionToken				= FunctionToken(tag: "sin")
-	static let cos: FunctionToken				= FunctionToken(tag: "cos")
-	static let tan: FunctionToken				= FunctionToken(tag: "tan")
-	static let asin: FunctionToken				= FunctionToken(tag: "asin")
-	static let acos: FunctionToken				= FunctionToken(tag: "acos")
-	static let atan: FunctionToken				= FunctionToken(tag: "atan")
-	static let sec: FunctionToken				= FunctionToken(tag: "sec")
-	static let csc: FunctionToken				= FunctionToken(tag: "csc")
-	static let cot: FunctionToken				= FunctionToken(tag: "cot")
-	static let sinh: FunctionToken				= FunctionToken(tag: "sinh")
-	static let cosh: FunctionToken				= FunctionToken(tag: "cosh")
-	static let tanh: FunctionToken				= FunctionToken(tag: "tanh")
-	static let asinh: FunctionToken				= FunctionToken(tag: "asinh")
-	static let acosh: FunctionToken				= FunctionToken(tag: "acosh")
-	static let atanh: FunctionToken				= FunctionToken(tag: "atanh")
-	static let random: FunctionToken			= FunctionToken(tag: "random")
-	static let iif: FunctionToken				= FunctionToken(tag: "if", params: 3)
-	static let min: FunctionToken				= FunctionToken(tag: "min", params: 2)
-	static let max: FunctionToken				= FunctionToken(tag: "max", params: 2)
-	static let sum: FunctionToken				= FunctionToken(tag: "∑", params: 3)
-	static let complex: FunctionToken			= FunctionToken(tag: "Complex", params: 2)
-	static let vector: FunctionToken			= FunctionToken(tag: "Vector", params: 3)
+	public static let abs: FunctionToken			= FunctionToken(tag: "abs")
+	public static let round: FunctionToken			= FunctionToken(tag: "round")
+	public static let floor: FunctionToken			= FunctionToken(tag: "floor")
+	public static let sqrt: FunctionToken			= FunctionToken(tag: "sqrt")
+	public static let fac: FunctionToken			= FunctionToken(tag: "fac")
+	public static let exp: FunctionToken			= FunctionToken(tag: "exp")
+	public static let ln: FunctionToken				= FunctionToken(tag: "ln")
+	public static let log: FunctionToken			= FunctionToken(tag: "log")
+	public static let tenth: FunctionToken			= FunctionToken(tag: "ten")
+	public static let second: FunctionToken			= FunctionToken(tag: "two")
+	public static let log2: FunctionToken			= FunctionToken(tag: "log2")
+	public static let sin: FunctionToken			= FunctionToken(tag: "sin")
+	public static let cos: FunctionToken			= FunctionToken(tag: "cos")
+	public static let tan: FunctionToken			= FunctionToken(tag: "tan")
+	public static let asin: FunctionToken			= FunctionToken(tag: "asin")
+	public static let acos: FunctionToken			= FunctionToken(tag: "acos")
+	public static let atan: FunctionToken			= FunctionToken(tag: "atan")
+	public static let sec: FunctionToken			= FunctionToken(tag: "sec")
+	public static let csc: FunctionToken			= FunctionToken(tag: "csc")
+	public static let cot: FunctionToken			= FunctionToken(tag: "cot")
+	public static let sinh: FunctionToken			= FunctionToken(tag: "sinh")
+	public static let cosh: FunctionToken			= FunctionToken(tag: "cosh")
+	public static let tanh: FunctionToken			= FunctionToken(tag: "tanh")
+	public static let asinh: FunctionToken			= FunctionToken(tag: "asinh")
+	public static let acosh: FunctionToken			= FunctionToken(tag: "acosh")
+	public static let atanh: FunctionToken			= FunctionToken(tag: "atanh")
+	public static let random: FunctionToken			= FunctionToken(tag: "random")
+	public static let iif: FunctionToken			= FunctionToken(tag: "if", params: 3)
+	public static let min: FunctionToken			= FunctionToken(tag: "min", params: 2)
+	public static let max: FunctionToken			= FunctionToken(tag: "max", params: 2)
+	public static let sum: FunctionToken			= FunctionToken(tag: "∑", params: 3)
+	public static let complex: FunctionToken		= FunctionToken(tag: "Complex", params: 2)
+	public static let vector: FunctionToken			= FunctionToken(tag: "Vector", params: 3)
 
-	static let k: VariableToken					= VariableToken(tag:"k")
+	public static let k: VariableToken				= VariableToken(tag:"k")
 
-	static let chill: ConstantToken				= ConstantToken(tag:"chill")
-	static let eat: ConstantToken				= ConstantToken(tag:"eat")
-	static let flirt: ConstantToken				= ConstantToken(tag:"flirt")
-	static let fight: ConstantToken				= ConstantToken(tag:"fight")
-	static let flee: ConstantToken				= ConstantToken(tag:"flee")
-	static let wander: ConstantToken			= ConstantToken(tag:"wander")
+	public static let chill: ConstantToken			= ConstantToken(tag:"chill")
+	public static let eat: ConstantToken			= ConstantToken(tag:"eat")
+	public static let flirt: ConstantToken			= ConstantToken(tag:"flirt")
+	public static let fight: ConstantToken			= ConstantToken(tag:"fight")
+	public static let flee: ConstantToken			= ConstantToken(tag:"flee")
+	public static let wander: ConstantToken			= ConstantToken(tag:"wander")
 }
