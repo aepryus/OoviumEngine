@@ -11,7 +11,7 @@ Chain is the object representing a single mathematical statement made up of an a
 contains the ability to parse those tokens into mathematical meaning as well as handle the posting
 of new tokens or removal of existing tokens to the chain.
 
-The chain can be used standalone and calculate on off results or can be used as a Tower manager.  As
+The chain can be used standalone and calculate one off results or can be used as a Tower manager.  As
 a tower manager it is resposible for maintaining it's tower's upstream connections.  It is also
 responsible for compiling itself and uploading the LambdaTask to the tower.
 ================================================================================================= */
