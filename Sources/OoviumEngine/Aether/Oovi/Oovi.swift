@@ -150,7 +150,7 @@ public class Oovi: Aexel, TowerDelegate {
 	}
 	
 // Aexel ===========================================================================================
-	override var towers: Set<Tower> {
+	public override var towers: Set<Tower> {
 		return parameterTowers.union([amorousTower, stepTower])
 	}
 

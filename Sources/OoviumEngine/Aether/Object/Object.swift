@@ -45,7 +45,7 @@ public final class Object: Aexel {
 	}
 	
 // Aexel ===========================================================================================
-	override var towers: Set<Tower> {
+	public override var towers: Set<Tower> {
 		return Set<Tower>([tower])
 	}
 	

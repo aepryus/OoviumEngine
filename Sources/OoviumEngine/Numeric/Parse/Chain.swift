@@ -93,8 +93,8 @@ enum ParseError: Error {
 }
 
 public final class Chain: NSObject, Packable, TowerDelegate {
-	var tokens: [Token] = []
-	var label: String? = nil {
+	public var tokens: [Token] = []
+	public var label: String? = nil {
 		didSet {
 			guard let tower = tower else { return }
 			tower.variableToken.label = label ?? tower.obje.display

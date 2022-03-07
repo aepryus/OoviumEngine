@@ -104,7 +104,7 @@ public final class Auto: Aexel, TowerDelegate {
 	}
 	
 // Aexel ===========================================================================================
-	override var towers: Set<Tower> {
+	public override var towers: Set<Tower> {
 		return spaceTowers.union([statesTower, resultTower])
 	}
 	

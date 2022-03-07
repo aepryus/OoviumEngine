@@ -63,7 +63,7 @@ public final class Gate: Aexel, TowerDelegate {
 	}
 	
 // Aexel ===========================================================================================
-	override var towers: Set<Tower> {
+	public override var towers: Set<Tower> {
 		return Set<Tower>([ifTower, thenTower, elseTower, resultTower])
 	}
 	

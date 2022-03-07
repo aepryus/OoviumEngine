@@ -19,7 +19,7 @@ public class Aexel: Domain {
 		return parent as! Aether
 	}
 
-	var towers: Set<Tower> {
+	public var towers: Set<Tower> {
 		return []
 	}
 

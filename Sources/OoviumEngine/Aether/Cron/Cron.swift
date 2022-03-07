@@ -106,7 +106,7 @@ public final class Cron: Aexel, TowerDelegate {
 	}
 	
 // Aexel ===========================================================================================
-	override var towers: Set<Tower> {
+	public override var towers: Set<Tower> {
 		return Set<Tower>([startTower, stopTower, stepsTower, rateTower, deltaTower, whileTower, tower])
 	}
 	

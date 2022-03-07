@@ -172,7 +172,7 @@ public final class Grid: Aexel {
 	}
 
 // Aexel ===========================================================================================
-	override var towers: Set<Tower> {
+	public override var towers: Set<Tower> {
 		var towers: [Tower] = []
 		cells.forEach { towers.append($0.tower) }
 //		columns.forEach { towers.append($0.tower) }

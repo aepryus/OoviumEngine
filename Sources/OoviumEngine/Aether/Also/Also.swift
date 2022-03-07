@@ -8,27 +8,27 @@
 
 import Foundation
 
-class Space {}
+public class Space {}
 
 public final class Also: Aexel {
 	@objc public var aetherPath: String = ""
 
-	var spaceAether: (Space, Aether)? {
+	public var spaceAether: (Space, Aether)? {
 		return nil
 //		guard let (space, aether) = Space.digest(aetherPath: aetherPath) else { return nil }
 //		return (space, aether)
 	}
 
-	var aetherName: String {
+	public var aetherName: String {
 		return ""
 //		Space.split(aetherPath: aetherPath).1
 	}
-	var alsoAether: Aether? {
+	public var alsoAether: Aether? {
 		return nil
 //		spaceAether?.1
 	}
 
-	var functionCount: Int {
+	public var functionCount: Int {
 		return alsoAether?.functions(not: [aether]).count ?? 0
 	}
 	

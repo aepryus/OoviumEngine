@@ -136,7 +136,7 @@ public final class Mech: Aexel, TowerDelegate, Mechlike {
 		}
 		get {return super.name}
 	}
-	override var towers: Set<Tower> {
+	public override var towers: Set<Tower> {
 		var towers = Set<Tower>()
 		inputs.forEach {towers.insert($0.tower)}
 		return towers.union([resultTower, tower])
