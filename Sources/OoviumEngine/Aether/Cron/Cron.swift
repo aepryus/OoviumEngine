@@ -27,22 +27,22 @@ public final class Cron: Aexel, TowerDelegate {
 	public lazy var tower: Tower = Tower(aether: aether, token: aether.variableToken(tag: "Cr_\(no)"), delegate: self)
 	public var token: Token {return tower.variableToken}
 
-	var startTower: Tower {
+	public var startTower: Tower {
 		return startChain.tower
 	}
-	var stopTower: Tower {
+	public var stopTower: Tower {
 		return stopChain.tower
 	}
-	var stepsTower: Tower {
+	public var stepsTower: Tower {
 		return stepsChain.tower
 	}
-	var rateTower: Tower {
+	public var rateTower: Tower {
 		return rateChain.tower
 	}
-	var deltaTower: Tower {
+	public var deltaTower: Tower {
 		return deltaChain.tower
 	}
-	var whileTower: Tower {
+	public var whileTower: Tower {
 		return whileChain.tower
 	}
 	
