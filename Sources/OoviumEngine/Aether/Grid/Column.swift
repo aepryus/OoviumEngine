@@ -31,29 +31,6 @@ public final class Column: Domain, TowerDelegate {
 	@objc public var justify: OOJustify = .right
 	@objc public var format: String = ""
 	
-//	var _width: CGFloat? = nil
-//	var width: CGFloat {
-//		if _width == nil {
-//			renderWidth()
-//		}
-//		return _width!
-//	}
-//	var _headerWidth: CGFloat? = nil
-//	var headerWidth: CGFloat {
-//		get {
-//			if _headerWidth == nil {
-//				renderHeaderWidth()
-//			}
-//			return _headerWidth!
-//		}
-//	}
-//	var _footerWidth: CGFloat? = nil
-//	var footerWidth: CGFloat {
-//		get {
-//			renderFooterWidth()
-//			return _footerWidth!
-//		}
-//	}
 	var footerChain: Chain = Chain()
 	
 	fileprivate lazy var header: Header = Header()
@@ -62,7 +39,7 @@ public final class Column: Domain, TowerDelegate {
 	lazy var token: VariableToken = grid.aether.variableToken(tag: "Gr\(grid.no).Co\(no)", label: name)
 	public lazy var footerTower: Tower = Tower(aether: grid.aether, token: grid.aether.variableToken(tag: "Gr\(grid.no).Ft\(no)"), delegate: self)
 	
-	var grid: Grid {
+	public var grid: Grid {
 		return parent as! Grid
 	}
 	var calculated: Bool {
@@ -72,13 +49,6 @@ public final class Column: Domain, TowerDelegate {
 		return aggregate != .none && aggregate != .running
 	}
 	
-//	var alignment: NSTextAlignment {
-//		switch justify {
-//			case .left: return .left
-//			case .center: return .center
-//			case .right: return .right
-//		}
-//	}
 	var colNo: Int {
 		for i in 0..<grid.columns.count {
 			if self === grid.columns[i] {return i}
@@ -96,17 +66,6 @@ public final class Column: Domain, TowerDelegate {
 			grid.aether.evaluate()
 		}
 	}
-//	func renderHeaderWidth() {
-//		let pen: Pen = Pen(font: UIFont(name: "Verdana-Bold", size: 15)!)
-//		_headerWidth = (name as NSString).size(pen: pen).width+20
-//	}
-//	func renderFooterWidth() {
-//		if aggregate == .none || aggregate == .running {
-//			_footerWidth = 0
-//		} else {
-//			_footerWidth = (footerTower.obje.display as NSString).size(pen: Pen()).width + 12
-//		}
-//	}
 
 // Inits ===========================================================================================
 	public init(grid: Grid) {
@@ -179,16 +138,7 @@ public final class Column: Domain, TowerDelegate {
 		}
 		grid.aether.evaluate(towers: towers)
 	}
-//	func renderWidth() {
-//		var width = max(90, headerWidth)
-//		width = max(width, footerWidth)
-//		for i in 0..<grid.rows {
-//			let cell: Cell = grid.cell(colNo: colNo, rowNo: i)
-//			width = max(width, cell.width)
-//		}
-//		_width = width
-//	}
-	
+
 	// Events ==========================================================================================
 	public override func onLoad() {
 		chain.tower = tower
