@@ -13,9 +13,9 @@ public final class Text: Aexel, NSCopying {
 	@objc var color: OOColor = .orange
 	@objc var shape: OOShape = .ellipse
 	
-	@objc var edges: [Edge] = []
+	@objc public var edges: [Edge] = []
 	
-	var outputEdges: [Edge] {
+	public var outputEdges: [Edge] {
 		return aether.outputEdges(for: self)
 	}
 	

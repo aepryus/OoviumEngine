@@ -10,7 +10,7 @@ import Aegean
 import Acheron
 import Foundation
 
-protocol Mechlike: Aexel {
+public protocol Mechlike: Aexel {
 	var functionToken: FunctionToken { get }
 	var variableToken: VariableToken { get }
 }
@@ -33,8 +33,8 @@ public final class Mech: Aexel, TowerDelegate, Mechlike {
 	var recipe: UnsafeMutablePointer<Recipe>? = nil
 	var morphIndex: Int? = nil
 
-	lazy var variableToken: VariableToken = { aether.variableToken(tag: "MeRcp_\(no)") }()
-	lazy var functionToken: FunctionToken = { aether.functionToken(tag: name, recipe: "MeRcp_\(no)") }()
+	public lazy var variableToken: VariableToken = { aether.variableToken(tag: "MeRcp_\(no)") }()
+	public lazy var functionToken: FunctionToken = { aether.functionToken(tag: name, recipe: "MeRcp_\(no)") }()
 
 // Inits ===========================================================================================
 	public required init(no: Int, at: V2, aether: Aether) {

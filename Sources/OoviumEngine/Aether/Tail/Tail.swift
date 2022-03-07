@@ -34,8 +34,8 @@ public final class Tail: Aexel, TowerDelegate, Mechlike {
 	var recipe: UnsafeMutablePointer<Recipe>? = nil
 	var morphIndex: Int? = nil
 
-	lazy var functionToken: FunctionToken = { aether.functionToken(tag: name, recipe: "TaRcp_\(no)") }()
-	lazy var variableToken: VariableToken = { aether.variableToken(tag: "TaRcp_\(no)") }()
+	public lazy var functionToken: FunctionToken = { aether.functionToken(tag: name, recipe: "TaRcp_\(no)") }()
+	public lazy var variableToken: VariableToken = { aether.variableToken(tag: "TaRcp_\(no)") }()
 
 // Inits ===========================================================================================
 	public required init(no: Int, at: V2, aether: Aether) {

@@ -109,28 +109,28 @@ import Foundation
 	}
 	
 	// Object
-	func createObject(at: V2) -> Object {
+	public func createObject(at: V2) -> Object {
 		let object = Object(no: nos.increment(key: "object"), at: at, aether: self)
 		addAexel(object)
 		return object
 	}
 	
 	// Gate
-	func createGate(at: V2) -> Gate {
+	public func createGate(at: V2) -> Gate {
 		let gate = Gate(no: nos.increment(key: "gate"), at: at, aether: self)
 		addAexel(gate)
 		return gate
 	}
 	
 	// Mech
-	func createMech(at: V2) -> Mech {
+	public func createMech(at: V2) -> Mech {
 		let mech = Mech(no: nos.increment(key: "mech"), at: at, aether: self)
 		addAexel(mech)
 		return mech
 	}
 	
 	// Tail
-	func createTail(at: V2) -> Tail {
+	public func createTail(at: V2) -> Tail {
 		let tail = Tail(no: nos.increment(key: "tail"), at: at, aether: self)
 		addAexel(tail)
 		return tail
@@ -163,7 +163,7 @@ import Foundation
 	}
 
 	// Grid
-	func createGrid(at: V2) -> Grid {
+	public func createGrid(at: V2) -> Grid {
 		let no = nos.increment(key: "grid")
 		let grid = Grid(no: no, at: at, aether: self)
 		addAexel(grid)
@@ -171,7 +171,7 @@ import Foundation
 	}
 	
 	// Type
-	func createType(at: V2) -> Type {
+	public func createType(at: V2) -> Type {
 		let no = nos.increment(key: "type")
 		let type = Type(no: no, at: at, aether: self)
 		addAexel(type)
@@ -179,7 +179,7 @@ import Foundation
 	}
 	
 	// Miru
-	func createMiru(at: V2) -> Miru {
+	public func createMiru(at: V2) -> Miru {
 		let no = nos.increment(key: "miru")
 		let miru = Miru(no: no, at: at, aether: self)
 		addAexel(miru)
@@ -187,7 +187,7 @@ import Foundation
 	}
 	
 	// Cron
-	func createCron(at: V2) -> Cron {
+	public func createCron(at: V2) -> Cron {
 		let no = nos.increment(key: "cron")
 		let cron = Cron(no: no, at: at, aether: self)
 		addAexel(cron)
@@ -195,12 +195,12 @@ import Foundation
 	}
 	
 	// Text
-	func createEdge(parent: Text, child: Text) -> Edge {
+	public func createEdge(parent: Text, child: Text) -> Edge {
 		let edge = Edge(parent: parent)
 		edge.textNo = child.no
 		return edge
 	}
-	func createText(at: V2) -> Text {
+	public func createText(at: V2) -> Text {
 		let no = nos.increment(key: "text")
 		let text = Text(no: no, at: at, aether: self)
 		addAexel(text)
@@ -300,7 +300,7 @@ import Foundation
 	}
 
 // MARK: - Functions ===============================================================================
-	func functions(not: [Aether]) -> [String] {
+	public func functions(not: [Aether]) -> [String] {
 		guard !not.contains(self) else {return []}
 		var names: [String] = []
 		aexels.forEach {
@@ -313,17 +313,17 @@ import Foundation
 			return left.uppercased() < right.uppercased()
 		}
 	}
-	var functions: [String] {
+	public var functions: [String] {
 		return functions(not: [])
 	}
-	func functionExists(name: String) -> Bool {
+	public func functionExists(name: String) -> Bool {
 		for aexel in aexels {
 			guard aexel is Mechlike else {continue}
 			if aexel.name == name {return true}
 		}
 		return false
 	}
-	func function(name: String, not: [Aether]) -> Mechlike? {
+	public func function(name: String, not: [Aether]) -> Mechlike? {
 		guard !not.contains(self) else {return nil}
 		for aexel in aexels {
 			guard let function = aexel as? Mechlike else {continue}
@@ -335,7 +335,7 @@ import Foundation
 		}
 		return nil
 	}
-	func function(name: String) -> Mechlike? {
+	public func function(name: String) -> Mechlike? {
 		function(name: name, not: [])
 	}
 

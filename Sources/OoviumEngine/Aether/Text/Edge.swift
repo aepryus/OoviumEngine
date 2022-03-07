@@ -9,7 +9,7 @@
 import Acheron
 import Foundation
 
-final class Edge: Domain {
+public final class Edge: Domain {
 	@objc var textNo: Int = 0
 	
 	var text: Text {
@@ -20,7 +20,7 @@ final class Edge: Domain {
 	}
 	
 // Domain ==========================================================================================
-	override var properties: [String] {
+	public override var properties: [String] {
 		return super.properties + ["textNo"]
 	}
 }
