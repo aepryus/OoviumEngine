@@ -11,9 +11,9 @@ import Acheron
 import Foundation
 
 public final class Tail: Aexel, TowerDelegate, Mechlike {
-	@objc var whileChain: Chain = Chain()
-	@objc var resultChain: Chain = Chain()
-	@objc var vertebras: [Vertebra] = []	
+	@objc public var whileChain: Chain = Chain()
+	@objc public var resultChain: Chain = Chain()
+	@objc public var vertebras: [Vertebra] = []	
 	
 	var tower: Tower!
 
@@ -34,8 +34,8 @@ public final class Tail: Aexel, TowerDelegate, Mechlike {
 	var recipe: UnsafeMutablePointer<Recipe>? = nil
 	var morphIndex: Int? = nil
 
-	lazy var functionToken: FunctionToken = { aether.functionToken(tag: name, recipe: "TaRcp_\(no)") }()
-	lazy var variableToken: VariableToken = { aether.variableToken(tag: "TaRcp_\(no)") }()
+	public lazy var functionToken: FunctionToken = { aether.functionToken(tag: name, recipe: "TaRcp_\(no)") }()
+	public lazy var variableToken: VariableToken = { aether.variableToken(tag: "TaRcp_\(no)") }()
 
 // Inits ===========================================================================================
 	public required init(no: Int, at: V2, aether: Aether) {
@@ -127,7 +127,7 @@ public final class Tail: Aexel, TowerDelegate, Mechlike {
 	}
 
 // Aexel ===========================================================================================
-	override var name: String {
+	public override var name: String {
 		set {
 			guard newValue != "" && newValue != super.name else { return }
 			
@@ -149,7 +149,7 @@ public final class Tail: Aexel, TowerDelegate, Mechlike {
 		}
 		get { return super.name }
 	}
-	override var towers: Set<Tower> {
+	public override var towers: Set<Tower> {
 		var towers = Set<Tower>()
 		vertebras.forEach {
 			towers.insert($0.tower)

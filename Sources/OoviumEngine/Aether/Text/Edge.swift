@@ -9,18 +9,18 @@
 import Acheron
 import Foundation
 
-final class Edge: Domain {
-	@objc var textNo: Int = 0
+public final class Edge: Domain {
+	@objc public var textNo: Int = 0
 	
-	var text: Text {
+	public var text: Text {
 		return parent! as! Text
 	}
-	var other: Text {
+	public var other: Text {
 		return text.aether.aexel(type: "text", no: textNo)! as! Text
 	}
 	
 // Domain ==========================================================================================
-	override var properties: [String] {
+	public override var properties: [String] {
 		return super.properties + ["textNo"]
 	}
 }

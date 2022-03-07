@@ -9,8 +9,8 @@
 import Acheron
 import Foundation
 
-final class Vertebra: Domain, TowerDelegate {
-	@objc dynamic var name: String = "" {
+public final class Vertebra: Domain, TowerDelegate {
+	@objc public dynamic var name: String = "" {
 		didSet {
 			guard let tail = parent as? Tail else {return}
 			tail.aether.rekey(token: tower.variableToken, tag: "\(tail.name).\(name)")
@@ -19,7 +19,7 @@ final class Vertebra: Domain, TowerDelegate {
 		}
 	}
 	var def: Def = RealDef.def
-	@objc dynamic var chain: Chain = Chain() {
+	@objc public dynamic var chain: Chain = Chain() {
 		didSet {
 			chain.tower = Tower(aether: tail.aether, token: tail.aether.variableToken(tag: "TaV_\(tail.no).\(name)"), delegate: chain)
 		}
@@ -44,12 +44,12 @@ final class Vertebra: Domain, TowerDelegate {
 	}
 
 // Events ==========================================================================================
-	override func onLoad() {
+	public override func onLoad() {
 		tower.web = tail.web
 	}
 	
 // Domain ==========================================================================================
-	override public var properties: [String] {
+	public override var properties: [String] {
 		return super.properties + ["name", "chain"]
 	}
 	

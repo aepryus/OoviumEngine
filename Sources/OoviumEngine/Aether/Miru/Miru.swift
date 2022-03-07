@@ -9,7 +9,7 @@
 import Foundation
 
 public final class Miru: Aexel {
-	@objc var gridID: Int = 0
+	@objc public var gridID: Int = 0
 
 // Aexel ===========================================================================================
 //	override var freeVars: [String] {

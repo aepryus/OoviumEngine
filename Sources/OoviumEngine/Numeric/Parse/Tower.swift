@@ -29,7 +29,7 @@ extension TowerDelegate {
 	func executeWorker(tower: Tower) {}
 }
 
-protocol TowerListener: AnyObject {
+public protocol TowerListener: AnyObject {
 	func onCalculate()
 }
 
@@ -45,14 +45,14 @@ class Funnel {
 
 public final class Tower: Hashable, CustomStringConvertible {
 	unowned let aether: Aether
-	let variableToken: VariableToken
-	let functionToken: FunctionToken?
+	public let variableToken: VariableToken
+	public let functionToken: FunctionToken?
 	unowned let delegate: TowerDelegate
 
 	var upstream: WeakSet<Tower> = WeakSet<Tower>()
 	var downstream: WeakSet<Tower> = WeakSet<Tower>()
 
-	weak var listener: TowerListener? = nil
+	public weak var listener: TowerListener? = nil
 
 	var tailForWeb: AnyObject? = nil
 	weak var _web: AnyObject? = nil
@@ -90,13 +90,13 @@ public final class Tower: Hashable, CustomStringConvertible {
 		AETaskRelease(task)
 	}
 
-	var index: mnimi {
+	public var index: mnimi {
 		return AEMemoryIndexForName(aether.memory, variableToken.tag.toInt8())
 	}
-	var value: Double {
+	public var value: Double {
 		return AEMemoryValue(aether.memory, index)
 	}
-	var obje: Obje {
+	public var obje: Obje {
 		return Obje(memory: aether.memory, index: index)
 	}
 	
@@ -109,16 +109,16 @@ public final class Tower: Hashable, CustomStringConvertible {
 		downstream.insert(tower)
 		tower.upstream.insert(self)
 	}
-	func detach(_ tower: Tower) {
+	public func detach(_ tower: Tower) {
 		downstream.remove(tower)
 		tower.upstream.remove(self)
 	}
-	func abstract() {
+	public func abstract() {
 		abstractUp()
 		downstream.forEach {$0.upstream.remove(self)}
 		downstream.removeAll()
 	}
-	func abstractUp() {
+	public func abstractUp() {
 		upstream.forEach {$0.downstream.remove(self)}
 		upstream.removeAll()
 	}
@@ -128,12 +128,12 @@ public final class Tower: Hashable, CustomStringConvertible {
 		towers.insert(self)
 		downstream.forEach { $0.loadDownstream(into: &towers) }
 	}
-	func allDownstream() -> Set<Tower> {
+	public func allDownstream() -> Set<Tower> {
 		var towers: Set<Tower> = Set()
 		loadDownstream(into: &towers)
 		return towers
 	}
-	func downstream(contains: Tower) -> Bool {
+	public func downstream(contains: Tower) -> Bool {
 		if self === contains {return true}
 		guard tailForWeb == nil else {return false}
 		for tower in downstream {
@@ -144,7 +144,7 @@ public final class Tower: Hashable, CustomStringConvertible {
 		return false
 	}
 	
-	func towersDestinedFor() -> Set<Tower> {
+	public func towersDestinedFor() -> Set<Tower> {
 		var result = Set<Tower>()
 		guard web != nil else {return result}
 		result.insert(self)
@@ -165,10 +165,10 @@ public final class Tower: Hashable, CustomStringConvertible {
 		}
 		return false
 	}
-	func stronglyLinked(override: Tower?) -> Set<Tower> {
+	public func stronglyLinked(override: Tower?) -> Set<Tower> {
 		return towersDestinedFor().filter {$0.isStronglyLinked(to: self, override: override)}
 	}
-	func stronglyLinked() -> Set<Tower> {
+	public func stronglyLinked() -> Set<Tower> {
 		return stronglyLinked(override: nil)
 	}
 
@@ -196,7 +196,7 @@ public final class Tower: Hashable, CustomStringConvertible {
 	func buildStream() {
 		delegate.buildUpstream(tower: self)
 	}
-	func buildTask() {
+	public func buildTask() {
 		AETaskRelease(task)
 		delegate.buildWorker(tower: self)
 	}

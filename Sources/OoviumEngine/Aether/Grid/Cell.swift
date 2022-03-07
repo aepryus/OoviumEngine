@@ -11,9 +11,9 @@ import Foundation
 
 public final class Cell: Domain {
 	@objc public var no: Int = 0
-	@objc var colNo: Int = 0
-	@objc var rowNo: Int = 0
-	@objc var chain: Chain!
+	@objc public var colNo: Int = 0
+	@objc public var rowNo: Int = 0
+	@objc public var chain: Chain!
 	
 //	var _width: CGFloat? = nil
 //	var width: CGFloat {
@@ -23,17 +23,17 @@ public final class Cell: Domain {
 //		}
 //	}
 
-	var tower: Tower {
+	public var tower: Tower {
 		return chain.tower
 	}
-	var token: Token {
+	public var token: Token {
 		return tower.variableToken
 	}
 	
-	var grid: Grid {
+	public var grid: Grid {
 		return parent as! Grid
 	}
-	var column: Column {
+	public var column: Column {
 		return grid.columns[colNo]
 	}
 	

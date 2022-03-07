@@ -93,17 +93,17 @@ enum ParseError: Error {
 }
 
 public final class Chain: NSObject, Packable, TowerDelegate {
-	var tokens: [Token] = []
-	var label: String? = nil {
+	public var tokens: [Token] = []
+	public var label: String? = nil {
 		didSet {
 			guard let tower = tower else { return }
 			tower.variableToken.label = label ?? tower.obje.display
 		}
 	}
-	var tower: Tower!
+	public var tower: Tower!
 	
-	private(set) var editing: Bool = false
-	var cursor: Int = 0
+	public private(set) var editing: Bool = false
+	public var cursor: Int = 0
 	var alwaysShow: Bool = false
 
 	var loadedKeys: [String]? = nil
@@ -259,24 +259,24 @@ public final class Chain: NSObject, Packable, TowerDelegate {
 	}
 	
 // Public ==========================================================================================
-	var tokensString: String {
+	public var tokensString: String {
 		return ""
 	}
-	var natural: String {
+	public var natural: String {
 		return ""
 	}
 
-	func edit() {
+	public func edit() {
 		editing = true
 		cursor = tokens.count
 	}
-	func ok() {
+	public func ok() {
 		editing = false
 		tower.buildTask()
 		tower.trigger()
 	}
 	
-	func attemptToPost(token: Token) -> Bool {
+	public func attemptToPost(token: Token) -> Bool {
 		
 		if let this = tower, let towerToken = token as? TowerToken, let that = tower.aether.tower(token: towerToken) {
 			if this.downstream(contains: that) { return false }
@@ -292,21 +292,21 @@ public final class Chain: NSObject, Packable, TowerDelegate {
 		
 		return true
 	}
-	func post(token: Token) {
+	public func post(token: Token) {
 		_ = attemptToPost(token: token)
 	}
-	func minusSign() {
+	public func minusSign() {
 		post(token: minusToken())
 	}
-	func parenthesis() {
+	public func parenthesis() {
 		guard let parenToken = parenToken() else {return}
 		post(token: parenToken)
 	}
-	func braket() {
+	public func braket() {
 		guard let braketToken = braketToken() else {return}
 		post(token: braketToken)
 	}
-	func backspace() -> Token? {
+	public func backspace() -> Token? {
 		guard cursor > 0 else { return nil }
 		cursor -= 1
 		let token = tokens.remove(at: cursor)
@@ -315,7 +315,7 @@ public final class Chain: NSObject, Packable, TowerDelegate {
 		}
 		return token
 	}
-	func delete() -> Token? {
+	public func delete() -> Token? {
 		guard cursor < tokens.count else { return nil }
 		let token = tokens.remove(at: cursor)
 		if let this = tower, let towerToken = token as? TowerToken, let that = tower.aether.tower(token: towerToken) {
@@ -323,17 +323,17 @@ public final class Chain: NSObject, Packable, TowerDelegate {
 		}
 		return token
 	}
-	func leftArrow() -> Bool {
+	public func leftArrow() -> Bool {
 		guard cursor > 0 else { return false }
 		cursor -= 1
 		return true
 	}
-	func rightArrow() -> Bool {
+	public func rightArrow() -> Bool {
 		guard cursor < tokens.count else { return false }
 		cursor += 1
 		return true
 	}
-	var inString: Bool {
+	public var inString: Bool {
 		var q: Int = 0
 		for (i, token) in tokens.enumerated() {
 			if i == cursor {break}
@@ -341,20 +341,20 @@ public final class Chain: NSObject, Packable, TowerDelegate {
 		}
 		return q % 2 == 1
 	}
-	var unmatchedQuote: Bool {
+	public var unmatchedQuote: Bool {
 		var q: Int = 0
 		for token in tokens {
 			if token == Token.quote {q += 1}
 		}
 		return q % 2 == 1
 	}
-	func contains(token: Token) -> Bool {
+	public func contains(token: Token) -> Bool {
 		for t in tokens {
 			if t == token {return true}
 		}
 		return false
 	}
-	func clear() {
+	public func clear() {
 		self.tokens.removeAll()
 		cursor = 0
 	}

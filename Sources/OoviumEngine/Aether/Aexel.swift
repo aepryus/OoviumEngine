@@ -11,7 +11,7 @@ import Foundation
 
 public class Aexel: Domain {
 	@objc public var no: Int = 0
-	@objc var name: String = ""
+	@objc public var name: String = ""
 	@objc public var x: Double = 0.0
 	@objc public var y: Double = 0.0
 	
@@ -19,7 +19,7 @@ public class Aexel: Domain {
 		return parent as! Aether
 	}
 
-	var towers: Set<Tower> {
+	public var towers: Set<Tower> {
 		return []
 	}
 
