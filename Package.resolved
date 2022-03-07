@@ -1,0 +1,16 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "Acheron",
+        "repositoryURL": "https://github.com/aepryus/Acheron.git",
+        "state": {
+          "branch": null,
+          "revision": "c4c5564ad76e552607e67b937b25e46a361c48cd",
+          "version": "1.0.0"
+        }
+      }
+    ]
+  },
+  "version": 1
+}

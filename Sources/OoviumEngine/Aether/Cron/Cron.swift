@@ -1,0 +1,133 @@
+//
+//  Cron.swift
+//  Oovium
+//
+//  Created by Joe Charlier on 12/30/16.
+//  Copyright © 2016 Aepryus Software. All rights reserved.
+//
+
+import Aegean
+import Acheron
+import Foundation
+
+@objc enum OOEndMode: Int {
+	case stop, `repeat`, bounce, endless, `while`
+}
+
+public final class Cron: Aexel, TowerDelegate {
+	@objc var startChain: Chain = Chain()
+	@objc var stopChain: Chain = Chain()
+	@objc var stepsChain: Chain = Chain()
+	@objc var rateChain: Chain = Chain()
+	@objc var deltaChain: Chain = Chain()
+	@objc var whileChain: Chain = Chain()
+	@objc var endMode: OOEndMode = .stop
+	@objc var exposed: Bool = true
+
+	lazy var tower: Tower = Tower(aether: aether, token: aether.variableToken(tag: "Cr_\(no)"), delegate: self)
+	var token: Token {return tower.variableToken}
+
+	var startTower: Tower {
+		return startChain.tower
+	}
+	var stopTower: Tower {
+		return stopChain.tower
+	}
+	var stepsTower: Tower {
+		return stepsChain.tower
+	}
+	var rateTower: Tower {
+		return rateChain.tower
+	}
+	var deltaTower: Tower {
+		return deltaChain.tower
+	}
+	var whileTower: Tower {
+		return whileChain.tower
+	}
+	
+	var t: Double = 0
+	var dt: Double = 1
+	var sealed: Bool = true
+	
+	func reset() {
+		if endMode == .stop || endMode == .repeat || endMode == .bounce {
+			dt = (stopTower.value - startTower.value)/(stepsTower.value-1)
+		} else {
+			dt = deltaTower.value
+		}
+		t = startTower.value
+		sealed = true
+	}
+	func increment() -> Bool {
+		if sealed {
+			sealed = false
+		} else if (endMode == .stop && t+dt > stopTower.value) || (endMode == .while && whileTower.value == 0) {
+			t = startTower.value
+		} else {
+			t += dt
+		}
+		tower.trigger()
+		switch endMode {
+			case .stop:
+				if t+dt > stopTower.value { return true }
+			case .repeat:
+				if t+dt > stopTower.value {
+					t = startTower.value
+					sealed = true
+					return false
+				}
+			case .bounce:
+				if t+dt > stopTower.value || t+dt < startTower.value {dt = -dt}
+			case .endless: break;
+			case .while:
+				if whileTower.value == 0 {return true}
+		}
+		return false
+	}
+
+// Inits ===========================================================================================
+	public required init(no: Int, at: V2, aether: Aether) {
+		super.init(no: no, at: at, aether: aether)
+		onLoad()
+	}
+	public required init(attributes: [String:Any], parent: Domain?) {
+		super.init(attributes: attributes, parent: parent)
+	}
+	
+// Events ==========================================================================================
+	override public func onLoad() {
+		startChain.tower = Tower(aether: aether, token: aether.variableToken(tag: "CrSta_\(no)"), delegate: startChain)
+		stopChain.tower = Tower(aether: aether, token: aether.variableToken(tag: "CrSto_\(no)"), delegate: stopChain)
+		stepsChain.tower = Tower(aether: aether, token: aether.variableToken(tag: "CrSte_\(no)"), delegate: stepsChain)
+		rateChain.tower = Tower(aether: aether, token: aether.variableToken(tag: "CrRat_\(no)"), delegate: rateChain)
+		deltaChain.tower = Tower(aether: aether, token: aether.variableToken(tag: "CrDel_\(no)"), delegate: deltaChain)
+		whileChain.tower = Tower(aether: aether, token: aether.variableToken(tag: "CrWle_\(no)"), delegate: whileChain)
+	}
+	
+// Aexel ===========================================================================================
+	override var towers: Set<Tower> {
+		return Set<Tower>([startTower, stopTower, stepsTower, rateTower, deltaTower, whileTower, tower])
+	}
+	
+// Domain ==========================================================================================
+	override public var properties: [String] {
+		return super.properties + ["startChain", "stopChain", "stepsChain", "rateChain", "deltaChain", "whileChain", "endMode", "exposed"]
+	}
+	
+// TowerDelegate ===================================================================================
+	func renderDisplay(tower: Tower) -> String {
+		return tower.obje.display
+	}
+	func workerCompleted(tower: Tower, askedBy: Tower) -> Bool {
+		return AEMemoryLoaded(tower.aether.memory, tower.index) != 0
+	}
+	func resetWorker(tower: Tower) {
+		AEMemoryUnfix(tower.aether.memory, tower.index)
+	}
+	func executeWorker(tower: Tower) {
+		AEMemorySetValue(tower.aether.memory, tower.index, t)
+		AEMemoryFix(tower.aether.memory, tower.index)
+		tower.variableToken.label = tower.obje.display
+	}
+}
