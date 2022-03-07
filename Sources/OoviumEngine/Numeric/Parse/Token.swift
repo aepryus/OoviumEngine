@@ -56,7 +56,7 @@ public class TowerToken: Token, Labelable, Defable {
 public class DigitToken: Token {
 	init(tag: String) { super.init(type: .digit, tag: tag) }
 }
-class CharacterToken: Token {
+public class CharacterToken: Token {
 	init(tag: String) { super.init(type: .character, tag: tag) }
 }
 public class SeparatorToken: Token {
@@ -134,16 +134,16 @@ public class Token: Hashable {
 
 	static func register(token: Token) { tokens[token.key] = token }
 
-	static func digitToken(tag: String) -> DigitToken { tokens["\(TokenType.digit.rawValue):\(tag)"]! as! DigitToken }
-	static func characterToken(tag: String) -> CharacterToken {
+	public static func digitToken(tag: String) -> DigitToken { tokens["\(TokenType.digit.rawValue):\(tag)"]! as! DigitToken }
+	public static func characterToken(tag: String) -> CharacterToken {
 		return tokens["\(TokenType.character.rawValue):\(tag)"] as? CharacterToken ?? {
 			let token = CharacterToken(tag: tag)
 			register(token: token)
 			return token
 		}()
 	}
-	static func separatorToken(tag: String) -> SeparatorToken { tokens["\(TokenType.separator.rawValue):\(tag)"]! as! SeparatorToken }
-	static func operatorToken(tag: String) -> OperatorToken { tokens["\(TokenType.operator.rawValue):\(aliases[tag] ?? tag)"]! as! OperatorToken }
+	public static func separatorToken(tag: String) -> SeparatorToken { tokens["\(TokenType.separator.rawValue):\(tag)"]! as! SeparatorToken }
+	public static func operatorToken(tag: String) -> OperatorToken { tokens["\(TokenType.operator.rawValue):\(aliases[tag] ?? tag)"]! as! OperatorToken }
 
 	static let aliases: [String:String] = ["-":"−", "*":"×", "/":"÷" ]
 	static func token(key: String) -> Token? {
