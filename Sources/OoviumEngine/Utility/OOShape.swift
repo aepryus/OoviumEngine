@@ -8,7 +8,7 @@
 
 import Foundation
 
-@objc enum OOShape: Int {
+@objc public enum OOShape: Int {
 	case ellipse, rounded, rectangle, diamond
 
 //	static let ellipseShape_ = EllipseShape()

@@ -10,26 +10,26 @@ import Aegean
 import Acheron
 import Foundation
 
-@objc enum OOAggregate: Int {
+@objc public enum OOAggregate: Int {
 	case none, sum, average, running, count, match
 }
-@objc enum OOJustify: Int {
+@objc public enum OOJustify: Int {
 	case left, center, right
 }
 
 public final class Column: Domain, TowerDelegate {
 	@objc public var no: Int = 0
-	@objc var name: String = "" {
+	@objc public var name: String = "" {
 		didSet {
 			token.label = name
 			chain.label = name
 		}
 	}
 	var def: Def = RealDef.def
-	@objc var chain: Chain = Chain()
-	@objc var aggregate: OOAggregate = .none
-	@objc var justify: OOJustify = .right
-	@objc var format: String = ""
+	@objc public var chain: Chain = Chain()
+	@objc public var aggregate: OOAggregate = .none
+	@objc public var justify: OOJustify = .right
+	@objc public var format: String = ""
 	
 //	var _width: CGFloat? = nil
 //	var width: CGFloat {

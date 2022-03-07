@@ -11,9 +11,9 @@ import Foundation
 
 public final class Cell: Domain {
 	@objc public var no: Int = 0
-	@objc var colNo: Int = 0
-	@objc var rowNo: Int = 0
-	@objc var chain: Chain!
+	@objc public var colNo: Int = 0
+	@objc public var rowNo: Int = 0
+	@objc public var chain: Chain!
 	
 //	var _width: CGFloat? = nil
 //	var width: CGFloat {

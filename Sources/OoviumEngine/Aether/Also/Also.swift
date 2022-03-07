@@ -11,7 +11,7 @@ import Foundation
 class Space {}
 
 public final class Also: Aexel {
-	@objc var aetherPath: String = ""
+	@objc public var aetherPath: String = ""
 
 	var spaceAether: (Space, Aether)? {
 		return nil

@@ -22,12 +22,12 @@ enum EqualMode {
 }
 
 public final class Grid: Aexel {
-	@objc var typeID: Int = 0
-	@objc var rows: Int = 0
-	@objc var exposed: Bool = true
+	@objc public var typeID: Int = 0
+	@objc public var rows: Int = 0
+	@objc public var exposed: Bool = true
 	
-	@objc var columns: [Column] = []
-	@objc var cells: [Cell] = []
+	@objc public var columns: [Column] = []
+	@objc public var cells: [Cell] = []
 	
 	var equalMode: EqualMode = .close
 	

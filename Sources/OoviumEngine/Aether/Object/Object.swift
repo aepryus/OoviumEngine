@@ -10,8 +10,8 @@ import Acheron
 import Foundation
 
 public final class Object: Aexel {
-	@objc var chain: Chain!
-	@objc var label: String = "" {
+	@objc public var chain: Chain!
+	@objc public var label: String = "" {
 		didSet {
 			if label.count > 0 { chain.label = label }
 			else { chain.label = nil }

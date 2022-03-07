@@ -15,8 +15,8 @@ public class Oovi: Aexel, TowerDelegate {
 		didSet{nameChanged()}
 	}
 	@objc public var color: OOColor = OOColor.white
-	@objc var stepChain: Chain!
-	@objc var amorousChain: Chain!
+	@objc public var stepChain: Chain!
+	@objc public var amorousChain: Chain!
 	
 	var web: AnyObject {return self}
 

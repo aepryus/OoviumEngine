@@ -10,8 +10,8 @@ import Acheron
 import Foundation
 
 public final class Text: Aexel, NSCopying {
-	@objc var color: OOColor = .orange
-	@objc var shape: OOShape = .ellipse
+	@objc public var color: OOColor = .orange
+	@objc public var shape: OOShape = .ellipse
 	
 	@objc public var edges: [Edge] = []
 	

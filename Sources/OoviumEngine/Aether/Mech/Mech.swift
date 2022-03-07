@@ -16,8 +16,8 @@ public protocol Mechlike: Aexel {
 }
 
 public final class Mech: Aexel, TowerDelegate, Mechlike {
-	@objc var resultChain: Chain = Chain()
-	@objc var inputs: [Input] = []
+	@objc public var resultChain: Chain = Chain()
+	@objc public var inputs: [Input] = []
 
 	var tower: Tower!
 //	var token: FunctionToken!
@@ -115,7 +115,7 @@ public final class Mech: Aexel, TowerDelegate, Mechlike {
 	}
 	
 // Aexel ===========================================================================================
-	override var name: String {
+	public override var name: String {
 		set {
 			guard newValue != "" && newValue != super.name else {return}
 			

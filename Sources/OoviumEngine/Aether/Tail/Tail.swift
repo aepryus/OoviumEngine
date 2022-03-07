@@ -11,9 +11,9 @@ import Acheron
 import Foundation
 
 public final class Tail: Aexel, TowerDelegate, Mechlike {
-	@objc var whileChain: Chain = Chain()
-	@objc var resultChain: Chain = Chain()
-	@objc var vertebras: [Vertebra] = []	
+	@objc public var whileChain: Chain = Chain()
+	@objc public var resultChain: Chain = Chain()
+	@objc public var vertebras: [Vertebra] = []	
 	
 	var tower: Tower!
 
@@ -127,7 +127,7 @@ public final class Tail: Aexel, TowerDelegate, Mechlike {
 	}
 
 // Aexel ===========================================================================================
-	override var name: String {
+	public override var name: String {
 		set {
 			guard newValue != "" && newValue != super.name else { return }
 			

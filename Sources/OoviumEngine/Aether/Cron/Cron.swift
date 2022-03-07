@@ -10,19 +10,19 @@ import Aegean
 import Acheron
 import Foundation
 
-@objc enum OOEndMode: Int {
+@objc public enum OOEndMode: Int {
 	case stop, `repeat`, bounce, endless, `while`
 }
 
 public final class Cron: Aexel, TowerDelegate {
-	@objc var startChain: Chain = Chain()
-	@objc var stopChain: Chain = Chain()
-	@objc var stepsChain: Chain = Chain()
-	@objc var rateChain: Chain = Chain()
-	@objc var deltaChain: Chain = Chain()
-	@objc var whileChain: Chain = Chain()
-	@objc var endMode: OOEndMode = .stop
-	@objc var exposed: Bool = true
+	@objc public var startChain: Chain = Chain()
+	@objc public var stopChain: Chain = Chain()
+	@objc public var stepsChain: Chain = Chain()
+	@objc public var rateChain: Chain = Chain()
+	@objc public var deltaChain: Chain = Chain()
+	@objc public var whileChain: Chain = Chain()
+	@objc public var endMode: OOEndMode = .stop
+	@objc public var exposed: Bool = true
 
 	lazy var tower: Tower = Tower(aether: aether, token: aether.variableToken(tag: "Cr_\(no)"), delegate: self)
 	var token: Token {return tower.variableToken}

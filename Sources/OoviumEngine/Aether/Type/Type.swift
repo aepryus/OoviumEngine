@@ -9,9 +9,9 @@
 import Foundation
 
 public final class Type: Aexel {
-	@objc dynamic var color: OOColor = .black
+	@objc public dynamic var color: OOColor = .black
 	
-	@objc dynamic var fields: [Field] = []
+	@objc public dynamic var fields: [Field] = []
 
 // Domain ==========================================================================================
 	override public var properties: [String] {

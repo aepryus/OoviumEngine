@@ -10,7 +10,7 @@ import Acheron
 import Foundation
 
 public final class Edge: Domain {
-	@objc var textNo: Int = 0
+	@objc public var textNo: Int = 0
 	
 	var text: Text {
 		return parent! as! Text
