@@ -29,7 +29,7 @@ extension TowerDelegate {
 	func executeWorker(tower: Tower) {}
 }
 
-protocol TowerListener: AnyObject {
+public protocol TowerListener: AnyObject {
 	func onCalculate()
 }
 
