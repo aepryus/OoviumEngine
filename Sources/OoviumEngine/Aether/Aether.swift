@@ -357,4 +357,7 @@ import Foundation
 	override public var children: [String] {
 		return super.children + ["aexels"]
 	}
+
+// MARK: - Static ==================================================================================
+	static var version: String { "2.1.1" }
 }

@@ -331,10 +331,10 @@ public class Migrate {
 		let attributes: [String:Any] = json.toAttributes()
 		let version: String = attributes["version"] as? String ?? "2.0.2"
 
-		guard version != Oovium.version else { return json }
+		guard version != Aether.version else { return json }
 		var json = json
 
-		print("migrate file from [\(version)] to [\(Oovium.version)]")
+		print("migrate file from [\(version)] to [\(Aether.version)]")
 
 		if version == "2.0.2" {
 			let modified = attributes.modify(query:
