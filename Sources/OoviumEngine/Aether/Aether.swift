@@ -28,7 +28,7 @@ import Foundation
 
 	public override init() { super.init() }
 	public required init(attributes: [String:Any], parent: Domain? = nil) { super.init(attributes: attributes, parent: parent) }
-	init(json: String) {
+	public init(json: String) {
 		let attributes: [String:Any] = json.toAttributes()
 		super.init(attributes: attributes)
 		load(attributes: attributes)
