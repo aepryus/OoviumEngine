@@ -108,8 +108,8 @@ public final class Chain: NSObject, Packable, TowerDelegate {
 
 	var loadedKeys: [String]? = nil
 
-	override init() {}
-	init(tokens: [Token]) {
+	public override init() {}
+	public init(tokens: [Token]) {
 		guard tokens.count > 0 else { return }
 		self.tokens = tokens
 		cursor = self.tokens.count
