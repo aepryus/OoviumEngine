@@ -15,14 +15,6 @@ public final class Cell: Domain {
 	@objc public var rowNo: Int = 0
 	@objc public var chain: Chain!
 	
-//	var _width: CGFloat? = nil
-//	var width: CGFloat {
-//		get {
-//			if _width == nil { renderWidth() }
-//			return _width!
-//		}
-//	}
-
 	public var tower: Tower {
 		return chain.tower
 	}
@@ -37,10 +29,6 @@ public final class Cell: Domain {
 		return grid.columns[colNo]
 	}
 	
-//	func renderWidth() {
-//		_width = ChainView.calcWidth(chain: chain)+6
-//	}
-
 // Inits ===========================================================================================
 	public required init(grid: Grid) {
 		chain = Chain()
