@@ -320,5 +320,5 @@ import Foundation
 	}
 
 // MARK: - Static ==================================================================================
-	static var version: String { "2.1.1" }
+	static var engineVersion: String { "2.1.1" }
 }
