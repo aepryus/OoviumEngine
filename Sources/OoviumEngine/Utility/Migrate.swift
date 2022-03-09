@@ -10,7 +10,7 @@ import Acheron
 import Foundation
 
 public class Migrate {
-	static func migrateChain(_ from: Any?, colToGrid: [Int:Int], cellToGrid: [Int:Int]) -> String? {
+	public static func migrateChain(_ from: Any?, colToGrid: [Int:Int], cellToGrid: [Int:Int]) -> String? {
 		guard let keys = (from as? String)?.split(separator: ";") else {return nil}
 		var sb: String = ""
 		for _key in keys {
@@ -53,7 +53,7 @@ public class Migrate {
 		if sb.count > 0 { sb.removeLast() }
 		return sb
 	}
-	static func migrateXMLtoJSON(_ xml: [String:Any]) -> [String:Any] {
+	public static func migrateXMLtoJSON(_ xml: [String:Any]) -> [String:Any] {
 		var cellToGrid: [Int:Int] = [:]
 		var colToGrid: [Int:Int] = [:]
 	
@@ -314,7 +314,7 @@ public class Migrate {
 
 		return json
 	}
-	static func migrateChainTo21(_ tokensString: String) -> String {
+	public static func migrateChainTo21(_ tokensString: String) -> String {
 		let keys: [String] = tokensString.components(separatedBy: ";")
 
 		var sb: String = ""
@@ -327,7 +327,7 @@ public class Migrate {
 		if sb.count > 0 { sb.removeLast() }
 		return sb
 	}
-	static func migrateAether(json: String) -> String {
+	public static func migrateAether(json: String) -> String {
 		let attributes: [String:Any] = json.toAttributes()
 		let version: String = attributes["version"] as? String ?? "2.0.2"
 
