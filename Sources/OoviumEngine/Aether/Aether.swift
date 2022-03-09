@@ -206,7 +206,7 @@ import Foundation
 		addAexel(text)
 		return text
 	}
-	func outputEdges(for text: Text) -> [Edge] {
+	public func outputEdges(for text: Text) -> [Edge] {
 		var edges: [Edge] = []
 		aexels.forEach {
 			guard let other = $0 as? Text, let edge = other.edgeFor(text: text) else {return}
@@ -216,7 +216,7 @@ import Foundation
 	}
 	
 	// Also
-	func createAlso(at: V2) -> Also {
+	public func createAlso(at: V2) -> Also {
 		let no = nos.increment(key: "also")
 		let also = Also(no: no, at: at, aether: self)
 		addAexel(also)
