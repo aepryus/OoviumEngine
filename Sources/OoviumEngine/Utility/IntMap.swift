@@ -8,13 +8,13 @@
 
 import Foundation
 
-class IntMap: CustomStringConvertible {
+public class IntMap: CustomStringConvertible {
 	var map = [String:Int]()
 	
-	func set(key: String, to: Int) {
+	public func set(key: String, to: Int) {
 		map[key] = to
 	}
-	func get(key: String) -> Int {
+	public func get(key: String) -> Int {
 		if let value = map[key] {
 			return value
 		} else {
@@ -22,7 +22,7 @@ class IntMap: CustomStringConvertible {
 		}
 	}
 
-	func increment(key: String, by: Int) -> Int {
+	public func increment(key: String, by: Int) -> Int {
 		if let value = map[key] {
 			map[key] = value+by
 		} else {
@@ -30,18 +30,18 @@ class IntMap: CustomStringConvertible {
 		}
 		return map[key]!
 	}
-	func increment(key: String) -> Int {
+	public func increment(key: String) -> Int {
 		return increment(key:key, by:1)
 	}
-	func decrement(key: String) -> Int {
+	public func decrement(key: String) -> Int {
 		return increment(key:key, by:-1)
 	}
-	func reset(key: String) {
+	public func reset(key: String) {
 		map.removeValue(forKey: key)
 	}
 	
 // CustomStringConvertible =========================================================================
-	var description: String {
+	public var description: String {
 		var sb = String()
 		for key in map.keys {
 			sb.append("\(key):\(map[key]!)\n")
