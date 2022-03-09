@@ -8,14 +8,9 @@
 
 import Foundation
 
-public class Space {}
-
 public final class Also: Aexel {
 	@objc public var aetherPath: String = ""
 
-// Aexel ===========================================================================================
-//	override var towers: Set<Tower> {}
-	
 // Domain ==========================================================================================
 	override public var properties: [String] {
 		return super.properties + ["aetherPath"]
