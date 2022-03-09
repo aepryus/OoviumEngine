@@ -10,6 +10,8 @@ import Foundation
 
 public class IntMap: CustomStringConvertible {
 	var map = [String:Int]()
+
+	public init() {}
 	
 	public func set(key: String, to: Int) {
 		map[key] = to
