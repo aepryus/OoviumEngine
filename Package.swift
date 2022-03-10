@@ -12,7 +12,7 @@ let package = Package(
 		.executable(name: "oov", targets: ["Oov"]),
     ],
     dependencies: [
-		.package(url: "https://github.com/aepryus/Acheron.git", from: "1.0.0"),
+		.package(url: "https://github.com/aepryus/Acheron.git", branch: "master"),
     ],
     targets: [
 		.target(name: "Aegean"),
