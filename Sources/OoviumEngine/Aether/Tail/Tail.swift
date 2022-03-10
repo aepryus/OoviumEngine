@@ -15,24 +15,24 @@ public final class Tail: Aexel, TowerDelegate, Mechlike {
 	@objc public var resultChain: Chain = Chain()
 	@objc public var vertebras: [Vertebra] = []	
 	
-	var tower: Tower!
+	public var tower: Tower!
 
-	var whileTower: Tower {
+	public var whileTower: Tower {
 		return whileChain.tower
 	}
-	var whileToken: Token {
+	public var whileToken: Token {
 		return whileTower.variableToken
 	}
-	var resultTower: Tower {
+	public var resultTower: Tower {
 		return resultChain.tower
 	}
-	var resultToken: Token {
+	public var resultToken: Token {
 		return resultTower.variableToken
 	}
 	
-	var web: AnyObject {return self}
-	var recipe: UnsafeMutablePointer<Recipe>? = nil
-	var morphIndex: Int? = nil
+	public var web: AnyObject {return self}
+	public var recipe: UnsafeMutablePointer<Recipe>? = nil
+	public var morphIndex: Int? = nil
 
 	public lazy var functionToken: FunctionToken = { aether.functionToken(tag: name, recipe: "TaRcp_\(no)") }()
 	public lazy var variableToken: VariableToken = { aether.variableToken(tag: "TaRcp_\(no)") }()
@@ -53,20 +53,20 @@ public final class Tail: Aexel, TowerDelegate, Mechlike {
 		AERecipeRelease(recipe)
 	}
 
-	var key: String {
+	public var key: String {
 		var key: String = "\(super.name);"
 		vertebras.forEach {_ in key += "num;"}
 		return key
 	}
 
-	func add(vertebra: Vertebra) {
+	public func add(vertebra: Vertebra) {
 		add(vertebra)
 		vertebra.tower.web = web
 		vertebras.append(vertebra)
 		aether.register(tower: vertebra.tower)
 		aether.register(tower: vertebra.chain.tower)
 	}
-	func addVertebra() -> Vertebra {
+	public func addVertebra() -> Vertebra {
 		var name: String = ""
 		if vertebras.count < 4 {
 			name = ["x", "y", "z", "w"][vertebras.count]
@@ -78,7 +78,7 @@ public final class Tail: Aexel, TowerDelegate, Mechlike {
 		functionToken.params = vertebras.count
 		return vertebra
 	}
-	func removeVertebra() {
+	public func removeVertebra() {
 		let vertebra = vertebras.removeLast()
 		remove(vertebra)
 		aether.deregister(tower: vertebra.tower)

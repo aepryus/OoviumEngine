@@ -14,7 +14,7 @@ public final class State: Domain {
 	@objc public var no: Int = 0
 	@objc public var color: Int = 0
 	
-	init(no: Int, color: OOColor) {
+	public init(no: Int, color: OOColor) {
 		self.no = no
 		self.color = color.rawValue
 		super.init()

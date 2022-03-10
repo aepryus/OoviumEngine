@@ -19,21 +19,21 @@ public final class Text: Aexel, NSCopying {
 		return aether.outputEdges(for: self)
 	}
 	
-	func edgeFor(text: Text) -> Edge? {
+	public func edgeFor(text: Text) -> Edge? {
 		for edge in edges {
 			if edge.other === text {return edge}
 		}
 		return nil
 	}
-	func isLinkedTo(_ text: Text) -> Bool {
+	public func isLinkedTo(_ text: Text) -> Bool {
 		let edge = edgeFor(text: text)
 		return edge != nil
 	}
-	func linkTo(_ text: Text) {
+	public func linkTo(_ text: Text) {
 		let edge = aether.createEdge(parent: self, child: text)
 		edges.append(edge)
 	}
-	func unlinkTo(_ text: Text) {
+	public func unlinkTo(_ text: Text) {
 		guard let edge = edgeFor(text: text) else {return}
 		edges.remove(object: edge)
 	}

@@ -27,30 +27,30 @@ public final class Cron: Aexel, TowerDelegate {
 	public lazy var tower: Tower = Tower(aether: aether, token: aether.variableToken(tag: "Cr_\(no)"), delegate: self)
 	public var token: Token {return tower.variableToken}
 
-	var startTower: Tower {
+	public var startTower: Tower {
 		return startChain.tower
 	}
-	var stopTower: Tower {
+	public var stopTower: Tower {
 		return stopChain.tower
 	}
-	var stepsTower: Tower {
+	public var stepsTower: Tower {
 		return stepsChain.tower
 	}
-	var rateTower: Tower {
+	public var rateTower: Tower {
 		return rateChain.tower
 	}
-	var deltaTower: Tower {
+	public var deltaTower: Tower {
 		return deltaChain.tower
 	}
-	var whileTower: Tower {
+	public var whileTower: Tower {
 		return whileChain.tower
 	}
 	
-	var t: Double = 0
-	var dt: Double = 1
-	var sealed: Bool = true
+	public var t: Double = 0
+	public var dt: Double = 1
+	public var sealed: Bool = true
 	
-	func reset() {
+	public func reset() {
 		if endMode == .stop || endMode == .repeat || endMode == .bounce {
 			dt = (stopTower.value - startTower.value)/(stepsTower.value-1)
 		} else {
@@ -59,7 +59,7 @@ public final class Cron: Aexel, TowerDelegate {
 		t = startTower.value
 		sealed = true
 	}
-	func increment() -> Bool {
+	public func increment() -> Bool {
 		if sealed {
 			sealed = false
 		} else if (endMode == .stop && t+dt > stopTower.value) || (endMode == .while && whileTower.value == 0) {

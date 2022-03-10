@@ -16,7 +16,7 @@ public final class Auto: Aexel, TowerDelegate {
 	
 	@objc public var states: [State] = []
 	
-	var statesTower: Tower {
+	public var statesTower: Tower {
 		return statesChain.tower
 	}
 	public var resultTower: Tower {
@@ -68,16 +68,16 @@ public final class Auto: Aexel, TowerDelegate {
 		AEMemorySetValue(memory, AEMemoryIndexForName(memory, "Auto\(no).Self".toInt8()), 0)
 	}
 	
-	func add(state: State) {
+	public func add(state: State) {
 		add(state)
 		states.append(state)
 	}
-	func addState() {
+	public func addState() {
 		let state = State(no: states.count, color: OOColor(rawValue: states.count)!)
 		add(state: state)
 	}
 	
-	func buildStates() {
+	public func buildStates() {
 		let n = min(max(Int(statesTower.value), 2), 32)
 		guard n != states.count else {return}
 

@@ -38,14 +38,14 @@ public enum TokenStatus {
 	case ok, invalid, deleted, blocked
 }
 
-protocol Labelable: Token { var label: String { get set } }
-protocol Paramsable: Token { var params: Int { get set } }
-protocol Levelable: Token { var level: TokenLevel { get } }
-protocol Defable: Token { var def: Def? { get set } }
+public protocol Labelable: Token { var label: String { get set } }
+public protocol Paramsable: Token { var params: Int { get set } }
+public protocol Levelable: Token { var level: TokenLevel { get } }
+public protocol Defable: Token { var def: Def? { get set } }
 
 public class TowerToken: Token, Labelable, Defable {
 	public var label: String
-	var def: Def? = nil
+	public var def: Def? = nil
 
 	fileprivate init(type: TokenType, tag: String, label: String? = nil) {
 		self.label = label ?? tag
@@ -56,14 +56,14 @@ public class TowerToken: Token, Labelable, Defable {
 public class DigitToken: Token {
 	init(tag: String) { super.init(type: .digit, tag: tag) }
 }
-class CharacterToken: Token {
+public class CharacterToken: Token {
 	init(tag: String) { super.init(type: .character, tag: tag) }
 }
 public class SeparatorToken: Token {
 	init(tag: String) { super.init(type: .separator, tag: tag) }
 }
 public class ConstantToken: Token, Defable {
-	var def: Def? = nil
+	public var def: Def? = nil
 
 	init(tag: String) {
 		super.init(type: .constant, tag: tag)
@@ -75,8 +75,8 @@ public class UnaryToken: Token {
 	}
 }
 public class OperatorToken: Token, Labelable, Levelable {
-	var label: String
-	let level: TokenLevel
+	public var label: String
+	public let level: TokenLevel
 
 	init(tag: String, level: TokenLevel, label: String? = nil) {
 		self.label = label ?? tag
@@ -86,7 +86,7 @@ public class OperatorToken: Token, Labelable, Levelable {
 	public override var display: String { return label }
 }
 public class FunctionToken: TowerToken, Paramsable {
-	var params: Int
+	public var params: Int
 	let recipe: String?
 	init(tag: String, label: String? = nil, params: Int = 1, recipe: String? = nil) {
 		self.params = params
@@ -134,16 +134,16 @@ public class Token: Hashable {
 
 	static func register(token: Token) { tokens[token.key] = token }
 
-	static func digitToken(tag: String) -> DigitToken { tokens["\(TokenType.digit.rawValue):\(tag)"]! as! DigitToken }
-	static func characterToken(tag: String) -> CharacterToken {
+	public static func digitToken(tag: String) -> DigitToken { tokens["\(TokenType.digit.rawValue):\(tag)"]! as! DigitToken }
+	public static func characterToken(tag: String) -> CharacterToken {
 		return tokens["\(TokenType.character.rawValue):\(tag)"] as? CharacterToken ?? {
 			let token = CharacterToken(tag: tag)
 			register(token: token)
 			return token
 		}()
 	}
-	static func separatorToken(tag: String) -> SeparatorToken { tokens["\(TokenType.separator.rawValue):\(tag)"]! as! SeparatorToken }
-	static func operatorToken(tag: String) -> OperatorToken { tokens["\(TokenType.operator.rawValue):\(aliases[tag] ?? tag)"]! as! OperatorToken }
+	public static func separatorToken(tag: String) -> SeparatorToken { tokens["\(TokenType.separator.rawValue):\(tag)"]! as! SeparatorToken }
+	public static func operatorToken(tag: String) -> OperatorToken { tokens["\(TokenType.operator.rawValue):\(aliases[tag] ?? tag)"]! as! OperatorToken }
 
 	static let aliases: [String:String] = ["-":"−", "*":"×", "/":"÷" ]
 	static func token(key: String) -> Token? {

@@ -46,10 +46,6 @@ public class Oovi: Aexel, TowerDelegate {
 		AERecipeRelease(stepRecipe)
 	}
 	
-//	public var uiColor: UIColor {
-//		return color.uiColor
-//	}
-	
 	private func nameChanged() {
 		aether.name = name
 	}

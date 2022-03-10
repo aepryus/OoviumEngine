@@ -28,7 +28,7 @@ import Foundation
 
 	public override init() { super.init() }
 	public required init(attributes: [String:Any], parent: Domain? = nil) { super.init(attributes: attributes, parent: parent) }
-	init(json: String) {
+	public init(json: String) {
 		let attributes: [String:Any] = json.toAttributes()
 		super.init(attributes: attributes)
 		load(attributes: attributes)
@@ -36,10 +36,6 @@ import Foundation
 
 	deinit { AEMemoryRelease(memory) }
 
-	public var aethers: [Aether] {
-		return [self] + aexels.compactMap { ($0 as? Also)?.alsoAether }
-	}
-	
 // MARK: - Evaluate ================================================================================
 	private func QbuildMemory() {
 		var vars: [String] = ["k"]
@@ -206,7 +202,7 @@ import Foundation
 		addAexel(text)
 		return text
 	}
-	func outputEdges(for text: Text) -> [Edge] {
+	public func outputEdges(for text: Text) -> [Edge] {
 		var edges: [Edge] = []
 		aexels.forEach {
 			guard let other = $0 as? Text, let edge = other.edgeFor(text: text) else {return}
@@ -216,7 +212,7 @@ import Foundation
 	}
 	
 	// Also
-	func createAlso(at: V2) -> Also {
+	public func createAlso(at: V2) -> Also {
 		let no = nos.increment(key: "also")
 		let also = Also(no: no, at: at, aether: self)
 		addAexel(also)
@@ -299,44 +295,9 @@ import Foundation
 		return towers[token]
 	}
 
-// MARK: - Functions ===============================================================================
-	public func functions(not: [Aether]) -> [String] {
-		guard !not.contains(self) else {return []}
-		var names: [String] = []
-		aexels.forEach {
-			if $0 is Mechlike {names.append($0.name)}
-			else if $0 is Also {
-				names += ($0 as! Also).alsoAether!.functions(not: not+[self])
-			}
-		}
-		return names.sorted { (left: String, right: String) -> Bool in
-			return left.uppercased() < right.uppercased()
-		}
-	}
-	public var functions: [String] {
-		return functions(not: [])
-	}
+// Functions =======================================================================================
 	public func functionExists(name: String) -> Bool {
-		for aexel in aexels {
-			guard aexel is Mechlike else {continue}
-			if aexel.name == name {return true}
-		}
-		return false
-	}
-	public func function(name: String, not: [Aether]) -> Mechlike? {
-		guard !not.contains(self) else {return nil}
-		for aexel in aexels {
-			guard let function = aexel as? Mechlike else {continue}
-			if function.name == name {return function}
-		}
-		for aexel in aexels {
-			guard let also = aexel as? Also else {continue}
-			if let function = also.alsoAether?.function(name: name, not: not+[self]) {return function}
-		}
-		return nil
-	}
-	public func function(name: String) -> Mechlike? {
-		function(name: name, not: [])
+		aexels.first { $0 is Mechlike && $0.name == name } != nil
 	}
 
 // MARK: - Events ==================================================================================
@@ -357,4 +318,7 @@ import Foundation
 	override public var children: [String] {
 		return super.children + ["aexels"]
 	}
+
+// MARK: - Static ==================================================================================
+	public static var engineVersion: String { "2.1.1" }
 }
