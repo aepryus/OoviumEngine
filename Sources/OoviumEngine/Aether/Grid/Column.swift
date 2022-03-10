@@ -30,7 +30,11 @@ public final class Column: Domain, TowerDelegate {
 	@objc public var aggregate: OOAggregate = .none
 	@objc public var justify: OOJustify = .right
 	@objc public var format: String = ""
-	
+
+	public var _width: Double? = nil
+	public var _headerWidth: Double? = nil
+	public var _footerWidth: Double? = nil
+
 	var footerChain: Chain = Chain()
 	
 	fileprivate lazy var header: Header = Header()
