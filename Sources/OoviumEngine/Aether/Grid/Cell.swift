@@ -15,7 +15,7 @@ public final class Cell: Domain {
 	@objc public var rowNo: Int = 0
 	@objc public var chain: Chain!
 
-	public var _width: CGFloat? = nil
+	public var _width: Double? = nil
 
 	public var tower: Tower {
 		return chain.tower
