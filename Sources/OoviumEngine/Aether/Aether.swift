@@ -37,20 +37,18 @@ import Foundation
 	deinit { AEMemoryRelease(memory) }
 
 // MARK: - Evaluate ================================================================================
-	private func QbuildMemory() {
+	public func buildMemory() {
 		var vars: [String] = ["k"]
 		vars += tokens.values.filter { $0 is VariableToken }.map { $0.tag }
 		vars.sort(by: { $0.uppercased() < $1.uppercased() })
-		
+
 		let oldMemory: UnsafeMutablePointer<Memory> = memory
 		memory = AEMemoryCreate(vars.count)
 		vars.enumerated().forEach { AEMemorySetName(memory, UInt16($0), $1.toInt8()) }
 		AEMemoryLoad(memory, oldMemory)
 		AEMemoryRelease(oldMemory)
 //		AEMemoryPrint(memory)
-	}
-	public func buildMemory() {
-		QbuildMemory()
+
 		Set(towers.values).filter { $0.variableToken.type == .variable }.forEach { $0.buildTask() }
 	}
 	public func prepare() {
@@ -58,7 +56,7 @@ import Foundation
 		aexels.forEach { towers.formUnion($0.towers) }
 		towers.forEach { register(tower: $0) }
 		towers.forEach { $0.buildStream() }
-		QbuildMemory()
+		buildMemory()
 	}
 	public func evaluate(towers: Set<Tower>) {
 //		towers.forEach { AEMemoryUnfix(memory, $0.index) }
