@@ -227,11 +227,6 @@ import Foundation
 		return tokens["\(type.rawValue):\(tag)"]
 	}
 	public func token(key: String) -> Token {
-		var key: String = key
-		if key == "1:!" { key = "8:!" }
-		else if key == "1:-" { key = "8:-" }
-
-
 		var token: Token? = tokens[key]
 		if let token = token { return token }
 		token = Token.token(key: key)

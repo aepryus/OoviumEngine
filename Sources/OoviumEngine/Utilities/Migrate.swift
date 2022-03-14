@@ -338,12 +338,12 @@ public class Migrate {
 
 		if version == "2.0.2" {
 			let modified = attributes.modify(query:
-					["chain",
-					 "ifChain", "thenChain", "elseChain",
-					 "resultChain", "whileChain",
-					 "startChain", "stopChain", "stepChain", "rateChain", "deltaChain",
-					 "statesChain", "amorousChain"
-					],
+				["chain",
+				 "ifChain", "thenChain", "elseChain",
+				 "resultChain", "whileChain",
+				 "startChain", "stopChain", "stepChain", "rateChain", "deltaChain",
+				 "statesChain", "amorousChain"
+				],
 			convert: { (value: Any) in
 				(value as! String).replacingOccurrences(of: "1:!;", with: "8:!;").replacingOccurrences(of: "1:-;", with: "8:-;")
 			})
