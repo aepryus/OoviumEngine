@@ -242,7 +242,7 @@ import Foundation
 			case .variable: token = variableToken(tag: tag)
 			case .function: token = functionToken(tag: tag)
 			default:
-				token = variableToken(tag: tag) // fatalError()
+				token = functionToken(tag: tag) // fatalError()
 		}
 		tokens[key] = token as? TowerToken
 		return token!
