@@ -241,7 +241,8 @@ import Foundation
 		switch type {
 			case .variable: token = variableToken(tag: tag)
 			case .function: token = functionToken(tag: tag)
-			default: fatalError()
+			default:
+				token = variableToken(tag: tag) // fatalError()
 		}
 		tokens[key] = token as? TowerToken
 		return token!
