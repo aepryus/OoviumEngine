@@ -210,6 +210,7 @@ public final class Tower: Hashable, CustomStringConvertible {
 
 		if variableToken.status == .ok || variableToken.status == .blocked {
 			variableToken.status = delegate.workerBlocked(tower: self) ? .blocked : .ok
+			functionToken?.status = variableToken.status
 		}
 
 		// This was necessitated because data types can change. ====
