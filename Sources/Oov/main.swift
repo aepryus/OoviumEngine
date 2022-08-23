@@ -6,11 +6,11 @@ print("Oovium ==================================================================
 
 Math.start()
 
-while (true) {
+while true {
 	print("Oov> ", separator: "", terminator: "")
-	let response = readLine();
+    let response: String? = readLine()
 	if let response = response {
-		if response == "exit" {break}
+        guard response != "exit" else { break }
 
 		let chain: Chain = Chain(natural: response)
 		if let answer = chain.calculate() { print(" = \(Obje(answer).display)") }

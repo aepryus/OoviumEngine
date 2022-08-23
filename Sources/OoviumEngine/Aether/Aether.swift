@@ -247,7 +247,8 @@ import Foundation
 	}
 	public func buildTokens(chain: Chain) {
 		guard let keys = chain.loadedKeys else { return }
-		keys.forEach { chain.tokens.append(token(key: $0)) }
+        chain.tokens = keys.map { token(key: $0) }
+//		keys.forEach { chain.tokens.append(token(key: $0)) }
 		chain.loadedKeys = nil
 	}
 	public func buildTokens() {

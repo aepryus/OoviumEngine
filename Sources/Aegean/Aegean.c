@@ -1101,7 +1101,7 @@ void AETaskRelease(Task* task) {
 long AETaskExecute(Task* task, Memory* memory) {
 	switch (task->type) {
 		case AETaskLambda: {
-			AEMemorySet(memory, task->lambda.lambda->vi, AELambdaExecute(task->lambda.lambda, memory));
+			AEMemorySet(memory, task->lambda.lambda->vi, AEObjMirror(AELambdaExecute(task->lambda.lambda, memory)));
 			return -1;
 		} break;
 		case AETaskGoto: {
@@ -1113,13 +1113,13 @@ long AETaskExecute(Task* task, Memory* memory) {
 		} break;
 		case AETaskFork: {
 			if (AEMemoryGet(memory, task->fork.ifIndex).a.x != 0)
-				AEMemorySet(memory, task->fork.resultIndex, AEMemoryGet(memory, task->fork.thenIndex));
+				AEMemorySet(memory, task->fork.resultIndex, AEObjMirror(AEMemoryGet(memory, task->fork.thenIndex)));
 			else
-				AEMemorySet(memory, task->fork.resultIndex, AEMemoryGet(memory, task->fork.elseIndex));
+				AEMemorySet(memory, task->fork.resultIndex, AEObjMirror(AEMemoryGet(memory, task->fork.elseIndex)));
 			return -1;
 		} break;
 		case AETaskAssign: {
-			AEMemorySet(memory, task->assign.toIndex, AEMemoryGet(memory, task->assign.fromIndex));
+			AEMemorySet(memory, task->assign.toIndex, AEObjMirror(AEMemoryGet(memory, task->assign.fromIndex)));
 			return -1;
 		} break;
 		case AETaskNull: {
