@@ -161,12 +161,9 @@ public final class Mech: Aexel, TowerDelegate, Mechlike {
 		return name
 	}
 	func workerCompleted(tower: Tower, askedBy: Tower) -> Bool {
-		return AEMemoryLoaded(tower.aether.memory, AEMemoryIndexForName(aether.memory, variableToken.tag.toInt8())) != 0
-			|| (askedBy !== tower && askedBy.web === self)
+		AEMemoryLoaded(tower.aether.memory, AEMemoryIndexForName(aether.memory, variableToken.tag.toInt8())) != 0 || (askedBy !== tower && askedBy.web === self)
 	}
-	func workerBlocked(tower: Tower) -> Bool {
-		return resultChain.tower.variableToken.status != .ok
-	}
+	func workerBlocked(tower: Tower) -> Bool { resultChain.tower.variableToken.status != .ok }
 	func resetWorker(tower: Tower) {
 		recipe = nil
 		AEMemoryUnfix(tower.aether.memory, AEMemoryIndexForName(aether.memory, variableToken.tag.toInt8()))

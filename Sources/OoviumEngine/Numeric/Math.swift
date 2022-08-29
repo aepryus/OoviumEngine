@@ -106,9 +106,7 @@ public final class Math {
 				n += 1
 				
 				n = program(tasks: &tasks, tail: tail, memory: AEMemoryCreateClone(memory), additional: thenTowers, completed: completed, n: n)
-				AETaskRelease(tasks[ifGotoIndex])
-				tasks[ifGotoIndex] = AETaskCreateIfGoto(AEMemoryIndexForName(memory, gate.name.toInt8()), UInt8(n+1))
-				AETaskSetLabels(tasks[ifGotoIndex], "".toInt8(), "IF \(gate.name) == FALSE GOTO \(n+1)".toInt8())
+                var ifGotoN = n+1
 				
 				let gotoIndex = n
 				tasks.append(AETaskCreateGoto(0))
@@ -122,7 +120,12 @@ public final class Math {
 				} else {
 					tasks.removeLast()
 					n -= 1
+                    ifGotoN -= 1
 				}
+                
+                AETaskRelease(tasks[ifGotoIndex])
+                tasks[ifGotoIndex] = AETaskCreateIfGoto(AEMemoryIndexForName(memory, gate.name.toInt8()), UInt8(ifGotoN))
+                AETaskSetLabels(tasks[ifGotoIndex], "".toInt8(), "IF \(gate.name) == FALSE GOTO \(ifGotoN)".toInt8())
 				
 				memory.pointee.slots[Int(gate.gateTo!.index)].loaded = 1
 				tasks.append(AETaskCreateClone(gate.gateTo!.task!))

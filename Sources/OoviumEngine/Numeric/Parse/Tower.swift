@@ -261,6 +261,11 @@ public final class Tower: Hashable, CustomStringConvertible {
 		for tower in towers { print("\(tower)") }
 		print("[ ========================================== ]\n\n")
 	}
+    public static func printTowers(_ towers: Set<Tower>) {
+        print("[ Towers =================================== ]\n")
+        for tower in towers { print("\(tower)") }
+        print("[ ========================================== ]\n\n")
+    }
 	static func printTowers(_ towers: [Tower]) {
 		print("[ Towers =================================== ]\n")
 		towers.forEach { print("\($0)") }

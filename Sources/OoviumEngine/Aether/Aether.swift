@@ -312,12 +312,8 @@ import Foundation
 	}
 	
 // MARK: - Domain ==================================================================================
-	override public var properties: [String] {
-		return super.properties + ["name", "width", "height", "xOffset", "yOffset", "readOnly", "version"]
-	}
-	override public var children: [String] {
-		return super.children + ["aexels"]
-	}
+    override public var properties: [String] { super.properties + ["name", "width", "height", "xOffset", "yOffset", "readOnly", "version"] }
+    override public var children: [String] { super.children + ["aexels"] }
 
 // MARK: - Static ==================================================================================
 	public static var engineVersion: String { "2.1.1" }
