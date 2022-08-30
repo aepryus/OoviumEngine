@@ -94,7 +94,16 @@ public final class Mech: Aexel, TowerDelegate, Mechlike {
 			let index = AEMemoryIndexForName(memory, "\(name).\(input.name)".toInt8())
 			recipe!.pointee.params[i] = index
 		}
-	
+        
+        let towers: Set<Tower> = resultTower.towersDestinedFor()
+        towers.forEach {
+            AEMemorySetValue(memory, $0.index, 0)
+        }
+        
+        let index: mnimi = AEMemoryIndexForName(memory, variableToken.tag.toInt8())
+        AEMemorySet(memory, index, AEObjRecipe(recipe))
+        AEMemoryFix(memory, index)
+
 		AERecipeSetMemory(recipe, memory)
 	}
 	
@@ -160,6 +169,7 @@ public final class Mech: Aexel, TowerDelegate, Mechlike {
 		if tower.variableToken.status == .blocked { return "BLOCKED" }
 		return name
 	}
+//    func buildWorker(tower: Tower) {}
 	func workerCompleted(tower: Tower, askedBy: Tower) -> Bool {
 		AEMemoryLoaded(tower.aether.memory, AEMemoryIndexForName(aether.memory, variableToken.tag.toInt8())) != 0 || (askedBy !== tower && askedBy.web === self)
 	}

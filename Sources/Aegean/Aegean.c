@@ -99,7 +99,7 @@ Obj AEStackPop(Stack* stack) {
 }
 Obj AEStackPeek(Stack* stack, int offset) {
 	int index = (int)stack->sp+offset;
-	if (index < 0 || index >= stack->sn) abort();
+    if (index < 0 || index >= stack->sn) return AEObjReal(NAN);
 	return stack->stack[index];
 }
 void AEStackPoke(Stack* stack, int offset, Obj obj) {
