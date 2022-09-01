@@ -49,7 +49,7 @@ import Foundation
 		AEMemoryRelease(oldMemory)
 //		AEMemoryPrint(memory)
 
-		Set(towers.values).filter { $0.variableToken.type == .variable }.forEach { $0.buildTask() }
+//		Set(towers.values).filter { $0.variableToken.type == .variable }.forEach { $0.buildTask() }
 	}
 	public func prepare() {
 		var towers = Set<Tower>()
@@ -316,5 +316,5 @@ import Foundation
     override public var children: [String] { super.children + ["aexels"] }
 
 // MARK: - Static ==================================================================================
-	public static var engineVersion: String { "2.1.1" }
+	public static var engineVersion: String { "2.1" }
 }

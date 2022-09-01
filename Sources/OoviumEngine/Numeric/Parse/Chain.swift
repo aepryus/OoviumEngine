@@ -179,7 +179,7 @@ public final class Chain: NSObject, Packable, TowerDelegate {
 	}
 	private var isNewSection: Bool {
 		guard let last = tokens.last else { return true }
-		return last.tag == "(" || last.tag == "[" || last.tag == "," || last.type == .function
+        return last.tag == "(" || last.tag == "[" || last.tag == "," || last.type == .function || last.type == .operator
 	}
 	private var isComplete: Bool {
 		guard noOfParams > 0 else { return false }

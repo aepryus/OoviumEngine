@@ -180,6 +180,12 @@ void AEMemorySetValue(Memory* memory, mnimi index, double value) {
 	memory->slots[index].obj.type = AETypeReal;
 	memory->slots[index].loaded = 1;
 }
+void AEMemoryMarkLoaded(Memory* memory, mnimi index) {
+    if (memory->slots[index].loaded == 1) return;
+    memory->slots[index].obj.a.x = 0;
+    memory->slots[index].obj.type = AETypeReal;
+    memory->slots[index].loaded = 1;
+}
 Obj AEMemoryGet(Memory* memory, mnimi index) {
 	if (!memory->slots[index].stacked)
 		return memory->slots[index].obj;
@@ -375,7 +381,7 @@ void AELambdaPrint(Lambda* lambda) {
 		printf("  label: %s\n", lambda->label);
 	printf("  constants:\n");
 	for (int i=0;i<lambda->cn;i++)
-		printf("  [%2d][%.0lf]\n", i, lambda->constants[i].a.x);
+		printf("  [%2d][%s]\n", i, Oovium_objToString(lambda->constants[i]));
 	printf("  variables:\n");
 	for (int i=0;i<lambda->vn;i++)
 		printf("  [%2d][%2d]\n", i, lambda->variables[i]);

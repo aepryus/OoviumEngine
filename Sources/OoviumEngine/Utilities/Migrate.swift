@@ -345,7 +345,9 @@ public class Migrate {
 				 "statesChain", "amorousChain"
 				],
 			convert: { (value: Any) in
-				(value as! String).replacingOccurrences(of: "1:!;", with: "8:!;").replacingOccurrences(of: "1:-;", with: "8:-;")
+                Migrate.migrateChainTo21(value as! String)
+//				(value as! String)
+//                    .replacingOccurrences(of: "1:!;", with: "8:!;")
 			})
 			json = modified.toJSON()
 		}

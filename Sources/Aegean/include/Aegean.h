@@ -77,6 +77,7 @@ Memory* AEMemoryCreateClone(Memory* memory);
 void AEMemoryRelease(Memory* memory);
 void AEMemorySetName(Memory* memory, mnimi index, char* name);
 void AEMemorySetValue(Memory* memory, mnimi index, double value);
+void AEMemoryMarkLoaded(Memory* memory, mnimi index);
 void AEMemorySet(Memory* memory, mnimi index, Obj obj);
 Obj AEMemoryGet(Memory* memory, mnimi index);
 void AEMemoryFix(Memory* memory, mnimi index);

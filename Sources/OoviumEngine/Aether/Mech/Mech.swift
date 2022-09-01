@@ -96,9 +96,7 @@ public final class Mech: Aexel, TowerDelegate, Mechlike {
 		}
         
         let towers: Set<Tower> = resultTower.towersDestinedFor()
-        towers.forEach {
-            AEMemorySetValue(memory, $0.index, 0)
-        }
+        towers.forEach { AEMemoryMarkLoaded(memory, $0.index) }
         
         let index: mnimi = AEMemoryIndexForName(memory, variableToken.tag.toInt8())
         AEMemorySet(memory, index, AEObjRecipe(recipe))
