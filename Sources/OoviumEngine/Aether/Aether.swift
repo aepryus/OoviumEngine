@@ -49,7 +49,7 @@ import Foundation
 		AEMemoryRelease(oldMemory)
 //		AEMemoryPrint(memory)
 
-//		Set(towers.values).filter { $0.variableToken.type == .variable }.forEach { $0.buildTask() }
+		Set(towers.values).filter { $0.variableToken.type == .variable }.forEach { $0.buildTask() }
 	}
 	public func prepare() {
 		var towers = Set<Tower>()
