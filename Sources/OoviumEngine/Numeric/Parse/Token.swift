@@ -147,6 +147,7 @@ public class Token: Hashable {
 
 	static let aliases: [String:String] = ["-":"−", "*":"×", "/":"÷" ]
 	static func token(key: String) -> Token? {
+        guard key != "7::" else { return tokens[key] ?? characterToken(tag: ":") }
 		let subs: [Substring] = key.split(separator: ":")
 		let s0: Int = Int(String(subs[0]))!
 		let s1: String = String(subs[1])
