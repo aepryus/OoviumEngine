@@ -493,7 +493,14 @@ public final class Chain: NSObject, Packable, TowerDelegate {
 
 		var i: Int = i
 		var token: Token = tokens[i]
-		
+
+        // Fix for imported unary Tokens ========
+        if tokens[i] === Token.subtract {
+            self.tokens[i] = Token.neg
+            token = Token.neg
+        }
+        // ======================================
+
 		var unary: UnaryToken?
 		if let ut = token as? UnaryToken {
 			unary = ut

@@ -38,7 +38,9 @@ Obj AEObjVector(double x, double y, double z) {
 Obj AEObjString(char* string) {
 	Obj obj;
 	obj.a.p = malloc(sizeof(char)*(strlen(string)+1));
-	strcpy(obj.a.p, string);
+    // Added because of a crash when using strings in an if() function.  This can be removed when the if is fixed.
+    if (strlen(string) > 0)
+        strcpy(obj.a.p, string);
 	obj.type = AETypeString;
 	return obj;
 }

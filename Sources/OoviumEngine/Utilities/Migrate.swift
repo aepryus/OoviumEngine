@@ -250,7 +250,13 @@ public class Migrate {
 					jsonAtts["name"] = xmlAtts["text"]
 					jsonAtts["x"] = xmlAtts["x"]
 					jsonAtts["y"] = xmlAtts["y"]
-					jsonAtts["shape"] = xmlAtts["shape"]
+
+                    switch xmlAtts["shape"] as! String {
+                        case "1": jsonAtts["shape"] = "2"
+                        case "2": jsonAtts["shape"] = "1"
+                        default: jsonAtts["shape"] = xmlAtts["shape"]
+                    }
+                    
 					jsonAtts["color"] = xmlAtts["color"]
 					if let xmlArray2 = xmlAtts["children"] as? [[String:Any]] {
 						var edgeArray = [[String:Any]]()
