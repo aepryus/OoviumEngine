@@ -54,6 +54,7 @@ public final class Grid: Aexel {
 	}
 
 // Other ===========================================================================================
+    public func cellsForColumn(i: Int) -> [Cell] { cells.filter { $0.colNo == i } }
 	public func numberCells() {
 		for j in 0..<rows {
 			for i in 0..<columns.count {
@@ -63,7 +64,8 @@ public final class Grid: Aexel {
 			}
 		}
 	}
-	public func addRow() {
+	public func addRow() -> [Cell] {
+        var newCells: [Cell] = []
 		rows += 1
 		for colNo in 0 ..< columns.count {
 			let cell: Cell = Cell(grid: self)
@@ -72,12 +74,15 @@ public final class Grid: Aexel {
 			cell.rowNo = rows-1
 			cells.append(cell)
 			aether.register(tower: cell.tower)
+            newCells.append(cell)
 		}
 		aether.buildMemory()
 		columns.forEach {
-			if $0.calculated {$0.disseminate()}
-			$0.render()
+			if $0.calculated { $0.disseminate() }
+// this is very slow; is it needed?
+//			$0.render()
 		}
+        return newCells
 	}
 	public func deleteRow(rowNo: Int) {
 		rows -= 1
@@ -97,7 +102,7 @@ public final class Grid: Aexel {
 		numberCells()
 	}
 	
-	public func addColumn() {
+	public func addColumn() -> Column {
 		let cc: Int = columns.count
 		
 		let column: Column = Column(grid: self)
@@ -117,6 +122,8 @@ public final class Grid: Aexel {
 			nc += 1 + cc
 		}
 		aether.buildMemory()
+        
+        return column
 	}
 	public func deleteColumn(_ column: Column) {
 		let colNo: Int = column.colNo

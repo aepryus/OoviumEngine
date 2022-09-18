@@ -66,7 +66,7 @@ import Foundation
 			progress = false
 			towers.forEach { if $0.attemptToCalculate() { progress = true } }
 		} while progress
-		towers.forEach { $0.listener?.onCalculate() }
+		towers.forEach { $0.listener?.onTriggered() }
 	}
 	public func evaluate() {
 		evaluate(towers: Set(towers.values))
@@ -255,7 +255,10 @@ import Foundation
 		aexels.forEach { $0.towers.forEach {
 			guard let chain = $0.delegate as? Chain else { return }
 			buildTokens(chain: chain)
-		} }
+		}}
+        (aexels.filter { $0 is Grid } as! [Grid]).forEach { $0.columns.forEach {
+            buildTokens(chain: $0.chain)
+        }}
 	}
 
 	public func rekey(token: TowerToken, tag:String) {

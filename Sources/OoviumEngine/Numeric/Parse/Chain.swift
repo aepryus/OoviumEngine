@@ -107,6 +107,8 @@ public final class Chain: NSObject, Packable, TowerDelegate {
 	var alwaysShow: Bool = false
 
 	var loadedKeys: [String]? = nil
+    public var sealed: Bool = true
+    public var unsealed: Bool { !sealed }
 
 	public override init() {}
 	public init(tokens: [Token]) {
@@ -272,8 +274,13 @@ public final class Chain: NSObject, Packable, TowerDelegate {
 	}
 	public func ok() {
 		editing = false
-		tower.buildTask()
-		tower.trigger()
+        guard !sealed else {
+            tower.listener?.onTriggered()
+            return
+        }
+        tower.buildTask()
+        tower.trigger()
+        sealed = true
 	}
 	
 	public func attemptToPost(token: Token) -> Bool {
@@ -289,7 +296,9 @@ public final class Chain: NSObject, Packable, TowerDelegate {
 		tokens.insert(token, at: cursor)
 		
 		cursor += 1
-		
+        
+        sealed = false
+        
 		return true
 	}
 	public func post(token: Token) {
@@ -313,6 +322,7 @@ public final class Chain: NSObject, Packable, TowerDelegate {
 		if let this = tower, let towerToken = token as? TowerToken, let that = tower.aether.tower(token: towerToken) {
 			if !tokens.contains(token) {that.detach(this)}
 		}
+        sealed = false
 		return token
 	}
 	public func delete() -> Token? {
@@ -321,6 +331,7 @@ public final class Chain: NSObject, Packable, TowerDelegate {
 		if let this = tower, let towerToken = token as? TowerToken, let that = tower.aether.tower(token: towerToken) {
 			if !tokens.contains(token) {that.detach(this)}
 		}
+        sealed = false
 		return token
 	}
 	public func leftArrow() -> Bool {
@@ -372,7 +383,7 @@ public final class Chain: NSObject, Packable, TowerDelegate {
 // Unknown =========================================================================================
 	var tokensDisplay: String {
 		var sb = String()
-		tokens.forEach {sb.append($0.display)}
+		tokens.forEach { sb.append($0.display) }
 		return sb
 	}
 	

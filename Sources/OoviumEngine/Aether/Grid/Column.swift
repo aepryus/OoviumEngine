@@ -43,22 +43,10 @@ public final class Column: Domain, TowerDelegate {
 	public lazy var token: VariableToken = grid.aether.variableToken(tag: "Gr\(grid.no).Co\(no)", label: name)
 	public lazy var footerTower: Tower = Tower(aether: grid.aether, token: grid.aether.variableToken(tag: "Gr\(grid.no).Ft\(no)"), delegate: self)
 	
-	public var grid: Grid {
-		return parent as! Grid
-	}
-	public var calculated: Bool {
-		return chain.tokens.count > 0
-	}
-	public var hasFooter: Bool {
-		return aggregate != .none && aggregate != .running
-	}
-	
-	public var colNo: Int {
-		for i in 0..<grid.columns.count {
-			if self === grid.columns[i] {return i}
-		}
-		fatalError()
-	}
+	public var grid: Grid { parent as! Grid }
+    public var calculated: Bool { chain.tokens.count > 0 }
+	public var hasFooter: Bool { aggregate != .none && aggregate != .running }
+    public var colNo: Int { grid.columns.enumerated().first(where: { $0.1 === self })!.0 }
 	
 	public func render() {
 		if aggregate == .none {

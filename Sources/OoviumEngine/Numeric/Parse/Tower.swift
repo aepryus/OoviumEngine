@@ -30,7 +30,7 @@ extension TowerDelegate {
 }
 
 public protocol TowerListener: AnyObject {
-	func onCalculate()
+	func onTriggered()
 }
 
 class Funnel {
