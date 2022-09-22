@@ -12,7 +12,7 @@ import Foundation
 public final class Vertebra: Domain, TowerDelegate {
 	@objc public dynamic var name: String = "" {
 		didSet {
-			guard let tail = parent as? Tail else {return}
+			guard let tail = parent as? Tail else { return }
 			tail.aether.rekey(token: tower.variableToken, tag: "\(tail.name).\(name)")
 			tail.aether.rekey(token: chain.tower.variableToken, tag: "TaV_\(tail.no).\(name)")
 			tower.variableToken.label = name

@@ -124,7 +124,7 @@ public final class Mech: Aexel, TowerDelegate, Mechlike {
 // Aexel ===========================================================================================
 	public override var name: String {
 		set {
-			guard newValue != "" && newValue != super.name else {return}
+			guard newValue != "" && newValue != super.name else { return }
 			
 			Math.deregisterMorph(key: super.name)
 			

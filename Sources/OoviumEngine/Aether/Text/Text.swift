@@ -34,7 +34,7 @@ public final class Text: Aexel, NSCopying {
 		edges.append(edge)
 	}
 	public func unlinkTo(_ text: Text) {
-		guard let edge = edgeFor(text: text) else {return}
+		guard let edge = edgeFor(text: text) else { return }
 		edges.remove(object: edge)
 	}
 	

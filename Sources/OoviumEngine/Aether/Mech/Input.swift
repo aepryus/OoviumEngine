@@ -12,7 +12,7 @@ import Foundation
 public final class Input: Domain, TowerDelegate {
 	@objc public dynamic var name: String = "" {
 		didSet {
-			guard let mech = parent as? Mech else {return}
+			guard let mech = parent as? Mech else { return }
 			mech.aether.rekey(token: tower.variableToken, tag: "\(mech.name).\(name)")
 			tower.variableToken.label = name
 		}

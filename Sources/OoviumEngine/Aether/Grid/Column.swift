@@ -74,7 +74,7 @@ public final class Column: Domain, TowerDelegate {
 	
 	// Other ===========================================================================================
 	public func disseminate() {
-		guard chain.tokens.count > 0 else {return}
+		guard chain.tokens.count > 0 else { return }
 		
 		if aggregate != .running {
 			for i in 0..<grid.rows {

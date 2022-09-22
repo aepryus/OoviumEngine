@@ -79,7 +79,7 @@ public final class Auto: Aexel, TowerDelegate {
 	
 	public func buildStates() {
 		let n = min(max(Int(statesTower.value), 2), 32)
-		guard n != states.count else {return}
+		guard n != states.count else { return }
 
 		if n < states.count {
 			for _ in n..<states.count {

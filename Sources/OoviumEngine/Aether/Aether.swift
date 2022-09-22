@@ -203,7 +203,7 @@ import Foundation
 	public func outputEdges(for text: Text) -> [Edge] {
 		var edges: [Edge] = []
 		aexels.forEach {
-			guard let other = $0 as? Text, let edge = other.edgeFor(text: text) else {return}
+			guard let other = $0 as? Text, let edge = other.edgeFor(text: text) else { return }
 			edges.append(edge)
 		}
 		return edges

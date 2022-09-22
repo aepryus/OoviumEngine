@@ -34,23 +34,23 @@ fileprivate class Ops {
 	}
 	
 	private func doPOP(_ token: OperatorToken?) throws {
-		if let pOp = pOp {try chain.apply(token: pOp)}
+		if let pOp = pOp { try chain.apply(token: pOp) }
 		pOp = token
 	}
 	private func doMOP(_ token: OperatorToken?) throws {
-		if let mOp = mOp {try chain.apply(token: mOp)}
+		if let mOp = mOp { try chain.apply(token: mOp) }
 		mOp = token
 	}
 	private func doAOP(_ token: OperatorToken?) throws {
-		if let aOp = aOp {try chain.apply(token: aOp)}
+		if let aOp = aOp { try chain.apply(token: aOp) }
 		aOp = token
 	}
 	private func doCOP(_ token: OperatorToken?) throws {
-		if let cOp = cOp {try chain.apply(token: cOp)}
+		if let cOp = cOp { try chain.apply(token: cOp) }
 		cOp = token
 	}
 	private func doGOP(_ token: OperatorToken?) throws {
-		if let gOp = gOp {try chain.apply(token: gOp)}
+		if let gOp = gOp { try chain.apply(token: gOp) }
 		gOp = token
 	}
 	
@@ -308,11 +308,11 @@ public final class Chain: NSObject, Packable, TowerDelegate {
 		post(token: minusToken())
 	}
 	public func parenthesis() {
-		guard let parenToken = parenToken() else {return}
+		guard let parenToken = parenToken() else { return }
 		post(token: parenToken)
 	}
 	public func braket() {
-		guard let braketToken = braketToken() else {return}
+		guard let braketToken = braketToken() else { return }
 		post(token: braketToken)
 	}
 	public func backspace() -> Token? {
@@ -724,14 +724,14 @@ public final class Chain: NSObject, Packable, TowerDelegate {
 		AETaskSetLabels(tower.task, tower.variableToken.tag.toInt8(), "\(label ?? tower.variableToken.tag) = \(tokensDisplay)".toInt8())
 	}
 	func workerCompleted(tower: Tower, askedBy: Tower) -> Bool {
-		return AEMemoryLoaded(tower.aether.memory, tower.index) != 0
-	}
-	func workerBlocked(tower: Tower) -> Bool {
-		return tokens.contains { $0.status != .ok }
-	}
+        AEMemoryLoaded(tower.aether.memory, tower.index) != 0
+    }
+    func workerBlocked(tower: Tower) -> Bool {
+        tokens.contains { $0.status != .ok }
+    }
 	func resetWorker(tower: Tower) {
-		AEMemoryUnfix(tower.aether.memory, tower.index)
-	}
+        AEMemoryUnfix(tower.aether.memory, tower.index)
+    }
 	func executeWorker(tower: Tower) {
 		AETaskExecute(tower.task, tower.aether.memory)
 		AEMemoryFix(tower.aether.memory, tower.index)
@@ -740,15 +740,13 @@ public final class Chain: NSObject, Packable, TowerDelegate {
 	}
 
 // CustomStringConvertible =========================================================================
+    private var shouldDisplayTokens: Bool { editing || tower?.web != nil || tower?.variableToken.status != .ok || alwaysShow }
 	override public var description: String {
-		guard tokens.count > 0 else {return ""}
+		guard tokens.count > 0 else { return "" }
+        guard shouldDisplayTokens else { return tower.obje.display }
 		
-		var sb = String()
-		if editing || tower?.web != nil || tower?.variableToken.status != .ok || alwaysShow {
-			tokens.forEach { sb.append("\($0.display)") }
-		} else {
-			sb = tower.obje.display
-		}
-		return sb
+        var sb = String()
+        tokens.forEach { sb.append("\($0.display)") }
+        return sb
 	}
 }
