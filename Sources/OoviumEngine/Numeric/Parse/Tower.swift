@@ -193,7 +193,7 @@ public final class Tower: Hashable, CustomStringConvertible {
 	}
 	
 // Calculate =======================================================================================
-	func buildStream() {
+	public func buildStream() {
 		delegate.buildUpstream(tower: self)
 	}
 	public func buildTask() {
