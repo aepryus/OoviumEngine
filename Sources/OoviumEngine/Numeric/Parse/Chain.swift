@@ -271,16 +271,17 @@ public final class Chain: NSObject, Packable, TowerDelegate {
 	public func edit() {
 		editing = true
 		cursor = tokens.count
+        tower.listener?.onTriggered()
 	}
 	public func ok() {
 		editing = false
-        guard !sealed else {
+        if sealed {
             tower.listener?.onTriggered()
-            return
+        } else {
+            tower.buildTask()
+            tower.trigger()
+            sealed = true
         }
-        tower.buildTask()
-        tower.trigger()
-        sealed = true
 	}
 	
 	public func attemptToPost(token: Token) -> Bool {
