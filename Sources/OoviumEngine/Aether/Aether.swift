@@ -319,5 +319,5 @@ import Foundation
     override public var children: [String] { super.children + ["aexels"] }
 
 // MARK: - Static ==================================================================================
-	public static var engineVersion: String { "2.1" }
+	public static var engineVersion: String { "3.0" }
 }

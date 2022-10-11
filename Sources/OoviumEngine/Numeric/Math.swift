@@ -38,9 +38,7 @@ public enum Morph: Int {
 }
 
 @_cdecl("Oovium_objToString")
-public func objToString(_ obj: Obj) -> UnsafeMutablePointer<Int8> {
-	return Def.format(obj: obj).toInt8()
-}
+public func objToString(_ obj: Obj) -> UnsafeMutablePointer<Int8> { Def.format(obj: obj).toInt8() }
 
 public final class Math {
 	static var morphs = [String:Int]()
