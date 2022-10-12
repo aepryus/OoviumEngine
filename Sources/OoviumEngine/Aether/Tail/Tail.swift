@@ -76,10 +76,12 @@ public final class Tail: Aexel, TowerDelegate, Mechlike {
 		let vertebra = Vertebra(tail: self, name: name)
 		add(vertebra: vertebra)
 		functionToken.params = vertebras.count
+        vertebra.chain.tower.attach(tower)
 		return vertebra
 	}
 	public func removeVertebra() {
 		let vertebra = vertebras.removeLast()
+        vertebra.chain.tower.detach(tower)
 		remove(vertebra)
 		aether.deregister(tower: vertebra.tower)
 		aether.deregister(tower: vertebra.chain.tower)
@@ -168,6 +170,8 @@ public final class Tail: Aexel, TowerDelegate, Mechlike {
 	
 // TowerDelegate ===================================================================================
 	func buildUpstream(tower: Tower) {
+        whileTower.attach(tower)
+        vertebras.forEach { $0.chain.tower.attach(tower) }
 		resultTower.attach(tower)
 	}
 	func renderDisplay(tower: Tower) -> String {

@@ -54,7 +54,5 @@ public final class Vertebra: Domain, TowerDelegate {
 	}
 	
 // TowerDelegate ===================================================================================
-	func renderDisplay(tower: Tower) -> String {
-		return name
-	}
+    func renderDisplay(tower: Tower) -> String { name }
 }

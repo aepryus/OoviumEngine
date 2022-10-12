@@ -107,8 +107,6 @@ public final class Chain: NSObject, Packable, TowerDelegate {
 	var alwaysShow: Bool = false
 
 	var loadedKeys: [String]? = nil
-    public var sealed: Bool = true
-    public var unsealed: Bool { !sealed }
 
 	public override init() {}
 	public init(tokens: [Token]) {
@@ -272,16 +270,12 @@ public final class Chain: NSObject, Packable, TowerDelegate {
 		editing = true
 		cursor = tokens.count
         tower.listener?.onTriggered()
+        tower.task = AETaskCreateNull()
 	}
 	public func ok() {
 		editing = false
-        if sealed {
-            tower.listener?.onTriggered()
-        } else {
-            tower.buildTask()
-            tower.trigger()
-            sealed = true
-        }
+		tower.buildTask()
+		tower.trigger()
 	}
 	
 	public func attemptToPost(token: Token) -> Bool {
@@ -297,9 +291,7 @@ public final class Chain: NSObject, Packable, TowerDelegate {
 		tokens.insert(token, at: cursor)
 		
 		cursor += 1
-        
-        sealed = false
-        
+
 		return true
 	}
 	public func post(token: Token) {
@@ -323,7 +315,6 @@ public final class Chain: NSObject, Packable, TowerDelegate {
 		if let this = tower, let towerToken = token as? TowerToken, let that = tower.aether.tower(token: towerToken) {
 			if !tokens.contains(token) {that.detach(this)}
 		}
-        sealed = false
 		return token
 	}
 	public func delete() -> Token? {
@@ -332,7 +323,6 @@ public final class Chain: NSObject, Packable, TowerDelegate {
 		if let this = tower, let towerToken = token as? TowerToken, let that = tower.aether.tower(token: towerToken) {
 			if !tokens.contains(token) {that.detach(this)}
 		}
-        sealed = false
 		return token
 	}
 	public func leftArrow() -> Bool {
@@ -455,7 +445,7 @@ public final class Chain: NSObject, Packable, TowerDelegate {
 		else { throw ParseError.general }
 	}
 	
-	private func findEnd(_ n: Int) -> Int {
+	private func findEnd(_ n: Int) throws -> Int {
 		var i: Int = n
 		var p: Int = 1
 		
@@ -465,6 +455,7 @@ public final class Chain: NSObject, Packable, TowerDelegate {
 			else if token === Token.rightParen {p -= 1}
 			i += 1
 		}
+        if p != 0 { throw ParseError.general }
 		return i-1
 	}
 	private func parseNumber(tokens: [Token], i: Int) -> String {
@@ -529,13 +520,13 @@ public final class Chain: NSObject, Packable, TowerDelegate {
 			return n.lengthOfBytes(using: .ascii) + (unary != nil ? 1 : 0)
 		} else if token == .leftParen {
 			i += 1
-			let e = findEnd(i)
+			let e = try findEnd(i)
 			try parseTokens(tokens: tokens, start: i, stop: e)
 			if let unary = unary { try apply(token: unary) }
 			return 2 + e - i + (unary != nil ? 1 : 0)
 		} else if let token = token as? FunctionToken {
 			i += 1
-			let e = findEnd(i)
+			let e = try findEnd(i)
 			try parseTokens(tokens: tokens, start: i, stop: e)
 			if let recipe = token.recipe {
 				variables.append(recipe)
