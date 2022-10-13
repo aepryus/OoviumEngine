@@ -76,9 +76,7 @@ public final class Tower: Hashable, CustomStringConvertible {
 
 	var task: UnsafeMutablePointer<Task>? = nil
 	
-	var name: String {
-		return variableToken.tag
-	}
+	var name: String { variableToken.tag }
 
 	init(aether: Aether, token: VariableToken, functionToken: FunctionToken? = nil, delegate: TowerDelegate) {
 		self.aether = aether
@@ -90,19 +88,11 @@ public final class Tower: Hashable, CustomStringConvertible {
 		AETaskRelease(task)
 	}
 
-	public var index: mnimi {
-		return AEMemoryIndexForName(aether.memory, variableToken.tag.toInt8())
-	}
-	public var value: Double {
-		return AEMemoryValue(aether.memory, index)
-	}
-	public var obje: Obje {
-		return Obje(memory: aether.memory, index: index)
-	}
+	public var index: mnimi { AEMemoryIndexForName(aether.memory, variableToken.tag.toInt8()) }
+	public var value: Double { AEMemoryValue(aether.memory, index) }
+	public var obje: Obje { Obje(memory: aether.memory, index: index) }
 	
-	func workerCompleted(askedBy: Tower) -> Bool {
-		return delegate.workerCompleted(tower: self, askedBy: askedBy)
-	}
+	func workerCompleted(askedBy: Tower) -> Bool { delegate.workerCompleted(tower: self, askedBy: askedBy) }
 	
 // Stream ==========================================================================================
 	public func attach(_ tower: Tower) {
