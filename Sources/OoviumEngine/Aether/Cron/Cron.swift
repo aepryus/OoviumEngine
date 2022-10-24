@@ -120,14 +120,14 @@ public final class Cron: Aexel, TowerDelegate {
 		return tower.obje.display
 	}
 	func workerCompleted(tower: Tower, askedBy: Tower) -> Bool {
-		return AEMemoryLoaded(tower.aether.memory, tower.index) != 0
+		return AEMemoryLoaded(tower.memory, tower.index) != 0
 	}
 	func resetWorker(tower: Tower) {
-		AEMemoryUnfix(tower.aether.memory, tower.index)
+		AEMemoryUnfix(tower.memory, tower.index)
 	}
 	func executeWorker(tower: Tower) {
-		AEMemorySetValue(tower.aether.memory, tower.index, t)
-		AEMemoryFix(tower.aether.memory, tower.index)
+		AEMemorySetValue(tower.memory, tower.index, t)
+		AEMemoryFix(tower.memory, tower.index)
 		tower.variableToken.label = tower.obje.display
 	}
 }

@@ -85,13 +85,13 @@ class MathTests: XCTestCase {
 	func test_AetherManual() {
 		let aether: Aether = Aether()
 
-		let object1: Object = aether.createObject(at: V2.zero)
+		let object1: Object = aether.create(at: V2.zero)
 		object1.chain.replaceWith(natural: "893")
 
-		let object2: Object = aether.createObject(at: V2.zero)
+		let object2: Object = aether.create(at: V2.zero)
 		object2.chain.replaceWith(natural: "19")
 
-		let object3: Object = aether.createObject(at: V2.zero)
+		let object3: Object = aether.create(at: V2.zero)
 		object3.chain.post(token: object1.token)
 		object3.chain.post(token: Token.divide)
 		object3.chain.post(token: object2.token)
@@ -150,7 +150,7 @@ class MathTests: XCTestCase {
 		let aether = Aether()
 		aether.load(attributes: json.toAttributes())
 
-		let object: Object = aether.aexel(type: "object", no: 3) as! Object
+		let object: Object = aether.aexel(no: 3)!
 		XCTAssertEqual(object.chain.tower.value, 47)
 	}
 	func test_AetherJSONCatSkinTSF() {
@@ -269,7 +269,7 @@ class MathTests: XCTestCase {
 		let aether = Aether()
 		aether.load(attributes: json.toAttributes())
 
-		let object = aether.aexel(type: "object", no: 4) as! Object
+        let object: Object = aether.aexel(no: 4)!
 		XCTAssertEqual(object.chain.tower.value, 19)
 	}
     func test_AetherJSONCatSkinISF() {
@@ -397,7 +397,7 @@ class MathTests: XCTestCase {
         let aether = Aether()
         aether.load(attributes: json.toAttributes())
 
-        let object = aether.aexel(type: "object", no: 5) as! Object
+        let object: Object = aether.aexel(no: 5)!
         XCTAssertEqual(object.chain.tower.value, 19)
     }
     func test_AetherJSONCatSkinRSF() {
@@ -553,7 +553,7 @@ class MathTests: XCTestCase {
         let aether = Aether()
         aether.load(attributes: json.toAttributes())
 
-        let object = aether.aexel(type: "object", no: 2) as! Object
+        let object: Object = aether.aexel(no: 2)!
         XCTAssertEqual(object.chain.tower.value, 19)
     }
     func test_AetherJSONSUM() {
@@ -617,7 +617,7 @@ class MathTests: XCTestCase {
         let aether = Aether()
         aether.load(attributes: json.toAttributes())
 
-        let object = aether.aexel(type: "object", no: 5) as! Object
+        let object: Object = aether.aexel(no: 5)!
         XCTAssertEqual(object.chain.tower.value, 45)
     }
 }

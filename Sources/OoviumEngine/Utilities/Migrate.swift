@@ -28,7 +28,7 @@ public class Migrate {
 				case 8:			sb += "5:"
 				default:		sb += ""
 			}
-			if type == 4 && tag.loc(of: ".") == nil && tag != "k" {
+			if type == 4 && tag.loc(of: ".") == nil && tag != "k" && tag != "π" && tag != "e" {
 				let i: Int = tag.count-5
 				let prefix: String = tag[..<i]
 				let no: Int = Int(tag[i...])!

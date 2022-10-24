@@ -169,17 +169,17 @@ public final class Mech: Aexel, TowerDelegate, Mechlike {
 	}
 //    func buildWorker(tower: Tower) {}
 	func workerCompleted(tower: Tower, askedBy: Tower) -> Bool {
-		AEMemoryLoaded(tower.aether.memory, AEMemoryIndexForName(aether.memory, variableToken.tag.toInt8())) != 0 || (askedBy !== tower && askedBy.web === self)
+		AEMemoryLoaded(tower.memory, AEMemoryIndexForName(aether.memory, variableToken.tag.toInt8())) != 0 || (askedBy !== tower && askedBy.web === self)
 	}
 	func workerBlocked(tower: Tower) -> Bool { resultChain.tower.variableToken.status != .ok }
 	func resetWorker(tower: Tower) {
 		recipe = nil
-		AEMemoryUnfix(tower.aether.memory, AEMemoryIndexForName(aether.memory, variableToken.tag.toInt8()))
+		AEMemoryUnfix(tower.memory, AEMemoryIndexForName(aether.memory, variableToken.tag.toInt8()))
 	}
 	func executeWorker(tower: Tower) {
 		compileRecipe()
-		AEMemorySet(tower.aether.memory, AEMemoryIndexForName(aether.memory, variableToken.tag.toInt8()), AEObjRecipe(recipe))
-		AEMemoryFix(tower.aether.memory, AEMemoryIndexForName(aether.memory, variableToken.tag.toInt8()))
+		AEMemorySet(tower.memory, AEMemoryIndexForName(aether.memory, variableToken.tag.toInt8()), AEObjRecipe(recipe))
+		AEMemoryFix(tower.memory, AEMemoryIndexForName(aether.memory, variableToken.tag.toInt8()))
 		tower.variableToken.label = name
 		tower.variableToken.def = RecipeDef.def
 	}

@@ -280,7 +280,7 @@ public final class Chain: NSObject, Packable, TowerDelegate {
 	
 	public func attemptToPost(token: Token) -> Bool {
 		
-		if let this = tower, let towerToken = token as? TowerToken, let that = tower.aether.tower(token: towerToken) {
+        if let this = tower, let towerToken = token as? TowerToken, let that = tower.tower(towerToken: towerToken) {
 			if this.downstream(contains: that) { return false }
 			if let thisWeb = this.web ?? this.tailForWeb, let thatWeb = that.web {
 				if thisWeb !== thatWeb { return false }
@@ -312,7 +312,7 @@ public final class Chain: NSObject, Packable, TowerDelegate {
 		guard cursor > 0 else { return nil }
 		cursor -= 1
 		let token = tokens.remove(at: cursor)
-		if let this = tower, let towerToken = token as? TowerToken, let that = tower.aether.tower(token: towerToken) {
+        if let this = tower, let towerToken = token as? TowerToken, let that = tower.tower(towerToken: towerToken) {
 			if !tokens.contains(token) {that.detach(this)}
 		}
 		return token
@@ -320,7 +320,7 @@ public final class Chain: NSObject, Packable, TowerDelegate {
 	public func delete() -> Token? {
 		guard cursor < tokens.count else { return nil }
 		let token = tokens.remove(at: cursor)
-		if let this = tower, let towerToken = token as? TowerToken, let that = tower.aether.tower(token: towerToken) {
+        if let this = tower, let towerToken = token as? TowerToken, let that = tower.tower(towerToken: towerToken) {
 			if !tokens.contains(token) {that.detach(this)}
 		}
 		return token
@@ -662,7 +662,7 @@ public final class Chain: NSObject, Packable, TowerDelegate {
 			return nil
 		}
 		
-		let memory = tower.aether.memory
+		let memory = tower.memory
 		
 		let vi: mnimi = AEMemoryIndexForName(memory, name.toInt8())
 		
@@ -697,7 +697,7 @@ public final class Chain: NSObject, Packable, TowerDelegate {
 // TowerDelegate ===================================================================================
 	func buildUpstream(tower: Tower) {
 		tokens.compactMap { $0 as? TowerToken }.forEach {
-			guard let upstream: Tower = tower.aether.tower(token: $0) else { return }
+            guard let upstream: Tower = tower.tower(towerToken: $0) else { return }
 			upstream.attach(tower)
 		}
 	}
@@ -716,17 +716,17 @@ public final class Chain: NSObject, Packable, TowerDelegate {
 		AETaskSetLabels(tower.task, tower.variableToken.tag.toInt8(), "\(label ?? tower.variableToken.tag) = \(tokensDisplay)".toInt8())
 	}
 	func workerCompleted(tower: Tower, askedBy: Tower) -> Bool {
-        AEMemoryLoaded(tower.aether.memory, tower.index) != 0
+        AEMemoryLoaded(tower.memory, tower.index) != 0
     }
     func workerBlocked(tower: Tower) -> Bool {
         tokens.contains { $0.status != .ok }
     }
 	func resetWorker(tower: Tower) {
-        AEMemoryUnfix(tower.aether.memory, tower.index)
+        AEMemoryUnfix(tower.memory, tower.index)
     }
 	func executeWorker(tower: Tower) {
-		AETaskExecute(tower.task, tower.aether.memory)
-		AEMemoryFix(tower.aether.memory, tower.index)
+		AETaskExecute(tower.task, tower.memory)
+		AEMemoryFix(tower.memory, tower.index)
 		tower.variableToken.label = label ?? tower.obje.display
 		tower.variableToken.def = tower.obje.def
 	}

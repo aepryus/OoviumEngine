@@ -65,14 +65,10 @@ public class SeparatorToken: Token {
 public class ConstantToken: Token, Defable {
 	public var def: Def? = nil
 
-	init(tag: String) {
-		super.init(type: .constant, tag: tag)
-	}
+	init(tag: String) { super.init(type: .constant, tag: tag) }
 }
 public class UnaryToken: Token {
-	init(tag: String) {
-		super.init(type: .unary, tag: tag)
-	}
+	init(tag: String) { super.init(type: .unary, tag: tag) }
 }
 public class OperatorToken: Token, Labelable, Levelable {
 	public var label: String
@@ -122,9 +118,7 @@ public class Token: Hashable {
 	public var display: String { return tag }
 
 // Hashable ========================================================================================
-	public static func == (left: Token, right: Token) -> Bool {
-		return left === right
-	}
+	public static func == (left: Token, right: Token) -> Bool { left === right }
 	public func hash(into hasher: inout Hasher) {
 		 hasher.combine(ObjectIdentifier(self))
 	}

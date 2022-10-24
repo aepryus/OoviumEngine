@@ -128,7 +128,7 @@ public final class Column: Domain, TowerDelegate {
 			let cell = grid.cell(colNo: colNo, rowNo: i)
 			towers.formUnion(cell.tower.allDownstream())
 		}
-		grid.aether.evaluate(towers: towers)
+		Tower.evaluate(towers: towers)
 	}
 
 	// Events ==========================================================================================
@@ -148,7 +148,7 @@ public final class Column: Domain, TowerDelegate {
 	
 	// Compiling =======================================================================================
 	private func compileNON() -> UnsafeMutablePointer<Lambda>? {
-		let memory = tower.aether.memory
+		let memory = tower.memory
 		let vi: mnimi = AEMemoryIndexForName(memory, footerTower.variableToken.tag.toInt8())
 		
 		let c: UnsafeMutablePointer<Obj> = UnsafeMutablePointer<Obj>.allocate(capacity: 0)
@@ -164,7 +164,7 @@ public final class Column: Domain, TowerDelegate {
 		return lambda
 	}
 	private func compileSUM() -> UnsafeMutablePointer<Lambda>? {
-		let memory = tower.aether.memory
+		let memory = tower.memory
 		let vi: mnimi = AEMemoryIndexForName(memory, footerTower.variableToken.tag.toInt8())
 		let c: UnsafeMutablePointer<Obj> = UnsafeMutablePointer<Obj>.allocate(capacity: 0)
 		
@@ -193,7 +193,7 @@ public final class Column: Domain, TowerDelegate {
 		return lambda
 	}
 	private func compileAVG() -> UnsafeMutablePointer<Lambda>? {
-		let memory = tower.aether.memory
+		let memory = tower.memory
 		let vi: mnimi = AEMemoryIndexForName(memory, footerTower.variableToken.tag.toInt8())
 		
 		let cn: Int = 1
@@ -227,7 +227,7 @@ public final class Column: Domain, TowerDelegate {
 		return lambda
 	}
 	private func compileRUN() -> UnsafeMutablePointer<Lambda>? {
-		let memory = tower.aether.memory
+		let memory = tower.memory
 		let vi: mnimi = AEMemoryIndexForName(memory, footerTower.variableToken.tag.toInt8())
 		
 		let c: UnsafeMutablePointer<Obj> = UnsafeMutablePointer<Obj>.allocate(capacity: 0)
@@ -246,7 +246,7 @@ public final class Column: Domain, TowerDelegate {
 		return footerChain.compile(name: footerTower.variableToken.tag)
 	}
 	private func compuleCNT() -> UnsafeMutablePointer<Lambda>? {
-		let memory = tower.aether.memory
+		let memory = tower.memory
 		let vi: mnimi = AEMemoryIndexForName(memory, footerTower.variableToken.tag.toInt8())
 		
 		let cn: Int = 1
@@ -299,14 +299,14 @@ public final class Column: Domain, TowerDelegate {
 		AETaskSetLabels(tower.task, tower.variableToken.tag.toInt8(), "\(tower.variableToken.tag) = SUM(Gr\(grid.no).Co\(no)".toInt8())
 	}
 	func workerCompleted(tower: Tower, askedBy: Tower) -> Bool {
-		return AEMemoryLoaded(tower.aether.memory, tower.index) != 0
+		return AEMemoryLoaded(tower.memory, tower.index) != 0
 	}
 	func resetWorker(tower: Tower) {
-		AEMemoryUnfix(tower.aether.memory, tower.index)
+		AEMemoryUnfix(tower.memory, tower.index)
 	}
 	func executeWorker(tower: Tower) {
-		AETaskExecute(tower.task, tower.aether.memory)
-		AEMemoryFix(tower.aether.memory, tower.index)
+		AETaskExecute(tower.task, tower.memory)
+		AEMemoryFix(tower.memory, tower.index)
 		tower.variableToken.label = tower.obje.display
 		tower.variableToken.def = tower.obje.def
 	}

@@ -36,7 +36,7 @@ import Foundation
 
 	deinit { AEMemoryRelease(memory) }
 
-// MARK: - Evaluate ================================================================================
+// Evaluate ========================================================================================
 	public func buildMemory() {
 		var vars: [String] = ["k"]
 		vars += tokens.values.filter { $0 is VariableToken }.map { $0.tag }
@@ -47,7 +47,6 @@ import Foundation
 		vars.enumerated().forEach { AEMemorySetName(memory, UInt16($0), $1.toInt8()) }
 		AEMemoryLoad(memory, oldMemory)
 		AEMemoryRelease(oldMemory)
-//		AEMemoryPrint(memory)
 
 		Set(towers.values).filter { $0.variableToken.type == .variable }.forEach { $0.buildTask() }
 	}
@@ -58,31 +57,16 @@ import Foundation
 		towers.forEach { $0.buildStream() }
 		buildMemory()
 	}
-	public func evaluate(towers: Set<Tower>) {
-//		towers.forEach { AEMemoryUnfix(memory, $0.index) }
-		towers.forEach { $0.delegate.resetWorker(tower: $0) }
-		var progress: Bool
-		repeat {
-			progress = false
-			towers.forEach { if $0.attemptToCalculate() { progress = true } }
-		} while progress
-		towers.forEach { $0.listener?.onTriggered() }
-	}
-	public func evaluate() {
-		evaluate(towers: Set(towers.values))
-	}
-	public func evaluate(from: Tower) {
-		evaluate(towers: from.allDownstream())
-	}
+    public func evaluate() { Tower.evaluate(towers: Set(towers.values)) }
 
-// MARK: - Aexels ==================================================================================
+// Aexels ==========================================================================================
 	private func addAexel(_ aexel: Aexel) {
 		add(aexel)
 		aexels.append(aexel)
-		aexel.towers.forEach {register(tower: $0)}
-		aexel.towers.forEach {$0.buildStream()}
+		aexel.towers.forEach { register(tower: $0) }
+		aexel.towers.forEach { $0.buildStream() }
 		buildMemory()
-		evaluate(towers: aexel.towers)
+        Tower.evaluate(towers: aexel.towers)
 	}
 	public func removeAexel(_ aexel: Aexel) {
 		aexel.towers.forEach { deregister(tower: $0) }
@@ -90,115 +74,29 @@ import Foundation
 		aexels.remove(object: aexel)
 	}
 	public func removeAexels(_ aexels: [Aexel]) {
-		aexels.forEach {$0.towers.forEach {deregister(tower: $0)}}
-		aexels.forEach {remove($0)}
-		aexels.forEach {self.aexels.remove(object: $0)}
+		aexels.forEach { $0.towers.forEach { deregister(tower: $0) } }
+		aexels.forEach { remove($0) }
+		aexels.forEach { self.aexels.remove(object: $0) }
 		buildMemory()
 	}
-	public func removeAllAexels() {
-		removeAexels(aexels)
-	}
-	public func aexel(type: String, no: Int) -> Aexel? {
-		return aexels.first(where: {$0.type == type && $0.no == no})
-	}
+	public func removeAllAexels() { removeAexels(aexels) }
+    
+    public func create<T: Aexel>(at: V2) -> T {
+        let key: String = "\(T.self)".lowercased()
+        print("QQ: [\(key)]")
+        let aexel = T(no: nos.increment(key: key), at: at, aether: self)
+        addAexel(aexel)
+        return aexel
+    }
 	
-	// Object
-	public func createObject(at: V2) -> Object {
-		let object = Object(no: nos.increment(key: "object"), at: at, aether: self)
-		addAexel(object)
-		return object
-	}
-	
-	// Gate
-	public func createGate(at: V2) -> Gate {
-		let gate = Gate(no: nos.increment(key: "gate"), at: at, aether: self)
-		addAexel(gate)
-		return gate
-	}
-	
-	// Mech
-	public func createMech(at: V2) -> Mech {
-		let mech = Mech(no: nos.increment(key: "mech"), at: at, aether: self)
-		addAexel(mech)
-		return mech
-	}
-	
-	// Tail
-	public func createTail(at: V2) -> Tail {
-		let tail = Tail(no: nos.increment(key: "tail"), at: at, aether: self)
-		addAexel(tail)
-		return tail
-	}
-	
-	// Auto
-	public func createAuto(at: V2) -> Auto {
-		let auto = Auto(no: nos.increment(key: "auto"), at: at, aether: self)
-		addAexel(auto)
-		return auto
-	}
-	public func firstAuto() -> Auto? {
-		return aexels.first(where: {$0 is Auto}) as? Auto
-	}
-	
-	// Oovi
-	public func createOovi(at: V2) -> Oovi {
-		let no = nos.increment(key: "oovi")
-		let oovi = Oovi(no: no, at: at, aether: self)
-		addAexel(oovi)
-		return oovi
-	}
-	public func firstOovi() -> Oovi? {
-		for aexel in aexels {
-			if let oovi = aexel as? Oovi {
-				return oovi
-			}
-		}
-		return nil
-	}
+	public func first<T>() -> T? { aexels.first(where: {$0 is T}) as? T }
+    public func aexel<T>(no: Int) -> T? { aexels.first(where: { $0 is T  && $0.no == no }) as? T }
 
-	// Grid
-	public func createGrid(at: V2) -> Grid {
-		let no = nos.increment(key: "grid")
-		let grid = Grid(no: no, at: at, aether: self)
-		addAexel(grid)
-		return grid
-	}
-	
-	// Type
-	public func createType(at: V2) -> Type {
-		let no = nos.increment(key: "type")
-		let type = Type(no: no, at: at, aether: self)
-		addAexel(type)
-		return type
-	}
-	
-	// Miru
-	public func createMiru(at: V2) -> Miru {
-		let no = nos.increment(key: "miru")
-		let miru = Miru(no: no, at: at, aether: self)
-		addAexel(miru)
-		return miru
-	}
-	
-	// Cron
-	public func createCron(at: V2) -> Cron {
-		let no = nos.increment(key: "cron")
-		let cron = Cron(no: no, at: at, aether: self)
-		addAexel(cron)
-		return cron
-	}
-	
 	// Text
 	public func createEdge(parent: Text, child: Text) -> Edge {
 		let edge = Edge(parent: parent)
 		edge.textNo = child.no
 		return edge
-	}
-	public func createText(at: V2) -> Text {
-		let no = nos.increment(key: "text")
-		let text = Text(no: no, at: at, aether: self)
-		addAexel(text)
-		return text
 	}
 	public func outputEdges(for text: Text) -> [Edge] {
 		var edges: [Edge] = []
@@ -209,21 +107,9 @@ import Foundation
 		return edges
 	}
 	
-	// Also
-	public func createAlso(at: V2) -> Also {
-		let no = nos.increment(key: "also")
-		let also = Also(no: no, at: at, aether: self)
-		addAexel(also)
-		return also
-	}
-
-// MARK: - Tokens ==================================================================================
-	public func register(token: TowerToken) {
-		tokens[token.key] = token
-	}
-	public func token(type: TokenType, tag: String) -> TowerToken? {
-		return tokens["\(type.rawValue):\(tag)"]
-	}
+// Tokens ==========================================================================================
+	public func register(token: TowerToken) { tokens[token.key] = token }
+	public func token(type: TokenType, tag: String) -> TowerToken? { tokens["\(type.rawValue):\(tag)"] }
 	public func token(key: String) -> Token {
 		var token: Token? = tokens[key]
 		if let token = token { return token }
@@ -248,7 +134,6 @@ import Foundation
 	public func buildTokens(chain: Chain) {
 		guard let keys = chain.loadedKeys else { return }
         chain.tokens = keys.map { token(key: $0) }
-//		keys.forEach { chain.tokens.append(token(key: $0)) }
 		chain.loadedKeys = nil
 	}
 	public func buildTokens() {
@@ -281,11 +166,9 @@ import Foundation
 			return token
 		}()
 	}
-	public func wipe(token: Token) {
-		tokens[token.key] = nil
-	}
+	public func wipe(token: Token) { tokens[token.key] = nil }
 
-// MARK: - Towers ==================================================================================
+// Towers ==========================================================================================
 	func register(tower: Tower) {
 		towers[tower.variableToken] = tower
 		if let functionToken = tower.functionToken { towers[functionToken] = tower }
@@ -294,14 +177,25 @@ import Foundation
 		towers[tower.variableToken] = nil
 		if let functionToken = tower.functionToken { towers[functionToken] = nil }
 	}
-	func tower(token: TowerToken) -> Tower? {
-		return towers[token]
-	}
+    func tower(towerToken: TowerToken) -> Tower? { towers[towerToken] }
+    
+    public func delete(towers: Set<Tower>) {
+        var affected: Set<Tower> = Set<Tower>()
+        towers.forEach { affected.formUnion($0.allDownstream()) }
+        affected.subtract(towers)
+        
+        towers.forEach {
+            $0.variableToken.status = .deleted
+            $0.variableToken.label = "DELETED"
+            if $0.variableToken.type == .variable { AEMemoryUnfix(memory, $0.index) }
+            $0.abstract()
+        }
+        
+        Tower.evaluate(towers: affected)
+    }
 
 // Functions =======================================================================================
-	public func functionExists(name: String) -> Bool {
-		aexels.first { $0 is Mechlike && $0.name == name } != nil
-	}
+	public func functionExists(name: String) -> Bool { aexels.first { $0 is Mechlike && $0.name == name } != nil }
 
 // MARK: - Events ==================================================================================
 	override public func onLoad() {

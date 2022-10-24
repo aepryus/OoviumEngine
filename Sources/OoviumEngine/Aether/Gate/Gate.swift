@@ -88,17 +88,17 @@ public final class Gate: Aexel, TowerDelegate {
 		tower.task = task
 	}
 	func workerCompleted(tower: Tower, askedBy: Tower) -> Bool {
-		return AEMemoryLoaded(tower.aether.memory, tower.index) != 0
+		return AEMemoryLoaded(tower.memory, tower.index) != 0
 	}
 	func workerBlocked(tower: Tower) -> Bool {
 		return [ifTower,thenTower,elseTower].contains {$0.variableToken.status != .ok}
 	}
 	func resetWorker(tower: Tower) {
-		AEMemoryUnfix(tower.aether.memory, tower.index)
+		AEMemoryUnfix(tower.memory, tower.index)
 	}
 	func executeWorker(tower: Tower) {
-		AETaskExecute(tower.task, tower.aether.memory)
-		AEMemoryFix(tower.aether.memory, tower.index)
+		AETaskExecute(tower.task, tower.memory)
+		AEMemoryFix(tower.memory, tower.index)
 //		tower.variableToken.label = Oovium.format(value: tower.value)
 	}
 }

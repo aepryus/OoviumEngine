@@ -7,6 +7,7 @@
 //
 
 import Acheron
+import Aegean
 import Foundation
 
 public enum EqualMode {
@@ -79,8 +80,6 @@ public final class Grid: Aexel {
 		aether.buildMemory()
 		columns.forEach {
 			if $0.calculated { $0.disseminate() }
-// this is very slow; is it needed?
-//			$0.render()
 		}
         return newCells
 	}
@@ -126,6 +125,7 @@ public final class Grid: Aexel {
         return column
 	}
 	public func deleteColumn(_ column: Column) {
+        AEMemoryPrint(aether.memory)
 		let colNo: Int = column.colNo
 		for rowNo in 0..<rows {
 			let cellNo = columns.count*(rows-1-rowNo)+colNo
@@ -138,6 +138,7 @@ public final class Grid: Aexel {
 		columns.remove(at: colNo)
 		numberCells()
 		aether.buildMemory()
+        AEMemoryPrint(aether.memory)
 	}
 	public func move(column: Column, to: Int) {
 		let from = column.colNo

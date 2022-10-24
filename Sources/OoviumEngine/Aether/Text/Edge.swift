@@ -15,9 +15,7 @@ public final class Edge: Domain {
 	public var text: Text {
 		return parent! as! Text
 	}
-	public var other: Text {
-		return text.aether.aexel(type: "text", no: textNo)! as! Text
-	}
+	public var other: Text { text.aether.aexel(no: textNo)! }
 	
 // Domain ==========================================================================================
 	public override var properties: [String] {
