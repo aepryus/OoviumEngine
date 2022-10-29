@@ -11,7 +11,7 @@ import Acheron
 import Foundation
 
 public protocol Mechlike: Aexel {
-	var functionToken: FunctionToken { get }
+	var mechlikeToken: MechlikeToken { get }
 	var variableToken: VariableToken { get }
 }
 
@@ -20,25 +20,29 @@ public final class Mech: Aexel, TowerDelegate, Mechlike {
 	@objc public var inputs: [Input] = []
 
 	public var tower: Tower!
-//	var token: FunctionToken!
 
-	public var resultTower: Tower {
-		return resultChain.tower
-	}
-	var resultToken: Token {
-		return resultTower.variableToken
-	}
+	public var resultTower: Tower { resultChain.tower }
+	var resultToken: Token { resultTower.variableToken }
 
 	var web: AnyObject {return self}
 	var recipe: UnsafeMutablePointer<Recipe>? = nil
 	var morphIndex: Int? = nil
 
-	public lazy var variableToken: VariableToken = { aether.variableToken(tag: "MeRcp_\(no)") }()
-	public lazy var functionToken: FunctionToken = { aether.functionToken(tag: name, recipe: "MeRcp_\(no)") }()
+    public var variableToken: VariableToken { tower.variableToken }
+    public var mechlikeToken: MechlikeToken { tower.mechlikeToken! }
 
 // Inits ===========================================================================================
 	public required init(no: Int, at: V2, aether: Aether) {
 		super.init(no: no, at: at, aether: aether)
+        
+        tower = aether.createTower(tag: key, towerDelegate: self)
+        resultChain.tower = aether.createTower(tag: "\(key).result", towerDelegate: resultChain)
+        
+        tower.mechlikeToken?.params = inputs.count
+
+        resultTower.tailForWeb = web
+        inputs.forEach {$0.tower.web = web}
+
 
 		name = "f"
 		addInput()
@@ -48,15 +52,7 @@ public final class Mech: Aexel, TowerDelegate, Mechlike {
 	public required init(attributes: [String:Any], parent: Domain?) {
 		super.init(attributes: attributes, parent: parent)
 	}
-	deinit {
-		AERecipeRelease(recipe)
-	}
-	
-	var key: String {
-		var key: String = "\(super.name);"
-		inputs.forEach {_ in key += "num;"}
-		return key
-	}
+	deinit { AERecipeRelease(recipe) }
 	
 	public func add(input: Input) {
 		add(input)
@@ -72,14 +68,15 @@ public final class Mech: Aexel, TowerDelegate, Mechlike {
 			name = "p\(inputs.count+1)"
 		}
 		let input = Input(mech: self, name: name)
+        input.no = inputs.count+1
 		add(input: input)
-		functionToken.params = inputs.count
+        mechlikeToken.params = inputs.count
 	}
 	public func removeInput() {
 		let input = inputs.removeLast()
 		remove(input)
 		aether.deregister(tower: input.tower)
-		functionToken.params = inputs.count
+        mechlikeToken.params = inputs.count
 	}
 	
 	private func compileRecipe() {
@@ -88,10 +85,10 @@ public final class Mech: Aexel, TowerDelegate, Mechlike {
 		inputs.forEach {AEMemorySetValue(memory, $0.tower.index, 0)}
 		AERecipeRelease(recipe)
 		recipe = Math.compile(mech: self, memory: memory)
-		AERecipeSignature(recipe, AEMemoryIndexForName(memory, "MeR_\(no)".toInt8()), UInt8(inputs.count))
+		AERecipeSignature(recipe, AEMemoryIndexForName(memory, key.toInt8()), UInt8(inputs.count))
 		
 		for (i, input) in inputs.enumerated() {
-			let index = AEMemoryIndexForName(memory, "\(name).\(input.name)".toInt8())
+			let index = AEMemoryIndexForName(memory, "\(key).\(input.key)".toInt8())
 			recipe!.pointee.params[i] = index
 		}
         
@@ -107,26 +104,24 @@ public final class Mech: Aexel, TowerDelegate, Mechlike {
 	
 // Events ==========================================================================================
 	override public func onLoad() {
-		resultChain.tower = Tower(aether: aether, token: aether.variableToken(tag: "MeR_\(no)"), delegate: resultChain)
-		
-		functionToken.params = inputs.count
-		tower = Tower(aether: aether, token: variableToken, functionToken: functionToken, delegate: self)
-
-		resultTower.tailForWeb = web
-		inputs.forEach {$0.tower.web = web}
+//        resultChain.tower = aether.createTower(tag: "\(key).result", delegate: resultChain)
+//
+//        tower = aether.createTower(tag: key, delegate: self)
+//        tower.mechlikeToken?.params = inputs.count
+//
+//		resultTower.tailForWeb = web
+//		inputs.forEach {$0.tower.web = web}
 	}
 	override public func onRemoved() {
 		aether.deregister(tower: tower)
 		inputs.forEach { aether.deregister(tower: $0.tower) }
-		Math.deregisterMorph(key: key)
 	}
 	
 // Aexel ===========================================================================================
+    public override var code: String { "Me" }
 	public override var name: String {
 		set {
 			guard newValue != "" && newValue != super.name else { return }
-			
-			Math.deregisterMorph(key: super.name)
 			
 			var newName: String = newValue
 			var i: Int = 2
@@ -135,10 +130,8 @@ public final class Mech: Aexel, TowerDelegate, Mechlike {
 				i += 1
 			}
 			super.name = newName
-			aether.rekey(token: functionToken, tag: name)
-			functionToken.label = "\(name)("
+//            mechlikeToken.label = "\(name)("
 			
-			variableToken.label = name
 			if recipe != nil { AERecipeSetName(recipe, name.toInt8()) }
 		}
 		get {return super.name}
@@ -150,12 +143,8 @@ public final class Mech: Aexel, TowerDelegate, Mechlike {
 	}
 	
 // Domain ==========================================================================================
-	override public var properties: [String] {
-		return super.properties + ["resultChain"]
-	}
-	override public var children: [String] {
-		return super.children + ["inputs"]
-	}
+	override public var properties: [String] { super.properties + ["resultChain"] }
+	override public var children: [String] { super.children + ["inputs"] }
 	
 // TowerDelegate ===================================================================================
 	func buildUpstream(tower: Tower) {
@@ -180,7 +169,6 @@ public final class Mech: Aexel, TowerDelegate, Mechlike {
 		compileRecipe()
 		AEMemorySet(tower.memory, AEMemoryIndexForName(aether.memory, variableToken.tag.toInt8()), AEObjRecipe(recipe))
 		AEMemoryFix(tower.memory, AEMemoryIndexForName(aether.memory, variableToken.tag.toInt8()))
-		tower.variableToken.label = name
 		tower.variableToken.def = RecipeDef.def
 	}
 }

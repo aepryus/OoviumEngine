@@ -14,10 +14,6 @@ public final class Type: Aexel {
 	@objc public dynamic var fields: [Field] = []
 
 // Domain ==========================================================================================
-	override public var properties: [String] {
-		return super.properties + ["color"]
-	}
-	override public var children: [String] {
-		return super.children + ["fields"]
-	}
+    override public var properties: [String] { super.properties + ["color"] }
+	override public var children: [String] { super.children + ["fields"] }
 }

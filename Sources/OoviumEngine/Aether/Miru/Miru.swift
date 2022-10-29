@@ -12,12 +12,7 @@ public final class Miru: Aexel {
 	@objc public var gridID: Int = 0
 
 // Aexel ===========================================================================================
-//	override var freeVars: [String] {
-//		return []
-//	}
 	
 // Domain ==========================================================================================
-	override public var properties: [String] {
-		return super.properties + ["gridID"]
-	}
+	override public var properties: [String] { super.properties + ["gridID"] }
 }

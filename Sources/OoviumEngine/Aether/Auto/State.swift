@@ -10,7 +10,6 @@ import Acheron
 import Foundation
 
 public final class State: Domain {
-//	var color: OOColor = .clear
 	@objc public var no: Int = 0
 	@objc public var color: Int = 0
 	
@@ -24,7 +23,5 @@ public final class State: Domain {
 	}
 	
 // Domain ==========================================================================================
-	override public var properties: [String] {
-		return super.properties + ["no", "color"]
-	}
+	override public var properties: [String] { super.properties + ["no", "color"] }
 }

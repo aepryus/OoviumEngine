@@ -11,6 +11,12 @@ import Foundation
 
 public final class Edge: Domain {
 	@objc public var textNo: Int = 0
+    
+    init(parent: Text, child: Text) {
+        textNo = child.no
+        super.init(parent: parent)
+    }
+    public required init(attributes: [String : Any], parent: Domain? = nil) { super.init(attributes: attributes, parent: parent) }
 	
 	public var text: Text {
 		return parent! as! Text

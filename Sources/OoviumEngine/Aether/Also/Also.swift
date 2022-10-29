@@ -10,9 +10,7 @@ import Foundation
 
 public final class Also: Aexel {
 	@objc public var aetherPath: String = ""
-
+    
 // Domain ==========================================================================================
-	override public var properties: [String] {
-		return super.properties + ["aetherPath"]
-	}
+	override public var properties: [String] { super.properties + ["aetherPath"] }
 }

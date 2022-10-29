@@ -41,9 +41,9 @@ public class Migrate {
 					case "F":	sb += "Gr\(colToGrid[no]!).Ft\(no)"
 					default:	fatalError()
 				}
-			} else if type == TokenType.operator.rawValue && tag == "&" {
+			} else if type == 2 && tag == "&" {
 				sb += "&&"
-			} else if type == TokenType.operator.rawValue && tag == "|" {
+			} else if type == 2 && tag == "|" {
 				sb += "||"
 			} else {
 				sb += tag

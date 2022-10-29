@@ -21,8 +21,7 @@ public final class Column: Domain, TowerDelegate {
 	@objc public var no: Int = 0
 	@objc public var name: String = "" {
 		didSet {
-			token.label = name
-			chain.label = name
+//			chain.label = name
 		}
 	}
 	var def: Def = RealDef.def
@@ -38,10 +37,9 @@ public final class Column: Domain, TowerDelegate {
 	var footerChain: Chain = Chain()
 	
 	fileprivate lazy var header: Header = Header()
-	
-	public lazy var tower: Tower = Tower(aether: grid.aether, token: grid.aether.variableToken(tag: "Gr\(grid.no).Co\(no)"), delegate: header)
-	public lazy var token: VariableToken = grid.aether.variableToken(tag: "Gr\(grid.no).Co\(no)", label: name)
-	public lazy var footerTower: Tower = Tower(aether: grid.aether, token: grid.aether.variableToken(tag: "Gr\(grid.no).Ft\(no)"), delegate: self)
+    
+    public lazy var tower: Tower = grid.aether.createTower(tag: "\(grid.key).Co\(no)", towerDelegate: header)
+    public lazy var footerTower: Tower = grid.aether.createTower(tag: "\(grid.key).Ft\(no)", towerDelegate: self)
 	
 	public var grid: Grid { parent as! Grid }
     public var calculated: Bool { chain.tokens.count > 0 }
@@ -136,8 +134,7 @@ public final class Column: Domain, TowerDelegate {
 		chain.tower = tower
 		footerChain.tower = footerTower
 		chain.alwaysShow = true
-		chain.label = name
-		token.label = name
+//		chain.label = name
 	}
 	
 	// Domain ==========================================================================================
@@ -307,7 +304,7 @@ public final class Column: Domain, TowerDelegate {
 	func executeWorker(tower: Tower) {
 		AETaskExecute(tower.task, tower.memory)
 		AEMemoryFix(tower.memory, tower.index)
-		tower.variableToken.label = tower.obje.display
+//		tower.variableToken.value = tower.obje.display
 		tower.variableToken.def = tower.obje.def
 	}
 }

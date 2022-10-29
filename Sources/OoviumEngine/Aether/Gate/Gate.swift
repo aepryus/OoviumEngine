@@ -15,16 +15,10 @@ public final class Gate: Aexel, TowerDelegate {
 	@objc public var thenChain: Chain!
 	@objc public var elseChain: Chain!
 	
-	public var ifTower: Tower {
-		return ifChain.tower
-	}
-	public var thenTower: Tower {
-		return thenChain.tower
-	}
-	public var elseTower: Tower {
-		return elseChain.tower
-	}
-	public lazy var resultTower: Tower = {Tower(aether: aether, token: aether.variableToken(tag: "GtR_\(no)"), delegate: self)}()
+	public var ifTower: Tower { ifChain.tower }
+	public var thenTower: Tower { thenChain.tower }
+	public var elseTower: Tower { elseChain.tower }
+    public lazy var resultTower: Tower = aether.createTower(tag: key, towerDelegate: self)
 	
 	public var token: Token {
 		return resultTower.variableToken
@@ -44,9 +38,9 @@ public final class Gate: Aexel, TowerDelegate {
 
 // Events ==========================================================================================
 	override public func onLoaded() {
-		ifChain.tower = Tower(aether: aether, token: aether.variableToken(tag: "GtI_\(no)"), delegate: ifChain)
-		thenChain.tower = Tower(aether: aether, token: aether.variableToken(tag: "GtT_\(no)"), delegate: thenChain)
-		elseChain.tower = Tower(aether: aether, token: aether.variableToken(tag: "GtE_\(no)"), delegate: elseChain)
+        ifChain.tower = aether.createTower(tag: "\(key).if", towerDelegate: ifChain)
+        thenChain.tower = aether.createTower(tag: "\(key).then", towerDelegate: thenChain)
+        elseChain.tower = aether.createTower(tag: "\(key).else", towerDelegate: elseChain)
 
 		ifTower.gateTo = resultTower
 		ifTower.thenTo = thenTower
@@ -63,14 +57,11 @@ public final class Gate: Aexel, TowerDelegate {
 	}
 	
 // Aexel ===========================================================================================
-	public override var towers: Set<Tower> {
-		return Set<Tower>([ifTower, thenTower, elseTower, resultTower])
-	}
+    public override var code: String { "Gt" }
+	public override var towers: Set<Tower> { Set<Tower>([ifTower, thenTower, elseTower, resultTower]) }
 	
 // Domain ==========================================================================================
-	override public var properties: [String] {
-		return super.properties + ["ifChain", "thenChain", "elseChain"]
-	}
+    override public var properties: [String] { super.properties + ["ifChain", "thenChain", "elseChain"] }
 
 // TowerDelegate ===================================================================================
 	func buildUpstream(tower: Tower) {

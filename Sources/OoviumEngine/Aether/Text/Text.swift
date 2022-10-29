@@ -46,12 +46,8 @@ public final class Text: Aexel, NSCopying {
 //	}
 //
 // Domain ==========================================================================================
-	override public var properties: [String] {
-		return super.properties + ["color", "shape"]
-	}
-	override public var children: [String] {
-		return super.children + ["edges"]
-	}
+	override public var properties: [String] { super.properties + ["color", "shape"] }
+	override public var children: [String] { super.children + ["edges"] }
 	
 // NSCopying =======================================================================================
 	public func copy(with zone: NSZone? = nil) -> Any {

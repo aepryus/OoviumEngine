@@ -248,16 +248,18 @@ byte AEMemoryLoaded(Memory* memory, mnimi index) {
 	return memory->slots[index].loaded;
 }
 void AEMemoryPrint(Memory* memory) {
-	printf("[ Memory ==================== ]\n");
+	printf("[ Memory ======================================= ]\n\n");
+    printf("  [In] [F] [L] [S] [Of] [Name          ] [Value]\n");
+    printf("  ---- --- --- --- ---- ---------------- -------\n");
 	for (int i=0;i<memory->sn;i++) {
 		char value[32];
 		if (memory->slots[i].loaded) {
 			sprintf(value, "%s", Oovium_objToString(AEMemoryGet(memory, i)));
 		} else
 			sprintf(value, "-");
-		printf("  [%2d][%c][%c][%c][%2d][%-14s][%s]\n", i, memory->slots[i].fixed?'X':' ', memory->slots[i].loaded?'X':' ', memory->slots[i].stacked?'X':' ', memory->slots[i].offset, memory->slots[i].name, value);
+		printf("  [%2d] [%c] [%c] [%c] [%2d] [%-14s] [%s]\n", i, memory->slots[i].fixed?'X':' ', memory->slots[i].loaded?'X':' ', memory->slots[i].stacked?'X':' ', memory->slots[i].offset, memory->slots[i].name, value);
 	}
-	printf("[ =========================== ]\n\n");
+	printf("\n[ ============================================== ]\n\n");
 }
 
 // Pool ============================================================================================
