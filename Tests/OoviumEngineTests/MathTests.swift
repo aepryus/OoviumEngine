@@ -283,7 +283,7 @@ class MathTests: XCTestCase {
               "readOnly" : false,
               "width" : 1194,
               "name" : "aether41",
-              "version" : "2.1",
+              "version" : "3.0",
               "modified" : "2022-08-30T05:19:54+0900",
               "height" : 834,
               "yOffset" : 706,
@@ -552,7 +552,7 @@ class MathTests: XCTestCase {
                 }
               ],
               "yOffset" : 666,
-              "version" : "2.1",
+              "version" : "3.0",
               "readOnly" : false,
               "iden" : "E3BB4A35-F906-44BD-B7ED-89AAB42D3AB2",
               "height" : 834
@@ -565,12 +565,12 @@ class MathTests: XCTestCase {
         let object: Object = aether.aexel(no: 2)!
         XCTAssertEqual(object.chain.tower.value, 19)
     }
-    func qtest_AetherJSONSUM() {
+    func test_AetherJSONSUM() {
         let json = """
             {
               "height" : 1554,
               "xOffset" : 3254,
-              "version" : "2.1.1",
+              "version" : "3.0",
               "type" : "aether",
               "width" : 2365,
               "readOnly" : false,
@@ -583,7 +583,7 @@ class MathTests: XCTestCase {
                   "name" : "Ob_2",
                   "label" : "",
                   "type" : "object",
-                  "chain" : "0:1"
+                  "chain" : "dg:1"
                 },
                 {
                   "iden" : "C2EFF853-FF8F-4AD1-A31B-CE99DD46ABF2",
@@ -591,14 +591,14 @@ class MathTests: XCTestCase {
                   "x" : 3611.0859375,
                   "type" : "object",
                   "y" : 2021.39453125,
-                  "chain" : "0:9",
+                  "chain" : "dg:9",
                   "label" : "",
                   "no" : 3
                 },
                 {
                   "type" : "object",
                   "label" : "",
-                  "chain" : "2:[;4:k;2:]",
+                  "chain" : "sp:[;va:k;sp:]",
                   "y" : 2102.7734375,
                   "x" : 3699.59375,
                   "iden" : "B2783579-B39E-43E9-8B28-2732A74FB2F5",
@@ -608,7 +608,7 @@ class MathTests: XCTestCase {
                 {
                   "iden" : "9DABA2E8-4797-48DB-928F-3826EFA4F482",
                   "type" : "object",
-                  "chain" : "3:∑;4:Ob_2;2:,;4:Ob_3;2:,;4:Ob_4;2:)",
+                  "chain" : "fn:∑;va:Ob2;sp:,;va:Ob3;sp:,;va:Ob4;sp:)",
                   "name" : "Ob_5",
                   "x" : 3545.046875,
                   "no" : 5,

@@ -82,6 +82,8 @@ public class Token: Hashable {
     public static let pi: ConstantToken             = ConstantToken(tag:"π")
     public static let yes: ConstantToken            = ConstantToken(tag:"true")
     public static let no: ConstantToken             = ConstantToken(tag:"false")
+    
+    public static let k: KToken                     = KToken()
 
     public static let add: OperatorToken            = OperatorToken(tag:"+", level: .add)
     public static let subtract: OperatorToken       = OperatorToken(tag:"−", level: .add)
@@ -151,7 +153,7 @@ public class Token: Hashable {
     
     static func start() {
         [   period, zero, one, two, three, four, five, six, seven, eight, nine, e, i, pi, yes, no,
-            add, subtract, multiply, divide, dot, mod, power, equal, less, greater, notEqual,
+            k, add, subtract, multiply, divide, dot, mod, power, equal, less, greater, notEqual,
             lessOrEqual, greaterOrEqual, and, or, not, neg, leftParen, comma, rightParen, bra, ket,
             quote, abs, round, floor, sqrt, fac, exp, ln, log, tenth, second, log2, sin, cos, tan,
             asin, acos, atan, sec, csc, cot, sinh, cosh, tanh, asinh, acosh, atanh, random, iif,
@@ -178,6 +180,10 @@ public class UnaryToken: Token {
 public class ConstantToken: Token, Defable {
 	public var def: Def? = nil
     override public var code: Code { .cn }
+}
+public class KToken: Token {
+    public init() { super.init(tag: "k") }
+    override public var code: Code { .va }
 }
 public class OperatorToken: Token {
     public enum Level: Int { case add, multiply, power, compare, gate }

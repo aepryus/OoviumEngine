@@ -552,6 +552,14 @@ public final class Chain: NSObject, Packable, TowerDelegate {
 			if let unary = unary { try apply(token: unary) }
 			return 1 + (unary != nil ? 1 : 0)
 			
+        } else if let token = token as? KToken {
+            let name = token.tag
+            let type = "var;num;"
+            variables.append(name)
+            try addMorph(Math.morph(key: type))
+            if let unary = unary { try apply(token: unary) }
+            return 1 + (unary != nil ? 1 : 0)
+            
 		} else if token.code == .cn {
 
 			if token == Token.i {
@@ -674,7 +682,6 @@ public final class Chain: NSObject, Packable, TowerDelegate {
 		let cn = constants.count
 		let c: UnsafeMutablePointer<Obj> = UnsafeMutablePointer<Obj>.allocate(capacity: cn)
 		for i in 0..<cn {
-//			c[i] = AEObjMirror(constants[i].obj)
 			c[i] = constants[i].obj
 		}
 		
@@ -725,8 +732,6 @@ public final class Chain: NSObject, Packable, TowerDelegate {
 	func executeWorker(tower: Tower) {
 		AETaskExecute(tower.task, tower.memory)
 		AEMemoryFix(tower.memory, tower.index)
-//        tower.variableToken.label = tower.variableToken.label ?? tower.obje.display
-//        tower.variableToken.value = tower.obje.display
 		tower.variableToken.def = tower.obje.def
 	}
 
