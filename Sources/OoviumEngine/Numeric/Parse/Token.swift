@@ -246,13 +246,13 @@ public class PropertyToken: TowerToken {
     public override var display: String { label ?? tag }
 }
 public class MechlikeToken: TowerToken, Paramsable {
-	public var params: Int
-	let recipe: String?
-    init(tower: Tower? = nil, tag: String, label: String? = nil, params: Int = 1, recipe: String? = nil) {
-		self.params = params
-		self.recipe = recipe
-        super.init(tower: tower, tag: tag/*, label: label*/)
+    weak var delegate: VariableTokenDelegate?
+    var alias: String? { delegate?.alias }
+	public var params: Int = 1
+    init(tower: Tower? = nil, tag: String, delegate: VariableTokenDelegate? = nil) {
+        self.delegate = delegate
+        super.init(tower: tower, tag: tag)
 	}
     override public var code: Code { .ml }
-	public override var display: String { "\(tag)(" }
+	public override var display: String { "\(alias ?? tag)(" }
 }

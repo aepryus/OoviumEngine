@@ -15,7 +15,7 @@ public protocol Mechlike: Aexel {
 	var variableToken: VariableToken { get }
 }
 
-public final class Mech: Aexel, TowerDelegate, Mechlike {
+public final class Mech: Aexel, Mechlike, TowerDelegate, VariableTokenDelegate {
 	@objc public var resultChain: Chain = Chain()
 	@objc public var inputs: [Input] = []
 
@@ -24,7 +24,7 @@ public final class Mech: Aexel, TowerDelegate, Mechlike {
 	public var resultTower: Tower { resultChain.tower }
 	var resultToken: Token { resultTower.variableToken }
 
-	var web: AnyObject {return self}
+	var web: AnyObject { self }
 	var recipe: UnsafeMutablePointer<Recipe>? = nil
 	var morphIndex: Int? = nil
 
@@ -35,19 +35,10 @@ public final class Mech: Aexel, TowerDelegate, Mechlike {
 	public required init(no: Int, at: V2, aether: Aether) {
 		super.init(no: no, at: at, aether: aether)
         
-        tower = aether.createTower(tag: key, towerDelegate: self)
-        resultChain.tower = aether.createTower(tag: "\(key).result", towerDelegate: resultChain)
-        
-        tower.mechlikeToken?.params = inputs.count
-
-        resultTower.tailForWeb = web
-        inputs.forEach {$0.tower.web = web}
-
+        onLoad()
 
 		name = "f"
 		addInput()
-		
-		onLoad()
 	}
 	public required init(attributes: [String:Any], parent: Domain?) {
 		super.init(attributes: attributes, parent: parent)
@@ -62,11 +53,8 @@ public final class Mech: Aexel, TowerDelegate, Mechlike {
 	}
 	public func addInput() {
 		var name: String = ""
-		if inputs.count < 4 {
-			name = ["x", "y", "z", "w"][inputs.count]
-		} else {
-			name = "p\(inputs.count+1)"
-		}
+        if inputs.count < 4 { name = ["x", "y", "z", "w"][inputs.count] }
+        else { name = "p\(inputs.count+1)" }
 		let input = Input(mech: self, name: name)
         input.no = inputs.count+1
 		add(input: input)
@@ -85,7 +73,7 @@ public final class Mech: Aexel, TowerDelegate, Mechlike {
 		inputs.forEach {AEMemorySetValue(memory, $0.tower.index, 0)}
 		AERecipeRelease(recipe)
 		recipe = Math.compile(mech: self, memory: memory)
-		AERecipeSignature(recipe, AEMemoryIndexForName(memory, key.toInt8()), UInt8(inputs.count))
+		AERecipeSignature(recipe, AEMemoryIndexForName(memory, "\(key).result".toInt8()), UInt8(inputs.count))
 		
 		for (i, input) in inputs.enumerated() {
 			let index = AEMemoryIndexForName(memory, "\(key).\(input.key)".toInt8())
@@ -104,17 +92,17 @@ public final class Mech: Aexel, TowerDelegate, Mechlike {
 	
 // Events ==========================================================================================
 	override public func onLoad() {
-//        resultChain.tower = aether.createTower(tag: "\(key).result", delegate: resultChain)
-//
-//        tower = aether.createTower(tag: key, delegate: self)
-//        tower.mechlikeToken?.params = inputs.count
-//
-//		resultTower.tailForWeb = web
-//		inputs.forEach {$0.tower.web = web}
+        resultChain.tower = aether.createTower(tag: "\(key).result", towerDelegate: resultChain)
+        
+        tower = aether.createMechlikeTower(tag: key, towerDelegate: self, tokenDelegate: self)
+        tower.mechlikeToken?.params = inputs.count
+        
+		resultTower.tailForWeb = web
+		inputs.forEach {$0.tower.web = web}
 	}
 	override public func onRemoved() {
-		aether.deregister(tower: tower)
-		inputs.forEach { aether.deregister(tower: $0.tower) }
+//		aether.deregister(tower: tower)
+//		inputs.forEach { aether.deregister(tower: $0.tower) }
 	}
 	
 // Aexel ===========================================================================================
@@ -130,15 +118,14 @@ public final class Mech: Aexel, TowerDelegate, Mechlike {
 				i += 1
 			}
 			super.name = newName
-//            mechlikeToken.label = "\(name)("
 			
 			if recipe != nil { AERecipeSetName(recipe, name.toInt8()) }
 		}
-		get {return super.name}
+		get { super.name }
 	}
 	public override var towers: Set<Tower> {
 		var towers = Set<Tower>()
-		inputs.forEach {towers.insert($0.tower)}
+		inputs.forEach { towers.insert($0.tower) }
 		return towers.union([resultTower, tower])
 	}
 	
@@ -171,4 +158,7 @@ public final class Mech: Aexel, TowerDelegate, Mechlike {
 		AEMemoryFix(tower.memory, AEMemoryIndexForName(aether.memory, variableToken.tag.toInt8()))
 		tower.variableToken.def = RecipeDef.def
 	}
+    
+// VariableTokenDelegate ===========================================================================
+    var alias: String? { "\(name)" }
 }

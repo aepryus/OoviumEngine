@@ -94,12 +94,6 @@ enum ParseError: Error {
 
 public final class Chain: NSObject, Packable, TowerDelegate {
 	public var tokens: [Token] = []
-//	public var label: String? = nil {
-//		didSet {
-//			guard let tower = tower else { return }
-//			tower.variableToken.label = label ?? tower.obje.display
-//		}
-//	}
 	public var tower: Tower!
 	
 	public private(set) var editing: Bool = false
@@ -144,7 +138,7 @@ public final class Chain: NSObject, Packable, TowerDelegate {
 		var param = [Int]()
 		
 		for token in tokens {
-			if token.code == .fn {
+			if token.code == .fn || token.code == .ml {
 				param.append(1)
 
 			} else if token.code == .sp {
@@ -165,7 +159,7 @@ public final class Chain: NSObject, Packable, TowerDelegate {
 	private var noOfParams: Int {
 		var lefts: [Token] = []
 		for token in tokens {
-			if let token = token as? FunctionToken {
+			if token is FunctionToken || token is MechlikeToken {
 				lefts.append(token)
 			} else if let token = token as? SeparatorToken {
 				if token.tag == "(" {
@@ -176,6 +170,7 @@ public final class Chain: NSObject, Packable, TowerDelegate {
 			}
 		}
 		if let token = lefts.last as? FunctionToken { return token.params }
+        if let token = lefts.last as? MechlikeToken { return token.params }
 		return lefts.last != nil ? 1 : 0
 	}
 	private var lastIsOperator: Bool {
@@ -191,16 +186,9 @@ public final class Chain: NSObject, Packable, TowerDelegate {
 		return currentParam == noOfParams
 	}
 	private func parenToken() -> Token? {
-		if lastIsOperator || isNewSection {
-			return Token.leftParen
-
-		} else if isComplete {
-			return Token.rightParen
-			
-		} else if noOfParams > 0 {
-			return Token.comma
-		}
-		
+		if lastIsOperator || isNewSection { return Token.leftParen }
+        else if isComplete { return Token.rightParen }
+        else if noOfParams > 0 { return Token.comma }
 		return nil
 	}
 	private func minusToken() -> Token {
@@ -228,7 +216,7 @@ public final class Chain: NSObject, Packable, TowerDelegate {
 		var keys: [String] = []
 		var i: Int = 0
 		while i < natural.count {
-			var tag: String = "\(natural[i])"
+            var tag: String = Token.aliases["\(natural[i])"] ?? "\(natural[i])"
             let code: Token.Code
             if natural[i].isWholeNumber { code = .dg }
 			else if natural[i] == "!" { code = .un }
@@ -532,18 +520,21 @@ public final class Chain: NSObject, Packable, TowerDelegate {
 			try parseTokens(tokens: tokens, start: i, stop: e)
 			if let unary = unary { try apply(token: unary) }
 			return 2 + e - i + (unary != nil ? 1 : 0)
-		} else if let token = token as? FunctionToken {
-			i += 1
-			let e = try findEnd(i)
-			try parseTokens(tokens: tokens, start: i, stop: e)
-//			if let recipe = ""/*token.recipe*/ {
-//				variables.append(recipe)
-//				addMorph(Morph.recipe.rawValue)
-//			} else {
-				try apply(token: token)
-//			}
-			if let unary = unary { try apply(token: unary) }
-			return 2 + e - i + (unary != nil ? 1 : 0)
+        } else if let token = token as? FunctionToken {
+            i += 1
+            let e = try findEnd(i)
+            try parseTokens(tokens: tokens, start: i, stop: e)
+            try apply(token: token)
+            if let unary = unary { try apply(token: unary) }
+            return 2 + e - i + (unary != nil ? 1 : 0)
+        } else if let token = token as? MechlikeToken {
+            i += 1
+            let e = try findEnd(i)
+            try parseTokens(tokens: tokens, start: i, stop: e)
+            variables.append(token.tag)
+            addMorph(Morph.recipe.rawValue)
+            if let unary = unary { try apply(token: unary) }
+            return 2 + e - i + (unary != nil ? 1 : 0)
 		} else if token == .bra {
 			i += 1
 			let tokens: [Token] = try parseChain(tokens: tokens, i: i)

@@ -9,13 +9,13 @@
 import Acheron
 import Foundation
 
-public final class Input: Domain, TowerDelegate {
+public final class Input: Domain, TowerDelegate, VariableTokenDelegate {
     @objc public dynamic var name: String = ""
     @objc public dynamic var no: Int = 0
     
-	var def: Def = RealDef.def
+//	var def: Def = RealDef.def
 	
-	public lazy var tower: Tower = { mech.aether.createTower(tag: "\(mech.key).\(key)", towerDelegate: self) }()
+    public lazy var tower: Tower = { mech.aether.createTower(tag: "\(mech.key).\(key)", towerDelegate: self, tokenDelegate: self) }()
 	
 	init(mech: Mech, name: String) {
 		self.name = name
@@ -23,7 +23,6 @@ public final class Input: Domain, TowerDelegate {
 		parent = mech
 	}
 	required init(attributes: [String : Any], parent: Domain?) {
-//		let name: String = attributes["name"] as! String
 		super.init(attributes: attributes, parent: parent)
 	}
 	
@@ -43,4 +42,7 @@ public final class Input: Domain, TowerDelegate {
 	
 // TowerDelegate ===================================================================================
 	func renderDisplay(tower: Tower) -> String { name }
+    
+// VariableTokenDelegate ===========================================================================
+    public var alias: String? { name }
 }

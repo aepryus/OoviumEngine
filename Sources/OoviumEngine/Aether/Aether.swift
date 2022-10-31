@@ -122,24 +122,25 @@ import Foundation
         tokens[token.key] = token
         return Tower(aether: self, token: token, delegate: towerDelegate)
     }
+    func createMechlikeTower(tag: String, towerDelegate: TowerDelegate, tokenDelegate: VariableTokenDelegate? = nil) -> Tower {
+        let variableToken = VariableToken(tag: tag, delegate: tokenDelegate)
+        tokens[variableToken.key] = variableToken
+        let tower = Tower(aether: self, token: variableToken, delegate: towerDelegate)
+        let mechlikeToken = MechlikeToken(tower: tower, tag: tag, delegate: tokenDelegate)
+        tokens[mechlikeToken.key] = mechlikeToken
+        tower.mechlikeToken = mechlikeToken
+        return tower
+    }
     func destroyTower(_ tower: Tower) {
     }
-
-// Tokens ==========================================================================================
-    public func mechlikeToken(tower: Tower? = nil, tag: String, label: String? = nil, recipe: String? = nil) -> MechlikeToken {
-        return tokens["\(Token.Code.ml):\(tag)"] as? MechlikeToken ?? {
-            let token = MechlikeToken(tower: tower, tag: tag, label: label, recipe: recipe)
-            tokens[token.key] = token
-			return token
-		}()
-	}
-
+    
 // Functions =======================================================================================
 	public func functionExists(name: String) -> Bool { aexels.first { $0 is Mechlike && $0.name == name } != nil }
 
 // Events ==========================================================================================
 	override public func onLoad() {
         func buildTokens(chain: Chain) {
+            guard chain.loadedKeys != nil else { return }
             func token(key: String) -> Token {
                 if let token: Token = tokens[key] ?? Token.token(key: key) { return token }
                 return Token.zero
@@ -149,10 +150,10 @@ import Foundation
             chain.loadedKeys = nil
         }
 
-		aexels.forEach {
-			guard $0.no > nos.get(key: $0.type) else { return }
-			nos.set(key: $0.type, to: $0.no)
-		}
+        aexels.forEach {
+            guard $0.no > nos.get(key: $0.type) else { return }
+            nos.set(key: $0.type, to: $0.no)
+        }
         
         aexels.flatMap({ $0.towers }).compactMap({ $0.delegate as? Chain }).forEach { buildTokens(chain: $0) }
         aexels.compactMap({ $0 as? Grid }).flatMap({ $0.columns }).forEach { buildTokens(chain: $0.chain) }

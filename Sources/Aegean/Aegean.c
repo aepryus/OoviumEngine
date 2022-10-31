@@ -114,7 +114,7 @@ void AEStackPrint(Stack* stack) {
 	printf("   sp: %d\n", stack->sp);
 	printf("   sn: %d\n", stack->sn);
 	printf("   stack:\n");
-	for (int i=0;i<stack->sn;i++) {
+	for (int i=0;i<stack->sp;i++) {
 		printf("    [%2d][%s]\n", i, Oovium_objToString(stack->stack[i]));
 	}
 	printf("[ =========================== ]\n\n");
