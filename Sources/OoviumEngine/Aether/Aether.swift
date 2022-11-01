@@ -160,8 +160,6 @@ import Foundation
 
         prepare()
 		evaluate()
-        
-        AEMemoryPrint(memory)
 	}
 	
 // Domain ==========================================================================================

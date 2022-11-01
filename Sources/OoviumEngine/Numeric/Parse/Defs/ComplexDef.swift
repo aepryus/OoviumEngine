@@ -24,15 +24,16 @@ public final class ComplexDef: Def {
 		let i: Double = obj.b.x
 		
 		let rt: String = Def.normalFormatter.string(from: NSNumber(value: r))!
-		if rt != "0" {sb += rt}
+        let it: String = Def.normalFormatter.string(from: NSNumber(value: abs(i)))!
+
+        if rt != "0" || it == "0" { sb += rt }
 		
-		let it: String = Def.normalFormatter.string(from: NSNumber(value: abs(i)))!
 		if rt != "0" && it != "0" {
-			if i < 0 {sb += "\u{2212}"}
-			else {sb += "+"}
+			if i < 0 { sb += "\u{2212}" }
+			else { sb += "+" }
 		}
 		if it != "0" {
-			if it != "1" {sb += it}
+			if it != "1" { sb += it }
 			sb += "i"
 		}
 
