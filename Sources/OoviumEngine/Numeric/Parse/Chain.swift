@@ -179,7 +179,7 @@ public final class Chain: NSObject, Packable, TowerDelegate {
 	}
 	private var isNewSection: Bool {
 		guard let last = tokens.last else { return true }
-        return last.tag == "(" || last.tag == "[" || last.tag == "," || last.code == .fn || last.code == .op || last.code == .ml
+        return last.tag == "(" || last.tag == "[" || last.tag == "," || last.code == .fn || last.code == .ml || last.code == .op
 	}
 	private var isComplete: Bool {
 		guard noOfParams > 0 else { return false }
@@ -245,7 +245,7 @@ public final class Chain: NSObject, Packable, TowerDelegate {
 				}
 			}
 			keys.append("\(code):\(tag)")
-			isStart = (code == .fn || ["(", "[", ","].contains(natural[i]))
+            isStart = (code == .fn || code == .ml || ["(", "[", ","].contains(natural[i]))
 			i += 1
 		}
 		return keys
@@ -263,6 +263,7 @@ public final class Chain: NSObject, Packable, TowerDelegate {
 		editing = true
 		cursor = tokens.count
         tower.listener?.onTriggered()
+        AETaskRelease(tower.task)
         tower.task = AETaskCreateNull()
 	}
 	public func ok() {
@@ -306,8 +307,7 @@ public final class Chain: NSObject, Packable, TowerDelegate {
 		guard cursor > 0 else { return nil }
 		cursor -= 1
 		let token = tokens.remove(at: cursor)
-        if let this = tower, let towerToken = token as? TowerToken {
-            let that: Tower = towerToken.tower
+        if let this: Tower = tower, let that: Tower = (token as? TowerToken)?.tower {
 			if !tokens.contains(token) {that.detach(this)}
 		}
 		return token
@@ -447,7 +447,7 @@ public final class Chain: NSObject, Packable, TowerDelegate {
 		
 		while p != 0 && i<tokens.count {
 			let token = tokens[i]
-			if tokens[i] === Token.leftParen || tokens[i].code == .fn { p += 1 }
+			if tokens[i] === Token.leftParen || tokens[i].code == .fn || tokens[i].code == .ml { p += 1 }
 			else if token === Token.rightParen { p -= 1 }
 			i += 1
 		}

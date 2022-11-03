@@ -17,13 +17,9 @@ import Foundation
 	case left, center, right
 }
 
-public final class Column: Domain, TowerDelegate {
+public final class Column: Domain, TowerDelegate, VariableTokenDelegate {
 	@objc public var no: Int = 0
-	@objc public var name: String = "" {
-		didSet {
-//			chain.label = name
-		}
-	}
+	@objc public var name: String = ""
 	var def: Def = RealDef.def
 	@objc public var chain: Chain = Chain()
 	@objc public var aggregate: OOAggregate = .none
@@ -38,7 +34,7 @@ public final class Column: Domain, TowerDelegate {
 	
 	fileprivate lazy var header: Header = Header()
     
-    public lazy var tower: Tower = grid.aether.createTower(tag: "\(grid.key).Co\(no)", towerDelegate: header)
+    public lazy var tower: Tower = grid.aether.createTower(tag: "\(grid.key).Co\(no)", towerDelegate: header, tokenDelegate: self)
     public lazy var footerTower: Tower = grid.aether.createTower(tag: "\(grid.key).Ft\(no)", towerDelegate: self)
 	
 	public var grid: Grid { parent as! Grid }
@@ -138,9 +134,7 @@ public final class Column: Domain, TowerDelegate {
 	}
 	
 	// Domain ==========================================================================================
-	override public var properties: [String] {
-		return super.properties + ["no", "name", "chain", "aggregate", "justify", "format"]
-	}
+	override public var properties: [String] { super.properties + ["no", "name", "chain", "aggregate", "justify", "format"] }
 	
 	
 	// Compiling =======================================================================================
@@ -304,9 +298,18 @@ public final class Column: Domain, TowerDelegate {
 	func executeWorker(tower: Tower) {
 		AETaskExecute(tower.task, tower.memory)
 		AEMemoryFix(tower.memory, tower.index)
-//		tower.variableToken.value = tower.obje.display
 		tower.variableToken.def = tower.obje.def
 	}
+    
+// VariableTokenDelegate ===========================================================================
+    public var alias: String? { name }
 }
 
-fileprivate class Header: TowerDelegate {}
+fileprivate class Header: TowerDelegate {
+    func buildUpstream(tower: Tower) {}
+    func renderDisplay(tower: Tower) -> String { "---" }
+    func buildWorker(tower: Tower) {}
+    func workerCompleted(tower: Tower, askedBy: Tower) -> Bool { true }
+    func resetWorker(tower: Tower) {}
+    func executeWorker(tower: Tower) {}
+}

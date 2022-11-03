@@ -235,12 +235,12 @@ public class Migrate {
 								columnArray.append(jsonAtts2)
 								colIDtoColNo[jsonAtts2["no"] as! Int] = colNo
 								colNo += 1
-							} else if xmlAtts2["type"] as! String == "cell" {
+                            } else if xmlAtts2["type"] as! String == "cell", let colNo: Int = colIDtoColNo[Int(xmlAtts2["colID"] as! String)!] {
 								var jsonAtts2: [String:Any] = [:]
 								jsonAtts2["iden"] = UUID().uuidString
 								jsonAtts2["no"] = Int(xmlAtts2["cellID"] as! String)
-								jsonAtts2["type"] = "cell"
-								jsonAtts2["colNo"] = colIDtoColNo[Int(xmlAtts2["colID"] as! String)!]!
+								jsonAtts2["type"] = "cell"                                
+								jsonAtts2["colNo"] = colNo
 								jsonAtts2["rowNo"] = Int(xmlAtts2["rowNo"] as! String)
 								jsonAtts2["chain"] = migrateChainFromXML(xmlAtts2["tokens"], colToGrid: colToGrid, cellToGrid: cellToGrid)
 								cellArray.append(jsonAtts2)
@@ -403,9 +403,6 @@ public class Migrate {
 
         if sb.count > 0 { sb.removeLast() }
         
-        print("A> [\(tokensString)]")
-        print("B> [\(sb)]\n")
-
         return sb
     }
 	public static func migrateAether(json: String) -> String {
