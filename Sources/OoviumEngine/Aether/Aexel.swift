@@ -14,14 +14,11 @@ public class Aexel: Domain {
 	@objc public var name: String = ""
 	@objc public var x: Double = 0.0
 	@objc public var y: Double = 0.0
-	
-	public var aether: Aether {
-		return parent as! Aether
-	}
 
-	public var towers: Set<Tower> {
-		return []
-	}
+    var code: String { fatalError() }
+    var key: String { "\(code)\(no)" }
+	public var aether: Aether { parent as! Aether }
+	public var towers: Set<Tower> { [] }
 
 // Inits ===========================================================================================
 	public required init(no: Int, at: V2, aether: Aether) {
@@ -35,7 +32,5 @@ public class Aexel: Domain {
 	}
 
 // Domain ==========================================================================================
-	override open var properties: [String] {
-		return super.properties + ["no" ,"name", "x", "y"]
-	}
+	override open var properties: [String] { super.properties + ["no" ,"name", "x", "y"] }
 }

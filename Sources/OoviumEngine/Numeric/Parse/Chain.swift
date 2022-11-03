@@ -94,12 +94,6 @@ enum ParseError: Error {
 
 public final class Chain: NSObject, Packable, TowerDelegate {
 	public var tokens: [Token] = []
-	public var label: String? = nil {
-		didSet {
-			guard let tower = tower else { return }
-			tower.variableToken.label = label ?? tower.obje.display
-		}
-	}
 	public var tower: Tower!
 	
 	public private(set) var editing: Bool = false
@@ -135,14 +129,19 @@ public final class Chain: NSObject, Packable, TowerDelegate {
 	}
 	
 // Private =========================================================================================
+    private func buildTokens() {
+        tokens = loadedKeys?.map({ Token.token(key: $0)! }) ?? []
+        loadedKeys = nil
+    }
+    
 	private var currentParam: Int {
 		var param = [Int]()
 		
 		for token in tokens {
-			if token.type == .function {
+			if token.code == .fn || token.code == .ml {
 				param.append(1)
 
-			} else if token.type == .separator {
+			} else if token.code == .sp {
 				if token.tag == "(" {
 					param.append(1)
 
@@ -160,7 +159,7 @@ public final class Chain: NSObject, Packable, TowerDelegate {
 	private var noOfParams: Int {
 		var lefts: [Token] = []
 		for token in tokens {
-			if let token = token as? FunctionToken {
+			if token is FunctionToken || token is MechlikeToken {
 				lefts.append(token)
 			} else if let token = token as? SeparatorToken {
 				if token.tag == "(" {
@@ -171,31 +170,25 @@ public final class Chain: NSObject, Packable, TowerDelegate {
 			}
 		}
 		if let token = lefts.last as? FunctionToken { return token.params }
+        if let token = lefts.last as? MechlikeToken { return token.params }
 		return lefts.last != nil ? 1 : 0
 	}
 	private var lastIsOperator: Bool {
 		guard let last = tokens.last else {return true}
-		return last.type == .`operator`
+		return last.code == .op
 	}
 	private var isNewSection: Bool {
 		guard let last = tokens.last else { return true }
-        return last.tag == "(" || last.tag == "[" || last.tag == "," || last.type == .function || last.type == .operator
+        return last.tag == "(" || last.tag == "[" || last.tag == "," || last.code == .fn || last.code == .ml || last.code == .op
 	}
 	private var isComplete: Bool {
 		guard noOfParams > 0 else { return false }
 		return currentParam == noOfParams
 	}
 	private func parenToken() -> Token? {
-		if lastIsOperator || isNewSection {
-			return Token.leftParen
-
-		} else if isComplete {
-			return Token.rightParen
-			
-		} else if noOfParams > 0 {
-			return Token.comma
-		}
-		
+		if lastIsOperator || isNewSection { return Token.leftParen }
+        else if isComplete { return Token.rightParen }
+        else if noOfParams > 0 { return Token.comma }
 		return nil
 	}
 	private func minusToken() -> Token {
@@ -223,26 +216,26 @@ public final class Chain: NSObject, Packable, TowerDelegate {
 		var keys: [String] = []
 		var i: Int = 0
 		while i < natural.count {
-			var tag: String = "\(natural[i])"
-			let type: TokenType
-			if natural[i].isWholeNumber { type = .digit }
-			else if natural[i] == "!" { type = .unary }
-			else if natural[i] == "-" && isStart { type = .unary }
-			else if ["+", "-", "*", "/", "^"].contains(natural[i]) { type = .operator }
-			else if ["(", ",", ")"].contains(natural[i]) { type = .separator }
-			else if ["e", "i", "π"].contains(natural[i]) { type = .constant }
+            var tag: String = Token.aliases["\(natural[i])"] ?? "\(natural[i])"
+            let code: Token.Code
+            if natural[i].isWholeNumber { code = .dg }
+			else if natural[i] == "!" { code = .un }
+			else if natural[i] == "-" && isStart { code = .un }
+			else if ["+", "-", "*", "/", "^"].contains(natural[i]) { code = .op }
+			else if ["(", ",", ")"].contains(natural[i]) { code = .sp }
+			else if ["e", "i", "π"].contains(natural[i]) { code = .cn }
 			else if natural[i] == "\"" {
-				keys.append(Token.quote.key)
+                keys.append("\(Token.Code.sp):\"")
 				i += 1
 				let end: Int = natural.loc(of: "\"", after: i)!
 				while i < end {
-					keys.append(Token.characterToken(tag: "\(natural[i])").key)
+                    keys.append("\(Token.Code.ch):\(natural[i])")
 					i += 1
 				}
-				type = .separator
+				code = .sp
 				tag = "\""
 			} else {
-				type = .function
+				code = .fn
 				if let left = natural.loc(of: "(", after: i) {
 					let end = left - 1
 					tag = natural[i...end]
@@ -251,8 +244,8 @@ public final class Chain: NSObject, Packable, TowerDelegate {
 					return []
 				}
 			}
-			keys.append("\(type.rawValue):\(tag)")
-			isStart = (type == .function || ["(", "[", ","].contains(natural[i]))
+			keys.append("\(code):\(tag)")
+            isStart = (code == .fn || code == .ml || ["(", "[", ","].contains(natural[i]))
 			i += 1
 		}
 		return keys
@@ -270,6 +263,7 @@ public final class Chain: NSObject, Packable, TowerDelegate {
 		editing = true
 		cursor = tokens.count
         tower.listener?.onTriggered()
+        AETaskRelease(tower.task)
         tower.task = AETaskCreateNull()
 	}
 	public func ok() {
@@ -280,7 +274,8 @@ public final class Chain: NSObject, Packable, TowerDelegate {
 	
 	public func attemptToPost(token: Token) -> Bool {
 		
-        if let this = tower, let towerToken = token as? TowerToken, let that = tower.tower(towerToken: towerToken) {
+        if let this = tower, let towerToken = token as? TowerToken {
+            let that: Tower = towerToken.tower
 			if this.downstream(contains: that) { return false }
 			if let thisWeb = this.web ?? this.tailForWeb, let thatWeb = that.web {
 				if thisWeb !== thatWeb { return false }
@@ -312,7 +307,7 @@ public final class Chain: NSObject, Packable, TowerDelegate {
 		guard cursor > 0 else { return nil }
 		cursor -= 1
 		let token = tokens.remove(at: cursor)
-        if let this = tower, let towerToken = token as? TowerToken, let that = tower.tower(towerToken: towerToken) {
+        if let this: Tower = tower, let that: Tower = (token as? TowerToken)?.tower {
 			if !tokens.contains(token) {that.detach(this)}
 		}
 		return token
@@ -320,7 +315,8 @@ public final class Chain: NSObject, Packable, TowerDelegate {
 	public func delete() -> Token? {
 		guard cursor < tokens.count else { return nil }
 		let token = tokens.remove(at: cursor)
-        if let this = tower, let towerToken = token as? TowerToken, let that = tower.tower(towerToken: towerToken) {
+        if let this = tower, let towerToken = token as? TowerToken {
+            let that: Tower = towerToken.tower
 			if !tokens.contains(token) {that.detach(this)}
 		}
 		return token
@@ -364,7 +360,7 @@ public final class Chain: NSObject, Packable, TowerDelegate {
 		let keys = tokens.components(separatedBy: ";")
 		loadedKeys = keys
 		cursor = keys.count
-		Token.buildTokens(chain: self)
+        buildTokens()
 	}
 	public func replaceWith(natural: String) {
 		self.loadedKeys = Chain.convert(natural: natural)
@@ -441,7 +437,7 @@ public final class Chain: NSObject, Packable, TowerDelegate {
 				case .gate:			try ops.gOp(token)
 			}
 		}
-		else if tokens[i].type == .separator { try ops.end() }
+		else if tokens[i].code == .sp { try ops.end() }
 		else { throw ParseError.general }
 	}
 	
@@ -451,8 +447,8 @@ public final class Chain: NSObject, Packable, TowerDelegate {
 		
 		while p != 0 && i<tokens.count {
 			let token = tokens[i]
-			if tokens[i] === Token.leftParen || tokens[i].type == .function {p += 1}
-			else if token === Token.rightParen {p -= 1}
+			if tokens[i] === Token.leftParen || tokens[i].code == .fn || tokens[i].code == .ml { p += 1 }
+			else if token === Token.rightParen { p -= 1 }
 			i += 1
 		}
         if p != 0 { throw ParseError.general }
@@ -462,7 +458,7 @@ public final class Chain: NSObject, Packable, TowerDelegate {
 		var sb = String()
 		for i in i..<tokens.count {
 			let token = tokens[i]
-			if token.type != .digit {break}
+			if token.code != .dg { break }
 			sb.append(token.tag)
 		}
 		return sb;
@@ -512,7 +508,7 @@ public final class Chain: NSObject, Packable, TowerDelegate {
 			token = tokens[i]
 		}
 		
-		if token.type == .digit {
+		if token.code == .dg {
 			let n: String = parseNumber(tokens:tokens, i:i)
 			let x: Double = Double(n) ?? Double.nan
 			try addConstant(Obje(AEObjReal(x)));
@@ -524,18 +520,21 @@ public final class Chain: NSObject, Packable, TowerDelegate {
 			try parseTokens(tokens: tokens, start: i, stop: e)
 			if let unary = unary { try apply(token: unary) }
 			return 2 + e - i + (unary != nil ? 1 : 0)
-		} else if let token = token as? FunctionToken {
-			i += 1
-			let e = try findEnd(i)
-			try parseTokens(tokens: tokens, start: i, stop: e)
-			if let recipe = token.recipe {
-				variables.append(recipe)
-				addMorph(Morph.recipe.rawValue)
-			} else {
-				try apply(token: token)
-			}
-			if let unary = unary { try apply(token: unary) }
-			return 2 + e - i + (unary != nil ? 1 : 0)
+        } else if let token = token as? FunctionToken {
+            i += 1
+            let e = try findEnd(i)
+            try parseTokens(tokens: tokens, start: i, stop: e)
+            try apply(token: token)
+            if let unary = unary { try apply(token: unary) }
+            return 2 + e - i + (unary != nil ? 1 : 0)
+        } else if let token = token as? MechlikeToken {
+            i += 1
+            let e = try findEnd(i)
+            try parseTokens(tokens: tokens, start: i, stop: e)
+            variables.append(token.tag)
+            addMorph(Morph.recipe.rawValue)
+            if let unary = unary { try apply(token: unary) }
+            return 2 + e - i + (unary != nil ? 1 : 0)
 		} else if token == .bra {
 			i += 1
 			let tokens: [Token] = try parseChain(tokens: tokens, i: i)
@@ -553,7 +552,15 @@ public final class Chain: NSObject, Packable, TowerDelegate {
 			if let unary = unary { try apply(token: unary) }
 			return 1 + (unary != nil ? 1 : 0)
 			
-		} else if token.type == .constant {
+        } else if let token = token as? KToken {
+            let name = token.tag
+            let type = "var;num;"
+            variables.append(name)
+            try addMorph(Math.morph(key: type))
+            if let unary = unary { try apply(token: unary) }
+            return 1 + (unary != nil ? 1 : 0)
+            
+		} else if token.code == .cn {
 
 			if token == Token.i {
 				try addConstant(Obje.i)
@@ -612,7 +619,7 @@ public final class Chain: NSObject, Packable, TowerDelegate {
 // Calculate =======================================================================================
 	public func calculate() -> Obj? {
 
-		if loadedKeys != nil { Token.buildTokens(chain: self); loadedKeys = nil }
+		if loadedKeys != nil { buildTokens(); loadedKeys = nil }
 		do {
 			try parse(tokens: self.tokens)
 		} catch {
@@ -675,7 +682,6 @@ public final class Chain: NSObject, Packable, TowerDelegate {
 		let cn = constants.count
 		let c: UnsafeMutablePointer<Obj> = UnsafeMutablePointer<Obj>.allocate(capacity: cn)
 		for i in 0..<cn {
-//			c[i] = AEObjMirror(constants[i].obj)
 			c[i] = constants[i].obj
 		}
 		
@@ -697,7 +703,7 @@ public final class Chain: NSObject, Packable, TowerDelegate {
 // TowerDelegate ===================================================================================
 	func buildUpstream(tower: Tower) {
 		tokens.compactMap { $0 as? TowerToken }.forEach {
-            guard let upstream: Tower = tower.tower(towerToken: $0) else { return }
+            let upstream: Tower = $0.tower
 			upstream.attach(tower)
 		}
 	}
@@ -706,20 +712,19 @@ public final class Chain: NSObject, Packable, TowerDelegate {
 		if tower.variableToken.status == .invalid { return "INVALID" }
 		if tower.variableToken.status == .blocked { return "BLOCKED" }
 		
-		if let label = label { return label }
-		else if tokens.count == 1 { return description }
-		else { return "(\(description))" }
+        if let label = tower.variableToken.alias { return label }
+        return description
 	}
 	func buildWorker(tower: Tower) {
 		let lambda: UnsafeMutablePointer<Lambda>? = compile(name: tower.name)
 		tower.task = lambda != nil ? AETaskCreateLambda(lambda) : AETaskCreateNull()
-		AETaskSetLabels(tower.task, tower.variableToken.tag.toInt8(), "\(label ?? tower.variableToken.tag) = \(tokensDisplay)".toInt8())
+        AETaskSetLabels(tower.task, tower.variableToken.tag.toInt8(), "\(tower.variableToken.alias ?? tower.variableToken.tag) = \(tokensDisplay)".toInt8())
 	}
 	func workerCompleted(tower: Tower, askedBy: Tower) -> Bool {
         AEMemoryLoaded(tower.memory, tower.index) != 0
     }
     func workerBlocked(tower: Tower) -> Bool {
-        tokens.contains { $0.status != .ok }
+        tokens.compactMap({ $0 as? TowerToken }).contains { $0.status != .ok }
     }
 	func resetWorker(tower: Tower) {
         AEMemoryUnfix(tower.memory, tower.index)
@@ -727,7 +732,6 @@ public final class Chain: NSObject, Packable, TowerDelegate {
 	func executeWorker(tower: Tower) {
 		AETaskExecute(tower.task, tower.memory)
 		AEMemoryFix(tower.memory, tower.index)
-		tower.variableToken.label = label ?? tower.obje.display
 		tower.variableToken.def = tower.obje.def
 	}
 

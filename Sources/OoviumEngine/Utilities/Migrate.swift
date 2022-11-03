@@ -9,8 +9,37 @@
 import Acheron
 import Foundation
 
+fileprivate struct Subs {
+    let from: String
+    let to: String
+}
+
+public extension Dictionary where Key == String {
+    func modify(condition: (Self)->(Bool), action: (Self, Int)->(Self), no: Int = 0) -> Self {
+        var result: Self = [:]
+        if condition(self) { result = action(self, no) }
+        else {
+            keys.forEach { (key: String) in
+                if let subAtts = self[key] as? [String:Value] { result[key] = subAtts.modify(condition: condition, action: action) as? Value }
+                else if let subArray = self[key] as? [[String:Value]] {
+                    var subResult: [[String:Value]] = []
+                    var no: Int = 1
+                    subArray.forEach {
+                        subResult.append($0.modify(condition: condition, action: action, no: no))
+                        no += 1
+                    }
+                    result[key] = subResult as? Value
+                } else {
+                    result[key] = self[key]
+                }
+            }
+        }
+        return result
+    }
+}
+
 public class Migrate {
-	public static func migrateChain(_ from: Any?, colToGrid: [Int:Int], cellToGrid: [Int:Int]) -> String? {
+	public static func migrateChainFromXML(_ from: Any?, colToGrid: [Int:Int], cellToGrid: [Int:Int]) -> String? {
 		guard let keys = (from as? String)?.split(separator: ";") else {return nil}
 		var sb: String = ""
 		for _key in keys {
@@ -28,22 +57,25 @@ public class Migrate {
 				case 8:			sb += "5:"
 				default:		sb += ""
 			}
-			if type == 4 && tag.loc(of: ".") == nil && tag != "k" && tag != "π" && tag != "e" {
-				let i: Int = tag.count-5
-				let prefix: String = tag[..<i]
-				let no: Int = Int(tag[i...])!
-				switch prefix {
-					case "I":	sb += "Ob_\(no)"
-					case "CB":	sb += "Cr_\(no)"
-					case "IF":	sb += "GtR_\(no)"
-					case "L":	sb += "Gr\(cellToGrid[no]!).Ce\(no)"
-					case "C":	sb += "Gr\(colToGrid[no]!).Co\(no)"
-					case "F":	sb += "Gr\(colToGrid[no]!).Ft\(no)"
-					default:	fatalError()
-				}
-			} else if type == TokenType.operator.rawValue && tag == "&" {
+            if type == 4 && tag.loc(of: ".") == nil && tag != "k" && tag != "π" && tag != "e" {
+                let i: Int = tag.count-5
+                let prefix: String = tag[..<i]
+                let no: Int = Int(tag[i...])!
+                switch prefix {
+                    case "I":	sb += "Ob_\(no)"
+                    case "CB":	sb += "Cr_\(no)"
+                    case "IF":	sb += "GtR_\(no)"
+                    case "L":	sb += "Gr\(cellToGrid[no]!).Ce\(no)"
+                    case "C":	sb += "Gr\(colToGrid[no]!).Co\(no)"
+                    case "F":	sb += "Gr\(colToGrid[no]!).Ft\(no)"
+                    default:	fatalError()
+                }
+            } else if type == 4 && ["π", "e", "i"].contains(tag) {
+                sb.removeLast(2)
+                sb += "6:\(tag)"
+			} else if type == 1 && tag == "&" {
 				sb += "&&"
-			} else if type == TokenType.operator.rawValue && tag == "|" {
+			} else if type == 1 && tag == "|" {
 				sb += "||"
 			} else {
 				sb += tag
@@ -99,7 +131,7 @@ public class Migrate {
 					jsonAtts["label"] = xmlAtts["name"]
 					jsonAtts["x"] = xmlAtts["x"]
 					jsonAtts["y"] = xmlAtts["y"]
-					jsonAtts["chain"] = migrateChain(xmlAtts["tokens"], colToGrid: colToGrid, cellToGrid: cellToGrid)
+					jsonAtts["chain"] = migrateChainFromXML(xmlAtts["tokens"], colToGrid: colToGrid, cellToGrid: cellToGrid)
 					aexelArray.append(jsonAtts)
 				}
 				
@@ -111,9 +143,9 @@ public class Migrate {
 					jsonAtts["name"] = xmlAtts["name"]
 					jsonAtts["x"] = xmlAtts["x"]
 					jsonAtts["y"] = xmlAtts["y"]
-					jsonAtts["ifChain"] = migrateChain(xmlAtts["ifString"], colToGrid: colToGrid, cellToGrid: cellToGrid)
-					jsonAtts["thenChain"] = migrateChain(xmlAtts["thenString"], colToGrid: colToGrid, cellToGrid: cellToGrid)
-					jsonAtts["elseChain"] = migrateChain(xmlAtts["elseString"], colToGrid: colToGrid, cellToGrid: cellToGrid)
+					jsonAtts["ifChain"] = migrateChainFromXML(xmlAtts["ifString"], colToGrid: colToGrid, cellToGrid: cellToGrid)
+					jsonAtts["thenChain"] = migrateChainFromXML(xmlAtts["thenString"], colToGrid: colToGrid, cellToGrid: cellToGrid)
+					jsonAtts["elseChain"] = migrateChainFromXML(xmlAtts["elseString"], colToGrid: colToGrid, cellToGrid: cellToGrid)
 					aexelArray.append(jsonAtts)
 				}
 				
@@ -125,7 +157,7 @@ public class Migrate {
 					jsonAtts["name"] = xmlAtts["name"]
 					jsonAtts["x"] = xmlAtts["x"]
 					jsonAtts["y"] = xmlAtts["y"]
-					jsonAtts["resultChain"] = migrateChain(xmlAtts["tokens"], colToGrid: colToGrid, cellToGrid: cellToGrid)
+					jsonAtts["resultChain"] = migrateChainFromXML(xmlAtts["tokens"], colToGrid: colToGrid, cellToGrid: cellToGrid)
 					if let xmlArray2 = xmlAtts["children"] as? [[String:Any]] {
 						var inputArray = [[String:Any]]()
 						for xmlAtts2: [String:Any] in xmlArray2 {
@@ -152,8 +184,8 @@ public class Migrate {
 					jsonAtts["name"] = xmlAtts["name"]
 					jsonAtts["x"] = xmlAtts["x"]
 					jsonAtts["y"] = xmlAtts["y"]
-					jsonAtts["whileChain"] = migrateChain(xmlAtts["condition"], colToGrid: colToGrid, cellToGrid: cellToGrid)
-					jsonAtts["resultChain"] = migrateChain(xmlAtts["result"], colToGrid: colToGrid, cellToGrid: cellToGrid)
+					jsonAtts["whileChain"] = migrateChainFromXML(xmlAtts["condition"], colToGrid: colToGrid, cellToGrid: cellToGrid)
+					jsonAtts["resultChain"] = migrateChainFromXML(xmlAtts["result"], colToGrid: colToGrid, cellToGrid: cellToGrid)
 					if let xmlArray2 = xmlAtts["children"] as? [[String:Any]] {
 						var vertebraArray = [[String:Any]]()
 						for xmlAtts2: [String:Any] in xmlArray2 {
@@ -164,7 +196,7 @@ public class Migrate {
 								jsonAtts2["type"] = "vertebra"
 								jsonAtts2["name"] = xmlAtts2["name"]
 								jsonAtts2["def"] = "real"
-								jsonAtts2["chain"] = migrateChain(xmlAtts2["tokens"], colToGrid: colToGrid, cellToGrid: cellToGrid)
+								jsonAtts2["chain"] = migrateChainFromXML(xmlAtts2["tokens"], colToGrid: colToGrid, cellToGrid: cellToGrid)
 								vertebraArray.append(jsonAtts2)
 							}
 						}
@@ -195,7 +227,7 @@ public class Migrate {
 								jsonAtts2["type"] = "column"
 								jsonAtts2["name"] = xmlAtts2["name"]
 								jsonAtts2["def"] = "real"
-								jsonAtts2["chain"] = migrateChain(xmlAtts2["tokens"], colToGrid: colToGrid, cellToGrid: cellToGrid)
+								jsonAtts2["chain"] = migrateChainFromXML(xmlAtts2["tokens"], colToGrid: colToGrid, cellToGrid: cellToGrid)
 								jsonAtts2["aggregate"] = xmlAtts2["aggregate"]
 								let oldJustify: Int = Int(xmlAtts2["justify"] as! String)!
 								jsonAtts2["justify"] = oldJustify == 0 ? 1 : (oldJustify == 1 ? 2 : 0)
@@ -203,14 +235,14 @@ public class Migrate {
 								columnArray.append(jsonAtts2)
 								colIDtoColNo[jsonAtts2["no"] as! Int] = colNo
 								colNo += 1
-							} else if xmlAtts2["type"] as! String == "cell" {
+                            } else if xmlAtts2["type"] as! String == "cell", let colNo: Int = colIDtoColNo[Int(xmlAtts2["colID"] as! String)!] {
 								var jsonAtts2: [String:Any] = [:]
 								jsonAtts2["iden"] = UUID().uuidString
 								jsonAtts2["no"] = Int(xmlAtts2["cellID"] as! String)
-								jsonAtts2["type"] = "cell"
-								jsonAtts2["colNo"] = colIDtoColNo[Int(xmlAtts2["colID"] as! String)!]!
+								jsonAtts2["type"] = "cell"                                
+								jsonAtts2["colNo"] = colNo
 								jsonAtts2["rowNo"] = Int(xmlAtts2["rowNo"] as! String)
-								jsonAtts2["chain"] = migrateChain(xmlAtts2["tokens"], colToGrid: colToGrid, cellToGrid: cellToGrid)
+								jsonAtts2["chain"] = migrateChainFromXML(xmlAtts2["tokens"], colToGrid: colToGrid, cellToGrid: cellToGrid)
 								cellArray.append(jsonAtts2)
 							}
 						}
@@ -231,12 +263,12 @@ public class Migrate {
 					jsonAtts["name"] = xmlAtts["name"]
 					jsonAtts["x"] = xmlAtts["x"]
 					jsonAtts["y"] = xmlAtts["y"]
-					jsonAtts["startChain"] = migrateChain(xmlAtts["start"], colToGrid: colToGrid, cellToGrid: cellToGrid)
-					jsonAtts["stopChain"] = migrateChain(xmlAtts["stop"], colToGrid: colToGrid, cellToGrid: cellToGrid)
-					jsonAtts["stepsChain"] = migrateChain(xmlAtts["steps"], colToGrid: colToGrid, cellToGrid: cellToGrid)
-					jsonAtts["rateChain"] = migrateChain(xmlAtts["rate"], colToGrid: colToGrid, cellToGrid: cellToGrid)
-					jsonAtts["deltaChain"] = migrateChain(xmlAtts["delta"], colToGrid: colToGrid, cellToGrid: cellToGrid)
-					jsonAtts["whileChain"] = migrateChain(xmlAtts["whyle"], colToGrid: colToGrid, cellToGrid: cellToGrid)
+					jsonAtts["startChain"] = migrateChainFromXML(xmlAtts["start"], colToGrid: colToGrid, cellToGrid: cellToGrid)
+					jsonAtts["stopChain"] = migrateChainFromXML(xmlAtts["stop"], colToGrid: colToGrid, cellToGrid: cellToGrid)
+					jsonAtts["stepsChain"] = migrateChainFromXML(xmlAtts["steps"], colToGrid: colToGrid, cellToGrid: cellToGrid)
+					jsonAtts["rateChain"] = migrateChainFromXML(xmlAtts["rate"], colToGrid: colToGrid, cellToGrid: cellToGrid)
+					jsonAtts["deltaChain"] = migrateChainFromXML(xmlAtts["delta"], colToGrid: colToGrid, cellToGrid: cellToGrid)
+					jsonAtts["whileChain"] = migrateChainFromXML(xmlAtts["whyle"], colToGrid: colToGrid, cellToGrid: cellToGrid)
 					jsonAtts["endMode"] = xmlAtts["endMode"]
 					jsonAtts["exposed"] = xmlAtts["exposed"]
 					aexelArray.append(jsonAtts)
@@ -333,31 +365,119 @@ public class Migrate {
 		if sb.count > 0 { sb.removeLast() }
 		return sb
 	}
+    fileprivate static func migrateChainTo30(_ tokensString: String, subs: [Subs]) -> String {
+        guard tokensString != "" else {
+            return ""
+        }
+        let keys: [String] = tokensString.components(separatedBy: ";")
+
+        var sb: String = ""
+        keys.forEach {
+            let old: String = $0[0...0]
+            switch old {
+                case "0": sb.append("dg")
+                case "1": sb.append("op")
+                case "2": sb.append("sp")
+                case "3":
+                    if Token.token(key: "fn:\($0[2...])") != nil { sb.append("fn") }
+                    else { sb.append("ml") }
+                case "4": sb.append("va")
+                case "5": sb.append("pr")
+                case "6": sb.append("cn")
+                case "7": sb.append("ch")
+                case "8": sb.append("un")
+                default:  sb.append("")
+            }
+            sb.append(":")
+            
+            var tag: String = $0[2...]
+            tag = tag.replacingOccurrences(of: "Ob_", with: "Ob")
+            tag = tag.replacingOccurrences(of: "GtR_", with: "Gt")
+            tag = tag.replacingOccurrences(of: "Cr_", with: "Cr")
+            
+            subs.forEach { if tag == $0.from { tag = $0.to } }
+
+            sb.append(tag)
+            sb.append(";")
+        }
+
+        if sb.count > 0 { sb.removeLast() }
+        
+        return sb
+    }
 	public static func migrateAether(json: String) -> String {
-		let attributes: [String:Any] = json.toAttributes()
+		var attributes: [String:Any] = json.toAttributes()
 		let version: String = attributes["version"] as? String ?? "2.0.2"
 
 		guard version != Aether.engineVersion else { return json }
-		var json = json
 
 		print("migrate file from [\(version)] to [\(Aether.engineVersion)]")
-
-		if version == "2.0.2" {
-			let modified = attributes.modify(query:
-				["chain",
-				 "ifChain", "thenChain", "elseChain",
-				 "resultChain", "whileChain",
-				 "startChain", "stopChain", "stepChain", "rateChain", "deltaChain",
-				 "statesChain", "amorousChain"
-				],
-			convert: { (value: Any) in
+        
+        var migrate: Bool = false
+        
+        if version == "2.0.2" { migrate = true }
+        if migrate {
+            attributes = attributes.modify(query:
+                ["chain",
+                 "ifChain", "thenChain", "elseChain",
+                 "resultChain", "whileChain",
+                 "startChain", "stopChain", "stepChain", "rateChain", "deltaChain",
+                 "statesChain", "amorousChain"
+                ],
+            convert: { (value: Any) in
                 Migrate.migrateChainTo21(value as! String)
-//				(value as! String)
-//                    .replacingOccurrences(of: "1:!;", with: "8:!;")
-			})
-			json = modified.toJSON()
-		}
+            })
+        }
+        
+        if version == "3.0" { migrate = true }
+        if migrate {
+            attributes = attributes.modify(condition: { (attributes: [String:Any]) in
+                ["input", "vertebra"].contains(attributes["type"] as! String)
+            }, action: { (attributes: [String:Any], no: Int) in
+                var result: [String:Any] = attributes
+                result["no"] = no
+                return result
+            })
+            
+            var subs: [Subs] = []
+            
+            if let aexels: [[String:Any]] = attributes["aexels"] as? [[String:Any]] {
+                let mechs: [[String:Any]] = aexels.filter { $0["type"] as! String == "mech" }
+                mechs.forEach { (mech: [String:Any]) in
+                    subs.append(Subs(from: "\(mech["name"]!)", to: "Me\(mech["no"]!)"))
+                    let inputs: [[String:Any]] = mech["inputs"] as! [[String:Any]]
+                    var no: Int = 1
+                    inputs.forEach { (input: [String:Any]) in
+                        subs.append(Subs(from: "\(mech["name"]!).\(input["name"]!)", to: "Me\(mech["no"]!).i\(no)"))
+                        no += 1
+                    }
+                }
+                
+                let tails: [[String:Any]] = aexels.filter { $0["type"] as! String == "tail" }
+                tails.forEach { (tail: [String:Any]) in
+                    subs.append(Subs(from: tail["name"] as! String, to: "Ta\(tail["no"]!)"))
+                    let vertebras: [[String:Any]] = tail["vertebras"] as! [[String:Any]]
+                    var no: Int = 1
+                    vertebras.forEach { (vertebra: [String:Any]) in
+                        subs.append(Subs(from: "\(tail["name"]!).\(vertebra["name"]!)", to: "Ta\(tail["no"]!).i\(no)"))
+                        no += 1
+                    }
+                }
+                subs.forEach { print("from: \($0.from), to: \($0.to)") }
+            }
+            
+            attributes = attributes.modify(query:
+                ["chain",
+                 "ifChain", "thenChain", "elseChain",
+                 "resultChain", "whileChain",
+                 "startChain", "stopChain", "stepChain", "rateChain", "deltaChain",
+                 "statesChain", "amorousChain"
+                ],
+            convert: { (value: Any) in
+                Migrate.migrateChainTo30(value as! String, subs: subs)
+            })
+        }
 
-		return json
+        return attributes.toJSON()
 	}
 }

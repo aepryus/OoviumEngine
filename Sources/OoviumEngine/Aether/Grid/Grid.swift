@@ -159,9 +159,7 @@ public final class Grid: Aexel {
 	public func column(colNo: Int) -> Column? {
 		return columns[colNo]
 	}
-	public func column(tag: String) -> Column? {
-		return columns.first {$0.token.tag == tag}
-	}
+    public func column(tag: String) -> Column? { columns.first { $0.tower.variableToken.tag == tag } }
 	public var maxCellNo: Int {
 		var max: Int = 0
 		cells.forEach {if $0.no > max {max = $0.no}}
@@ -180,6 +178,7 @@ public final class Grid: Aexel {
 	}
 
 // Aexel ===========================================================================================
+    public override var code: String { "Gr" }
 	public override var towers: Set<Tower> {
 		var towers: [Tower] = []
 		cells.forEach { towers.append($0.tower) }
@@ -189,12 +188,8 @@ public final class Grid: Aexel {
 	}
 
 // Domain ==========================================================================================
-	override public var properties: [String] {
-		return super.properties + ["typeID", "rows", "exposed"]
-	}
-	override public var children: [String] {
-		return super.children + ["columns", "cells"]
-	}
+    override public var properties: [String] { super.properties + ["typeID", "rows", "exposed"] }
+	override public var children: [String] { super.children + ["columns", "cells"] }
 
 // Static ==========================================================================================
 	static func name(n: Int) -> String {

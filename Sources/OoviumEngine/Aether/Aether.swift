@@ -48,7 +48,7 @@ import Foundation
 		AEMemoryLoad(memory, oldMemory)
 		AEMemoryRelease(oldMemory)
 
-		Set(towers.values).filter { $0.variableToken.type == .variable }.forEach { $0.buildTask() }
+		Set(towers.values).filter { $0.variableToken.code == .va }.forEach { $0.buildTask() }
 	}
 	public func prepare() {
 		var towers = Set<Tower>()
@@ -64,120 +64,44 @@ import Foundation
 		add(aexel)
 		aexels.append(aexel)
 		aexel.towers.forEach { register(tower: $0) }
-		aexel.towers.forEach { $0.buildStream() }
+
+        aexel.towers.forEach { $0.buildStream() }
 		buildMemory()
         Tower.evaluate(towers: aexel.towers)
 	}
 	public func removeAexel(_ aexel: Aexel) {
 		aexel.towers.forEach { deregister(tower: $0) }
-		remove(aexel)
 		aexels.remove(object: aexel)
+        remove(aexel)
 	}
-	public func removeAexels(_ aexels: [Aexel]) {
-		aexels.forEach { $0.towers.forEach { deregister(tower: $0) } }
-		aexels.forEach { remove($0) }
-		aexels.forEach { self.aexels.remove(object: $0) }
-		buildMemory()
-	}
-	public func removeAllAexels() { removeAexels(aexels) }
+	public func removeAllAexels() {
+        aexels.forEach { removeAexel($0) }
+        buildMemory()
+    }
     
     public func create<T: Aexel>(at: V2) -> T {
         let key: String = "\(T.self)".lowercased()
-        print("QQ: [\(key)]")
-        let aexel = T(no: nos.increment(key: key), at: at, aether: self)
+        let aexel: T = T(no: nos.increment(key: key), at: at, aether: self)
         addAexel(aexel)
         return aexel
     }
 	
-	public func first<T>() -> T? { aexels.first(where: {$0 is T}) as? T }
-    public func aexel<T>(no: Int) -> T? { aexels.first(where: { $0 is T  && $0.no == no }) as? T }
+    public func first<T: Aexel>() -> T? { aexels.first(where: {$0 is T}) as? T }
+    public func aexel<T: Aexel>(no: Int) -> T? { aexels.first(where: { $0 is T  && $0.no == no }) as? T }
 
 	// Text
-	public func createEdge(parent: Text, child: Text) -> Edge {
-		let edge = Edge(parent: parent)
-		edge.textNo = child.no
-		return edge
-	}
-	public func outputEdges(for text: Text) -> [Edge] {
-		var edges: [Edge] = []
-		aexels.forEach {
-			guard let other = $0 as? Text, let edge = other.edgeFor(text: text) else { return }
-			edges.append(edge)
-		}
-		return edges
-	}
+    public func createEdge(parent: Text, child: Text) -> Edge { Edge(parent: parent, child: child) }
+	public func outputEdges(for text: Text) -> [Edge] { aexels.compactMap { ($0 as? Text)?.edgeFor(text: text) } }
 	
-// Tokens ==========================================================================================
-	public func register(token: TowerToken) { tokens[token.key] = token }
-	public func token(type: TokenType, tag: String) -> TowerToken? { tokens["\(type.rawValue):\(tag)"] }
-	public func token(key: String) -> Token {
-		var token: Token? = tokens[key]
-		if let token = token { return token }
-		token = Token.token(key: key)
-		if let token = token { return token }
-
-		let subs: [Substring] = key.split(separator: ":")
-		let s0: Int = Int(String(subs[0]))!
-		let s1: String = String(subs[1])
-		let type: TokenType = TokenType(rawValue: s0)!
-		let tag: String = Token.aliases[s1] ?? s1
-
-		switch type {
-			case .variable: token = variableToken(tag: tag)
-			case .function: token = functionToken(tag: tag)
-			default:
-				token = functionToken(tag: tag) // fatalError()
-		}
-		tokens[key] = token as? TowerToken
-		return token!
-	}
-	public func buildTokens(chain: Chain) {
-		guard let keys = chain.loadedKeys else { return }
-        chain.tokens = keys.map { token(key: $0) }
-		chain.loadedKeys = nil
-	}
-	public func buildTokens() {
-		aexels.forEach { $0.towers.forEach {
-			guard let chain = $0.delegate as? Chain else { return }
-			buildTokens(chain: chain)
-		}}
-        (aexels.filter { $0 is Grid } as! [Grid]).forEach { $0.columns.forEach {
-            buildTokens(chain: $0.chain)
-        }}
-	}
-
-	public func rekey(token: TowerToken, tag:String) {
-		tokens[token.key] = nil
-		token.tag = tag
-		tokens[token.key] = token
-	}
-
-	public func variableToken(tag: String, label: String? = nil) -> VariableToken {
-		return tokens["\(TokenType.variable.rawValue):\(tag)"] as? VariableToken ?? {
-			let token = VariableToken(tag: tag, label: label)
-			register(token: token)
-			return token
-		}()
-	}
-	public func functionToken(tag: String, label: String? = nil, recipe: String? = nil) -> FunctionToken {
-		return tokens["\(TokenType.function.rawValue):\(tag)"] as? FunctionToken ?? {
-			let token = FunctionToken(tag: tag, label: label, recipe: recipe)
-			register(token: token)
-			return token
-		}()
-	}
-	public func wipe(token: Token) { tokens[token.key] = nil }
-
 // Towers ==========================================================================================
-	func register(tower: Tower) {
-		towers[tower.variableToken] = tower
-		if let functionToken = tower.functionToken { towers[functionToken] = tower }
-	}
-	func deregister(tower: Tower) {
-		towers[tower.variableToken] = nil
-		if let functionToken = tower.functionToken { towers[functionToken] = nil }
-	}
-    func tower(towerToken: TowerToken) -> Tower? { towers[towerToken] }
+    func register(tower: Tower) {
+        towers[tower.variableToken] = tower
+        if let mechlikeToken = tower.mechlikeToken { towers[mechlikeToken] = tower }
+    }
+    func deregister(tower: Tower) {
+        towers[tower.variableToken] = nil
+        if let mechlikeToken = tower.mechlikeToken { towers[mechlikeToken] = nil }
+    }
     
     public func delete(towers: Set<Tower>) {
         var affected: Set<Tower> = Set<Tower>()
@@ -186,32 +110,62 @@ import Foundation
         
         towers.forEach {
             $0.variableToken.status = .deleted
-            $0.variableToken.label = "DELETED"
-            if $0.variableToken.type == .variable { AEMemoryUnfix(memory, $0.index) }
+//            $0.variableToken.label = "DELETED"
+            if $0.variableToken.code == .va { AEMemoryUnfix(memory, $0.index) }
             $0.abstract()
         }
         
         Tower.evaluate(towers: affected)
     }
-
+    func createTower(tag: String, towerDelegate: TowerDelegate, tokenDelegate: VariableTokenDelegate? = nil) -> Tower {
+        let token = VariableToken(tag: tag, delegate: tokenDelegate)
+        tokens[token.key] = token
+        return Tower(aether: self, token: token, delegate: towerDelegate)
+    }
+    func createMechlikeTower(tag: String, towerDelegate: TowerDelegate, tokenDelegate: VariableTokenDelegate? = nil) -> Tower {
+        let variableToken = VariableToken(tag: tag, delegate: tokenDelegate)
+        tokens[variableToken.key] = variableToken
+        let tower = Tower(aether: self, token: variableToken, delegate: towerDelegate)
+        let mechlikeToken = MechlikeToken(tower: tower, tag: tag, delegate: tokenDelegate)
+        tokens[mechlikeToken.key] = mechlikeToken
+        tower.mechlikeToken = mechlikeToken
+        return tower
+    }
+    func destroyTower(_ tower: Tower) {
+    }
+    
 // Functions =======================================================================================
 	public func functionExists(name: String) -> Bool { aexels.first { $0 is Mechlike && $0.name == name } != nil }
 
-// MARK: - Events ==================================================================================
+// Events ==========================================================================================
 	override public func onLoad() {
-		aexels.forEach {
-			guard $0.no > nos.get(key: $0.type) else { return }
-			nos.set(key: $0.type, to: $0.no)
-		}
-		buildTokens()
-		prepare()
+        func buildTokens(chain: Chain) {
+            guard chain.loadedKeys != nil else { return }
+            func token(key: String) -> Token {
+                if let token: Token = tokens[key] ?? Token.token(key: key) { return token }
+                return Token.zero
+            }
+
+            chain.tokens = chain.loadedKeys?.map({ token(key: $0) }) ?? []
+            chain.loadedKeys = nil
+        }
+
+        aexels.forEach {
+            guard $0.no > nos.get(key: $0.type) else { return }
+            nos.set(key: $0.type, to: $0.no)
+        }
+        
+        aexels.flatMap({ $0.towers }).compactMap({ $0.delegate as? Chain }).forEach { buildTokens(chain: $0) }
+        aexels.compactMap({ $0 as? Grid }).flatMap({ $0.columns }).forEach { buildTokens(chain: $0.chain) }
+
+        prepare()
 		evaluate()
 	}
 	
-// MARK: - Domain ==================================================================================
+// Domain ==========================================================================================
     override public var properties: [String] { super.properties + ["name", "width", "height", "xOffset", "yOffset", "readOnly", "version"] }
     override public var children: [String] { super.children + ["aexels"] }
 
-// MARK: - Static ==================================================================================
+// Static ==========================================================================================
 	public static var engineVersion: String { "3.0" }
 }

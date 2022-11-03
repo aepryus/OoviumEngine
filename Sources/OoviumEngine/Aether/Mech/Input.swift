@@ -9,17 +9,13 @@
 import Acheron
 import Foundation
 
-public final class Input: Domain, TowerDelegate {
-	@objc public dynamic var name: String = "" {
-		didSet {
-			guard let mech = parent as? Mech else { return }
-			mech.aether.rekey(token: tower.variableToken, tag: "\(mech.name).\(name)")
-			tower.variableToken.label = name
-		}
-	}
-	var def: Def = RealDef.def
+public final class Input: Domain, TowerDelegate, VariableTokenDelegate {
+    @objc public dynamic var name: String = ""
+    @objc public dynamic var no: Int = 0
+    
+//	var def: Def = RealDef.def
 	
-	public lazy var tower: Tower = {Tower(aether: mech.aether, token: mech.aether.variableToken(tag: "\(mech.name).\(name)"), delegate: self)}()
+    public lazy var tower: Tower = { mech.aether.createTower(tag: "\(mech.key).\(key)", towerDelegate: self, tokenDelegate: self) }()
 	
 	init(mech: Mech, name: String) {
 		self.name = name
@@ -27,13 +23,14 @@ public final class Input: Domain, TowerDelegate {
 		parent = mech
 	}
 	required init(attributes: [String : Any], parent: Domain?) {
-//		let name: String = attributes["name"] as! String
 		super.init(attributes: attributes, parent: parent)
 	}
 	
-	var mech: Mech {
-		return parent as! Mech
-	}
+	var mech: Mech { parent as! Mech }
+    var key: String {
+        if no == 0 { fatalError() }
+        return "i\(no)"
+    }
 	
 // Events ==========================================================================================
 	public override func onLoad() {
@@ -41,12 +38,11 @@ public final class Input: Domain, TowerDelegate {
 	}
 
 // Domain ==========================================================================================
-	public override var properties: [String] {
-		return super.properties + ["name"]
-	}
+	public override var properties: [String] { super.properties + ["name", "no"] }
 	
 // TowerDelegate ===================================================================================
-	func renderDisplay(tower: Tower) -> String {
-		return name
-	}
+	func renderDisplay(tower: Tower) -> String { name }
+    
+// VariableTokenDelegate ===========================================================================
+    public var alias: String? { name }
 }

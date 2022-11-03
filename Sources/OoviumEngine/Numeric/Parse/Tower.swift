@@ -45,9 +45,15 @@ class Funnel {
 
 public final class Tower: Hashable, CustomStringConvertible {
 	private unowned let aether: Aether
-	public let variableToken: VariableToken
-	public let functionToken: FunctionToken?
-	unowned let delegate: TowerDelegate
+    unowned let delegate: TowerDelegate
+
+    private let _variableToken: VariableToken
+    public lazy var variableToken: VariableToken = { _variableToken.tower = self; return _variableToken }()
+    //        aether.variableToken(tower: self, tag: tag, label: label, delegate: tokenDelegate)
+    private let _mechlikeToken: MechlikeToken? = nil
+    public lazy var mechlikeToken: MechlikeToken? = { _mechlikeToken?.tower = self; return _mechlikeToken }()
+    //        guard let mlTag else { return nil }
+    //        return aether.mechlikeToken(tower: self, tag: mlTag)
 
 	var upstream: WeakSet<Tower> = WeakSet<Tower>()
 	var downstream: WeakSet<Tower> = WeakSet<Tower>()
@@ -79,21 +85,17 @@ public final class Tower: Hashable, CustomStringConvertible {
 	var name: String { variableToken.tag }
     var memory: UnsafeMutablePointer<Memory> { aether.memory }
     
-	init(aether: Aether, token: VariableToken, functionToken: FunctionToken? = nil, delegate: TowerDelegate) {
+    init(aether: Aether, token: VariableToken, delegate: TowerDelegate) {
 		self.aether = aether
-		self.variableToken = token
-		self.functionToken = functionToken
+        self._variableToken = token
 		self.delegate = delegate
 	}
-	deinit {
-		AETaskRelease(task)
-	}
+	deinit { AETaskRelease(task) }
 
 	public var index: mnimi { AEMemoryIndexForName(aether.memory, variableToken.tag.toInt8()) }
 	public var value: Double { AEMemoryValue(aether.memory, index) }
 	public var obje: Obje { Obje(memory: aether.memory, index: index) }
 	
-    func tower(towerToken: TowerToken) -> Tower? { aether.tower(towerToken: towerToken) }
 	func workerCompleted(askedBy: Tower) -> Bool { delegate.workerCompleted(tower: self, askedBy: askedBy) }
 
 // Stream ==========================================================================================
@@ -190,7 +192,7 @@ public final class Tower: Hashable, CustomStringConvertible {
 		AETaskRelease(task)
 		delegate.buildWorker(tower: self)
 	}
-	var calced: Bool { variableToken.type != .variable || AEMemoryLoaded(aether.memory, index) != 0 }
+	var calced: Bool { variableToken.code != .va || AEMemoryLoaded(aether.memory, index) != 0 }
 	func attemptToCalculate() -> Bool {
 		guard !workerCompleted(askedBy: self),
 			  !upstream.contains(where: { !$0.workerCompleted(askedBy: self) })
@@ -198,7 +200,7 @@ public final class Tower: Hashable, CustomStringConvertible {
 
 		if variableToken.status == .ok || variableToken.status == .blocked {
 			variableToken.status = delegate.workerBlocked(tower: self) ? .blocked : .ok
-			functionToken?.status = variableToken.status
+            mechlikeToken?.status = variableToken.status
 		}
 
 		// This was necessitated because data types can change. ====
@@ -207,10 +209,10 @@ public final class Tower: Hashable, CustomStringConvertible {
 		// =========================================================
 
 		if (web != nil && variableToken.def !== LambdaDef.def) || variableToken.status != .ok {
-			variableToken.label = delegate.renderDisplay(tower: self)
+			variableToken.details = delegate.renderDisplay(tower: self)
 			AEMemorySetValue(aether.memory, index, 0)
 			return true
-		}
+        } else { variableToken.details = nil }
 		
 		delegate.executeWorker(tower: self)
 

@@ -16,20 +16,14 @@ public final class Cell: Domain {
 	@objc public var chain: Chain!
 
 	public var _width: Double? = nil
+    
+    var key: String { "Ce\(no)" }
 
-	public var tower: Tower {
-		return chain.tower
-	}
-	public var token: Token {
-		return tower.variableToken
-	}
+	public var tower: Tower { chain.tower }
+	public var token: Token { tower.variableToken }
 	
-	public var grid: Grid {
-		return parent as! Grid
-	}
-	public var column: Column {
-		return grid.columns[colNo]
-	}
+    public var grid: Grid { parent as! Grid }
+	public var column: Column { grid.columns[colNo] }
 	
 // Inits ===========================================================================================
 	public required init(grid: Grid) {
@@ -39,7 +33,7 @@ public final class Cell: Domain {
 		super.init()
 		
 		parent = grid
-		chain.tower = Tower(aether: grid.aether, token: grid.aether.variableToken(tag: "Gr\(grid.no).Ce\(no)"), delegate: chain)
+		chain.tower = grid.aether.createTower(tag: "\(grid.key).\(key)", towerDelegate: chain)
 	}
 	public required init(attributes: [String:Any], parent: Domain?) {
 		super.init(attributes: attributes, parent: parent)
@@ -47,7 +41,7 @@ public final class Cell: Domain {
 	
 // Events ==========================================================================================
 	public override func onLoad() {
-		chain.tower = Tower(aether: grid.aether, token: grid.aether.variableToken(tag: "Gr\(grid.no).Ce\(no)"), delegate: chain)
+        chain.tower = grid.aether.createTower(tag: "\(grid.key).\(key)", towerDelegate: chain)
 	}
 
 // Domain ==========================================================================================

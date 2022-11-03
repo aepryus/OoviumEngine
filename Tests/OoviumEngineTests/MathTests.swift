@@ -96,8 +96,8 @@ class MathTests: XCTestCase {
 		object3.chain.post(token: Token.divide)
 		object3.chain.post(token: object2.token)
 
-		aether.buildTokens()
-		aether.evaluate()
+        aether.onLoad()
+//		aether.evaluate()
 		XCTAssertEqual(object3.chain.tower.value, 47)
 	}
 	func test_AetherJSONBasic() {
@@ -109,9 +109,9 @@ class MathTests: XCTestCase {
 			  "aexels" : [
 				{
 				  "iden" : "194E1426-4A32-4D13-8FA5-B5420E8DB6A0",
-				  "name" : "Ob_1",
+				  "name" : "",
 				  "no" : 1,
-				  "chain" : "0:8;0:9;0:3",
+				  "chain" : "dg:8;dg:9;dg:3",
 				  "label" : "",
 				  "type" : "object",
 				  "y" : 0,
@@ -122,18 +122,18 @@ class MathTests: XCTestCase {
 				  "y" : 0,
 				  "type" : "object",
 				  "iden" : "5D7FFBA3-8E8B-4245-855A-82F6044F6E29",
-				  "name" : "Ob_2",
-				  "chain" : "0:1;0:9",
+				  "name" : "",
+				  "chain" : "dg:1;dg:9",
 				  "no" : 2,
 				  "label" : ""
 				},
 				{
 				  "y" : 0,
-				  "name" : "Ob_3",
+				  "name" : "",
 				  "x" : 0,
 				  "label" : "",
 				  "type" : "object",
-				  "chain" : "4:Ob_1;1:÷;4:Ob_2",
+				  "chain" : "va:Ob1;op:÷;va:Ob2",
 				  "iden" : "465775B6-5243-4269-86CB-1601B39C0F7A",
 				  "no" : 3
 				}
@@ -154,117 +154,120 @@ class MathTests: XCTestCase {
 		XCTAssertEqual(object.chain.tower.value, 47)
 	}
 	func test_AetherJSONCatSkinTSF() {
-		let json = """
-			{
-			  "name" : "Cat Skin",
-			  "aexels" : [
-				{
-				  "iden" : "16AD75B7-27F0-4B34-A611-00DA150411D1",
-				  "type" : "mech",
-				  "name" : "TSF",
-				  "modified" : "2021-03-07T23:05:00+0900",
-				  "no" : 1,
-				  "inputs" : [
-					{
-					  "type" : "input",
-					  "name" : "n",
-					  "modified" : "2021-03-07T23:05:00+0900",
-					  "iden" : "FA5AED43-38D0-4B9F-8C93-9A37778FE1EC"
-					}
-				  ],
-				  "resultChain" : "3:iTSF;4:TSF.n;2:,;0:2;2:)",
-				  "x" : 1676.765625,
-				  "y" : 1263.5390625
-				},
-				{
-				  "vertebras" : [
-					{
-					  "name" : "n",
-					  "chain" : "4:iTSF.n",
-					  "modified" : "2021-03-07T23:04:14+0900",
-					  "iden" : "A819C130-6DBA-4CA7-A359-D819E3C69C04",
-					  "type" : "vertebra"
-					},
-					{
-					  "iden" : "D1C1A3E8-5B68-4DF6-9433-F4E9B2DEC969",
-					  "type" : "vertebra",
-					  "modified" : "2021-03-07T23:04:52+0900",
-					  "chain" : "4:iTSF.p;1:+;0:1",
-					  "name" : "p"
-					}
-				  ],
-				  "whileChain" : "8:!;4:Ob_2;1:&&;8:!;4:Ob_1",
-				  "no" : 1,
-				  "y" : 1059.96484375,
-				  "modified" : "2021-03-07T23:04:52+0900",
-				  "iden" : "B21944AB-6A7C-4CA4-8CE2-54981FAF557A",
-				  "name" : "iTSF",
-				  "x" : 1685.8359375,
-				  "resultChain" : "4:GtR_1",
-				  "type" : "tail"
-				},
-				{
-				  "no" : 1,
-				  "name" : "Ob_1",
-				  "x" : 1967.30859375,
-				  "y" : 1038,
-				  "type" : "object",
-				  "chain" : "2:(;4:iTSF.p;1:+;0:1;2:);1:×;2:(;4:iTSF.p;1:+;0:1;2:);1:>;4:iTSF.n",
-				  "label" : "prime",
-				  "iden" : "094D10F0-B553-4012-93C4-A0CF8AF7B455"
-				},
-				{
-				  "y" : 1129.9375,
-				  "name" : "Ob_2",
-				  "no" : 2,
-				  "x" : 2021.51171875,
-				  "type" : "object",
-				  "label" : "factor",
-				  "chain" : "2:(;4:iTSF.n;1:÷;4:iTSF.p;2:);1:=;3:floor;4:iTSF.n;1:÷;4:iTSF.p;2:)",
-				  "iden" : "25C46F80-0A51-4655-9638-60C6FA25B47F"
-				},
-				{
-				  "name" : "Ob_3",
-				  "type" : "object",
-				  "no" : 3,
-				  "y" : 1275.54296875,
-				  "iden" : "D7EEF462-F6CE-431B-86BB-235ACBC3C0CB",
-				  "x" : 1281,
-				  "label" : "",
-				  "chain" : "0:8;0:9;0:3"
-				},
-				{
-				  "y" : 1258.2890625,
-				  "type" : "gate",
-				  "name" : "",
-				  "no" : 1,
-				  "iden" : "E8B55187-1382-4AE3-B83C-22A7B6E69185",
-				  "elseChain" : "4:iTSF.n",
-				  "x" : 2005.12109375,
-				  "thenChain" : "4:iTSF.p",
-				  "ifChain" : "4:Ob_2"
-				},
-				{
-				  "chain" : "3:TSF;4:Ob_3;2:)",
-				  "type" : "object",
-				  "no" : 4,
-				  "label" : "TSF",
-				  "name" : "Ob_4",
-				  "y" : 1179.6484375,
-				  "x" : 1397.5655937500001,
-				  "iden" : "426D1E54-0D35-44B2-A71E-3C3F5D290017"
-				}
-			  ],
-			  "xOffset" : 896,
-			  "type" : "aether",
-			  "readOnly" : false,
-			  "height" : 1046,
-			  "modified" : "2021-03-07T23:11:08+0900",
-			  "iden" : "5E90C7D8-347D-4C96-AD98-6A45D424B155",
-			  "width" : 1333,
-			  "yOffset" : 772
-			}
-		"""
+        let json = """
+            {
+              "name" : "Cat Skin",
+              "aexels" : [
+                {
+                  "iden" : "16AD75B7-27F0-4B34-A611-00DA150411D1",
+                  "type" : "mech",
+                  "name" : "TSF",
+                  "modified" : "2021-03-07T23:05:00+0900",
+                  "no" : 1,
+                  "inputs" : [
+                    {
+                      "type" : "input",
+                      "name" : "n",
+                      "no" : 1,
+                      "modified" : "2021-03-07T23:05:00+0900",
+                      "iden" : "FA5AED43-38D0-4B9F-8C93-9A37778FE1EC"
+                    }
+                  ],
+                  "resultChain" : "ml:Ta1;va:Me1.i1;sp:,;dg:2;sp:)",
+                  "x" : 1676.765625,
+                  "y" : 1263.5390625
+                },
+                {
+                  "vertebras" : [
+                    {
+                      "name" : "n",
+                      "no" : 1,
+                      "chain" : "va:Ta1.i1",
+                      "modified" : "2021-03-07T23:04:14+0900",
+                      "iden" : "A819C130-6DBA-4CA7-A359-D819E3C69C04",
+                      "type" : "vertebra"
+                    },
+                    {
+                      "iden" : "D1C1A3E8-5B68-4DF6-9433-F4E9B2DEC969",
+                      "type" : "vertebra",
+                      "modified" : "2021-03-07T23:04:52+0900",
+                      "chain" : "va:Ta1.i2;op:+;dg:1",
+                      "no" : 2,
+                      "name" : "p"
+                    }
+                  ],
+                  "whileChain" : "un:!;va:Ob2;op:&&;un:!;va:Ob1",
+                  "no" : 1,
+                  "y" : 1059.96484375,
+                  "modified" : "2021-03-07T23:04:52+0900",
+                  "iden" : "B21944AB-6A7C-4CA4-8CE2-54981FAF557A",
+                  "name" : "iTSF",
+                  "x" : 1685.8359375,
+                  "resultChain" : "va:Gt1",
+                  "type" : "tail"
+                },
+                {
+                  "no" : 1,
+                  "name" : "",
+                  "x" : 1967.30859375,
+                  "y" : 1038,
+                  "type" : "object",
+                  "chain" : "sp:(;va:Ta1.i2;op:+;dg:1;sp:);op:×;sp:(;va:Ta1.i2;op:+;dg:1;sp:);op:>;va:Ta1.i1",
+                  "label" : "prime",
+                  "iden" : "094D10F0-B553-4012-93C4-A0CF8AF7B455"
+                },
+                {
+                  "y" : 1129.9375,
+                  "name" : "",
+                  "no" : 2,
+                  "x" : 2021.51171875,
+                  "type" : "object",
+                  "label" : "factor",
+                  "chain" : "sp:(;va:Ta1.i1;op:÷;va:Ta1.i2;sp:);op:=;fn:floor;va:Ta1.i1;op:÷;va:Ta1.i2;sp:)",
+                  "iden" : "25C46F80-0A51-4655-9638-60C6FA25B47F"
+                },
+                {
+                  "name" : "Ob_3",
+                  "type" : "object",
+                  "no" : 3,
+                  "y" : 1275.54296875,
+                  "iden" : "D7EEF462-F6CE-431B-86BB-235ACBC3C0CB",
+                  "x" : 1281,
+                  "label" : "",
+                  "chain" : "dg:8;dg:9;dg:3"
+                },
+                {
+                  "y" : 1258.2890625,
+                  "type" : "gate",
+                  "name" : "",
+                  "no" : 1,
+                  "iden" : "E8B55187-1382-4AE3-B83C-22A7B6E69185",
+                  "elseChain" : "va:Ta1.i1",
+                  "x" : 2005.12109375,
+                  "thenChain" : "va:Ta1.i2",
+                  "ifChain" : "va:Ob2"
+                },
+                {
+                  "chain" : "ml:Me1;va:Ob3;sp:)",
+                  "type" : "object",
+                  "no" : 4,
+                  "label" : "TSF",
+                  "name" : "",
+                  "y" : 1179.6484375,
+                  "x" : 1397.5655937500001,
+                  "iden" : "426D1E54-0D35-44B2-A71E-3C3F5D290017"
+                }
+              ],
+              "xOffset" : 896,
+              "type" : "aether",
+              "readOnly" : false,
+              "height" : 1046,
+              "modified" : "2021-03-07T23:11:08+0900",
+              "iden" : "5E90C7D8-347D-4C96-AD98-6A45D424B155",
+              "width" : 1333,
+              "yOffset" : 772
+            }
+        """
 
 		let aether = Aether()
 		aether.load(attributes: json.toAttributes())
@@ -280,13 +283,13 @@ class MathTests: XCTestCase {
               "readOnly" : false,
               "width" : 1194,
               "name" : "aether41",
-              "version" : "2.1",
+              "version" : "3.0",
               "modified" : "2022-08-30T05:19:54+0900",
               "height" : 834,
               "yOffset" : 706,
               "aexels" : [
                 {
-                  "resultChain" : "3:iISF;4:ISF.n;2:,;0:2;2:)",
+                  "resultChain" : "ml:Me2;va:Me1.i1;sp:,;dg:2;sp:)",
                   "type" : "mech",
                   "modified" : "2022-08-29T16:58:02+0900",
                   "x" : 1689.5,
@@ -297,6 +300,7 @@ class MathTests: XCTestCase {
                       "modified" : "2022-08-29T16:58:02+0900",
                       "type" : "input",
                       "name" : "n",
+                      "no" : 1,
                       "iden" : "CE64A376-5305-4C0A-B1CA-15A19449050D"
                     }
                   ],
@@ -311,12 +315,12 @@ class MathTests: XCTestCase {
                   "type" : "object",
                   "name" : "Ob_4",
                   "x" : 1996,
-                  "chain" : "0:8;0:9;0:3"
+                  "chain" : "dg:8;dg:9;dg:3"
                 },
                 {
                   "iden" : "51083427-34B2-45E0-9999-23B590DE2586",
                   "label" : "",
-                  "chain" : "3:ISF;4:Ob_4;2:)",
+                  "chain" : "ml:Me1;va:Ob4;sp:)",
                   "type" : "object",
                   "y" : 884,
                   "no" : 5,
@@ -330,11 +334,12 @@ class MathTests: XCTestCase {
                   "name" : "iISF",
                   "modified" : "2022-08-29T16:58:50+0900",
                   "y" : 976.5,
-                  "resultChain" : "4:GtR_1",
+                  "resultChain" : "va:Gt1",
                   "x" : 1446,
                   "inputs" : [
                     {
                       "name" : "n",
+                      "no" : 1,
                       "modified" : "2022-08-29T16:58:40+0900",
                       "type" : "input",
                       "iden" : "0F60515D-64B7-4CD9-9C54-927701E2EC27"
@@ -342,6 +347,7 @@ class MathTests: XCTestCase {
                     {
                       "iden" : "A75067BE-ACD9-42A7-B6ED-56EFFF23093A",
                       "name" : "p",
+                      "no" : 2,
                       "modified" : "2022-08-29T16:58:50+0900",
                       "type" : "input"
                     }
@@ -352,7 +358,7 @@ class MathTests: XCTestCase {
                   "x" : 1315.5,
                   "name" : "Ob_6",
                   "y" : 990,
-                  "chain" : "4:iISF.n;1:÷;4:iISF.p",
+                  "chain" : "va:Me2.i1;op:÷;va:Me2.i2",
                   "no" : 6,
                   "label" : "",
                   "type" : "object"
@@ -362,18 +368,18 @@ class MathTests: XCTestCase {
                   "x" : 1178.5,
                   "no" : 7,
                   "y" : 1043.5,
-                  "chain" : "3:floor;4:Ob_6;2:)",
+                  "chain" : "fn:floor;va:Ob6;sp:)",
                   "iden" : "2A9115BA-3320-49A4-B7B5-9FC8953E89B1",
                   "name" : "Ob_7",
                   "type" : "object"
                 },
                 {
                   "y" : 1136,
-                  "thenChain" : "4:iISF.p",
+                  "thenChain" : "va:Me2.i2",
                   "name" : "",
-                  "elseChain" : "4:GtR_2",
+                  "elseChain" : "va:Gt2",
                   "no" : 1,
-                  "ifChain" : "4:Ob_6;1:=;4:Ob_7",
+                  "ifChain" : "va:Ob6;op:=;va:Ob7",
                   "type" : "gate",
                   "iden" : "E84E558B-7EEE-411F-93F4-395FA77D4858",
                   "x" : 1094
@@ -381,11 +387,11 @@ class MathTests: XCTestCase {
                 {
                   "type" : "gate",
                   "y" : 1219,
-                  "elseChain" : "3:iISF;4:iISF.n;2:,;4:iISF.p;1:+;0:1;2:)",
-                  "thenChain" : "4:iISF.n",
+                  "elseChain" : "ml:Me2;va:Me2.i1;sp:,;va:Me2.i2;op:+;dg:1;sp:)",
+                  "thenChain" : "va:Me2.i1",
                   "name" : "",
                   "no" : 2,
-                  "ifChain" : "4:iISF.p;1:×;4:iISF.p;1:>;4:iISF.n",
+                  "ifChain" : "va:Me2.i2;op:×;va:Me2.i2;op:>;va:Me2.i1",
                   "x" : 1400,
                   "iden" : "055C990D-5E5E-4E8C-9846-B5788BCF74CC"
                 }
@@ -415,12 +421,13 @@ class MathTests: XCTestCase {
                   "y" : 881,
                   "type" : "mech",
                   "no" : 1,
-                  "resultChain" : "3:iRSF;4:RSF.n;2:,;0:2;2:)",
+                  "resultChain" : "ml:Me2;va:Me1.i1;sp:,;dg:2;sp:)",
                   "modified" : "2022-08-31T12:23:15+0900",
                   "x" : 1762.75,
                   "inputs" : [
                     {
                       "type" : "input",
+                      "no" : 1,
                       "iden" : "A0EB0707-6561-4044-A4A0-E7C13EFDE4D3",
                       "modified" : "2022-08-31T12:23:15+0900",
                       "name" : "n"
@@ -433,16 +440,18 @@ class MathTests: XCTestCase {
                   "no" : 2,
                   "x" : 1360,
                   "name" : "iRSF",
-                  "resultChain" : "4:Ob_10",
+                  "resultChain" : "va:Ob10",
                   "inputs" : [
                     {
                       "type" : "input",
                       "modified" : "2022-08-31T12:23:42+0900",
                       "iden" : "5C163365-CC14-4309-9A3D-416ADAADF044",
+                      "no" : 1,
                       "name" : "n"
                     },
                     {
                       "name" : "p",
+                      "no" : 2,
                       "modified" : "2022-08-31T12:23:48+0900",
                       "type" : "input",
                       "iden" : "DBDDEA1F-2E06-4E15-ABFF-2F08B9DAC05E"
@@ -453,7 +462,7 @@ class MathTests: XCTestCase {
                 },
                 {
                   "y" : 799,
-                  "chain" : "0:8;0:9;0:3",
+                  "chain" : "dg:8;dg:9;dg:3",
                   "type" : "object",
                   "name" : "Ob_1",
                   "label" : "",
@@ -468,14 +477,14 @@ class MathTests: XCTestCase {
                   "type" : "object",
                   "label" : "",
                   "x" : 1972,
-                  "chain" : "3:RSF;4:Ob_1;2:)",
+                  "chain" : "ml:Me1;va:Ob1;sp:)",
                   "iden" : "475600DF-5730-4B73-899F-F817C396AADC"
                 },
                 {
                   "no" : 4,
                   "type" : "object",
                   "y" : 949,
-                  "chain" : "4:iRSF.n;1:÷;4:iRSF.p",
+                  "chain" : "va:Me2.i1;op:÷;va:Me2.i2",
                   "iden" : "38FC6BFB-808A-4BF4-B98B-2E289864C95A",
                   "name" : "Ob_4",
                   "label" : "",
@@ -488,7 +497,7 @@ class MathTests: XCTestCase {
                   "x" : 1094,
                   "y" : 1000,
                   "no" : 5,
-                  "chain" : "3:floor;4:Ob_4;2:)",
+                  "chain" : "fn:floor;va:Ob4;sp:)",
                   "label" : ""
                 },
                 {
@@ -498,12 +507,12 @@ class MathTests: XCTestCase {
                   "x" : 1145.75,
                   "iden" : "655D064D-6FBE-4B26-8580-3C86EB22C388",
                   "label" : "isFactor",
-                  "chain" : "4:Ob_5;1:=;4:Ob_4",
+                  "chain" : "va:Ob5;op:=;va:Ob4",
                   "type" : "object"
                 },
                 {
                   "iden" : "1706384C-2E88-4D23-B6B4-635DFFD4FC40",
-                  "chain" : "2:[;3:iRSF;4:iRSF.n;2:,;4:iRSF.p;1:+;0:1;2:);2:]",
+                  "chain" : "sp:[;ml:Me2;va:Me2.i1;sp:,;va:Me2.i2;op:+;dg:1;sp:);sp:]",
                   "no" : 7,
                   "type" : "object",
                   "label" : "",
@@ -512,7 +521,7 @@ class MathTests: XCTestCase {
                   "y" : 948.5
                 },
                 {
-                  "chain" : "2:[;4:iRSF.n;2:]",
+                  "chain" : "sp:[;va:Me2.i1;sp:]",
                   "iden" : "099C5651-A594-44CF-9D17-83B52992058C",
                   "y" : 873,
                   "no" : 8,
@@ -524,7 +533,7 @@ class MathTests: XCTestCase {
                 {
                   "type" : "object",
                   "label" : "increment",
-                  "chain" : "3:if;4:iRSF.p;1:×;4:iRSF.p;1:>;4:iRSF.n;2:,;4:Ob_8;2:,;4:Ob_7;2:)",
+                  "chain" : "fn:if;va:Me2.i2;op:×;va:Me2.i2;op:>;va:Me2.i1;sp:,;va:Ob8;sp:,;va:Ob7;sp:)",
                   "no" : 9,
                   "x" : 1429.75,
                   "y" : 1058,
@@ -532,7 +541,7 @@ class MathTests: XCTestCase {
                   "name" : "Ob_9"
                 },
                 {
-                  "chain" : "3:if;4:Ob_6;2:,;4:iRSF.p;2:,;4:Ob_9;2:)",
+                  "chain" : "fn:if;va:Ob6;sp:,;va:Me2.i2;sp:,;va:Ob9;sp:)",
                   "no" : 10,
                   "iden" : "ACA1A70B-CA6E-4925-8897-E04F52A7A20A",
                   "y" : 1159,
@@ -543,7 +552,7 @@ class MathTests: XCTestCase {
                 }
               ],
               "yOffset" : 666,
-              "version" : "2.1",
+              "version" : "3.0",
               "readOnly" : false,
               "iden" : "E3BB4A35-F906-44BD-B7ED-89AAB42D3AB2",
               "height" : 834
@@ -561,7 +570,7 @@ class MathTests: XCTestCase {
             {
               "height" : 1554,
               "xOffset" : 3254,
-              "version" : "2.1.1",
+              "version" : "3.0",
               "type" : "aether",
               "width" : 2365,
               "readOnly" : false,
@@ -574,7 +583,7 @@ class MathTests: XCTestCase {
                   "name" : "Ob_2",
                   "label" : "",
                   "type" : "object",
-                  "chain" : "0:1"
+                  "chain" : "dg:1"
                 },
                 {
                   "iden" : "C2EFF853-FF8F-4AD1-A31B-CE99DD46ABF2",
@@ -582,14 +591,14 @@ class MathTests: XCTestCase {
                   "x" : 3611.0859375,
                   "type" : "object",
                   "y" : 2021.39453125,
-                  "chain" : "0:9",
+                  "chain" : "dg:9",
                   "label" : "",
                   "no" : 3
                 },
                 {
                   "type" : "object",
                   "label" : "",
-                  "chain" : "2:[;4:k;2:]",
+                  "chain" : "sp:[;va:k;sp:]",
                   "y" : 2102.7734375,
                   "x" : 3699.59375,
                   "iden" : "B2783579-B39E-43E9-8B28-2732A74FB2F5",
@@ -599,7 +608,7 @@ class MathTests: XCTestCase {
                 {
                   "iden" : "9DABA2E8-4797-48DB-928F-3826EFA4F482",
                   "type" : "object",
-                  "chain" : "3:∑;4:Ob_2;2:,;4:Ob_3;2:,;4:Ob_4;2:)",
+                  "chain" : "fn:∑;va:Ob2;sp:,;va:Ob3;sp:,;va:Ob4;sp:)",
                   "name" : "Ob_5",
                   "x" : 3545.046875,
                   "no" : 5,

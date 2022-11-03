@@ -24,27 +24,15 @@ public final class Cron: Aexel, TowerDelegate {
 	@objc public var endMode: OOEndMode = .stop
 	@objc public var exposed: Bool = true
 
-	public lazy var tower: Tower = Tower(aether: aether, token: aether.variableToken(tag: "Cr_\(no)"), delegate: self)
-	public var token: Token {return tower.variableToken}
+    public lazy var tower: Tower = aether.createTower(tag: key, towerDelegate: self)
+    public var token: Token { tower.variableToken }
 
-	public var startTower: Tower {
-		return startChain.tower
-	}
-	public var stopTower: Tower {
-		return stopChain.tower
-	}
-	public var stepsTower: Tower {
-		return stepsChain.tower
-	}
-	public var rateTower: Tower {
-		return rateChain.tower
-	}
-	public var deltaTower: Tower {
-		return deltaChain.tower
-	}
-	public var whileTower: Tower {
-		return whileChain.tower
-	}
+	public var startTower: Tower { startChain.tower }
+	public var stopTower: Tower { stopChain.tower }
+	public var stepsTower: Tower { stepsChain.tower }
+	public var rateTower: Tower { rateChain.tower }
+	public var deltaTower: Tower { deltaChain.tower }
+	public var whileTower: Tower { whileChain.tower }
 	
 	public var t: Double = 0
 	public var dt: Double = 1
@@ -97,23 +85,20 @@ public final class Cron: Aexel, TowerDelegate {
 	
 // Events ==========================================================================================
 	override public func onLoad() {
-		startChain.tower = Tower(aether: aether, token: aether.variableToken(tag: "CrSta_\(no)"), delegate: startChain)
-		stopChain.tower = Tower(aether: aether, token: aether.variableToken(tag: "CrSto_\(no)"), delegate: stopChain)
-		stepsChain.tower = Tower(aether: aether, token: aether.variableToken(tag: "CrSte_\(no)"), delegate: stepsChain)
-		rateChain.tower = Tower(aether: aether, token: aether.variableToken(tag: "CrRat_\(no)"), delegate: rateChain)
-		deltaChain.tower = Tower(aether: aether, token: aether.variableToken(tag: "CrDel_\(no)"), delegate: deltaChain)
-		whileChain.tower = Tower(aether: aether, token: aether.variableToken(tag: "CrWle_\(no)"), delegate: whileChain)
+        startChain.tower = aether.createTower(tag: "\(key).start", towerDelegate: startChain)
+		stopChain.tower = aether.createTower(tag: "\(key).stop", towerDelegate: stopChain)
+		stepsChain.tower = aether.createTower(tag: "\(key).steps", towerDelegate: stepsChain)
+		rateChain.tower = aether.createTower(tag: "\(key).rate", towerDelegate: rateChain)
+		deltaChain.tower = aether.createTower(tag: "\(key).delta", towerDelegate: deltaChain)
+		whileChain.tower = aether.createTower(tag: "\(key).while", towerDelegate: whileChain)
 	}
 	
 // Aexel ===========================================================================================
-	public override var towers: Set<Tower> {
-		return Set<Tower>([startTower, stopTower, stepsTower, rateTower, deltaTower, whileTower, tower])
-	}
+    public override var code: String { "Cr" }
+	public override var towers: Set<Tower> { Set<Tower>([startTower, stopTower, stepsTower, rateTower, deltaTower, whileTower, tower]) }
 	
 // Domain ==========================================================================================
-	override public var properties: [String] {
-		return super.properties + ["startChain", "stopChain", "stepsChain", "rateChain", "deltaChain", "whileChain", "endMode", "exposed"]
-	}
+	override public var properties: [String] { super.properties + ["startChain", "stopChain", "stepsChain", "rateChain", "deltaChain", "whileChain", "endMode", "exposed"] }
 	
 // TowerDelegate ===================================================================================
 	func renderDisplay(tower: Tower) -> String {
@@ -128,6 +113,6 @@ public final class Cron: Aexel, TowerDelegate {
 	func executeWorker(tower: Tower) {
 		AEMemorySetValue(tower.memory, tower.index, t)
 		AEMemoryFix(tower.memory, tower.index)
-		tower.variableToken.label = tower.obje.display
+//		tower.variableToken.value = tower.obje.display
 	}
 }

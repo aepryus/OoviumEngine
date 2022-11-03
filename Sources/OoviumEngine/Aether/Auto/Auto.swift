@@ -41,32 +41,30 @@ public final class Auto: Aexel, TowerDelegate {
 	}
 	
 	private func buildSpaceTowers(no: Int) {
-		spaceTowers.insert(Tower(aether: aether, token: aether.variableToken(tag: "Auto\(no).A", label: "A"), delegate: self))
-		spaceTowers.insert(Tower(aether: aether, token: aether.variableToken(tag: "Auto\(no).B", label: "B"), delegate: self))
-		spaceTowers.insert(Tower(aether: aether, token: aether.variableToken(tag: "Auto\(no).C", label: "C"), delegate: self))
-		spaceTowers.insert(Tower(aether: aether, token: aether.variableToken(tag: "Auto\(no).D", label: "D"), delegate: self))
-		spaceTowers.insert(Tower(aether: aether, token: aether.variableToken(tag: "Auto\(no).E", label: "E"), delegate: self))
-		spaceTowers.insert(Tower(aether: aether, token: aether.variableToken(tag: "Auto\(no).F", label: "F"), delegate: self))
-		spaceTowers.insert(Tower(aether: aether, token: aether.variableToken(tag: "Auto\(no).G", label: "G"), delegate: self))
-		spaceTowers.insert(Tower(aether: aether, token: aether.variableToken(tag: "Auto\(no).H", label: "H"), delegate: self))
-		spaceTowers.insert(Tower(aether: aether, token: aether.variableToken(tag: "Auto\(no).Self", label: "Self"), delegate: self))
-		
-		for tower in spaceTowers {
-			tower.web = web
-		}
+        spaceTowers.insert(aether.createTower(tag: "\(key).A", towerDelegate: self, tokenDelegate: StaticVariableTokenDelegate("A")))
+        spaceTowers.insert(aether.createTower(tag: "\(key).B", towerDelegate: self, tokenDelegate: StaticVariableTokenDelegate("B")))
+        spaceTowers.insert(aether.createTower(tag: "\(key).C", towerDelegate: self, tokenDelegate: StaticVariableTokenDelegate("C")))
+        spaceTowers.insert(aether.createTower(tag: "\(key).D", towerDelegate: self, tokenDelegate: StaticVariableTokenDelegate("D")))
+        spaceTowers.insert(aether.createTower(tag: "\(key).E", towerDelegate: self, tokenDelegate: StaticVariableTokenDelegate("E")))
+        spaceTowers.insert(aether.createTower(tag: "\(key).F", towerDelegate: self, tokenDelegate: StaticVariableTokenDelegate("F")))
+        spaceTowers.insert(aether.createTower(tag: "\(key).G", towerDelegate: self, tokenDelegate: StaticVariableTokenDelegate("G")))
+        spaceTowers.insert(aether.createTower(tag: "\(key).H", towerDelegate: self, tokenDelegate: StaticVariableTokenDelegate("H")))
+        spaceTowers.insert(aether.createTower(tag: "\(key).Self", towerDelegate: self, tokenDelegate: StaticVariableTokenDelegate("Self")))
+
+        spaceTowers.forEach { $0.web = web }
 	}
 	
-	public func foreshadow(_ memory: UnsafeMutablePointer<Memory>) {
-		AEMemorySetValue(memory, AEMemoryIndexForName(memory, "Auto\(no).A".toInt8()), 0)
-		AEMemorySetValue(memory, AEMemoryIndexForName(memory, "Auto\(no).B".toInt8()), 0)
-		AEMemorySetValue(memory, AEMemoryIndexForName(memory, "Auto\(no).C".toInt8()), 0)
-		AEMemorySetValue(memory, AEMemoryIndexForName(memory, "Auto\(no).D".toInt8()), 0)
-		AEMemorySetValue(memory, AEMemoryIndexForName(memory, "Auto\(no).E".toInt8()), 0)
-		AEMemorySetValue(memory, AEMemoryIndexForName(memory, "Auto\(no).F".toInt8()), 0)
-		AEMemorySetValue(memory, AEMemoryIndexForName(memory, "Auto\(no).G".toInt8()), 0)
-		AEMemorySetValue(memory, AEMemoryIndexForName(memory, "Auto\(no).H".toInt8()), 0)
-		AEMemorySetValue(memory, AEMemoryIndexForName(memory, "Auto\(no).Self".toInt8()), 0)
-	}
+//	public func foreshadow(_ memory: UnsafeMutablePointer<Memory>) {
+//		AEMemorySetValue(memory, AEMemoryIndexForName(memory, "Auto\(no).A".toInt8()), 0)
+//		AEMemorySetValue(memory, AEMemoryIndexForName(memory, "Auto\(no).B".toInt8()), 0)
+//		AEMemorySetValue(memory, AEMemoryIndexForName(memory, "Auto\(no).C".toInt8()), 0)
+//		AEMemorySetValue(memory, AEMemoryIndexForName(memory, "Auto\(no).D".toInt8()), 0)
+//		AEMemorySetValue(memory, AEMemoryIndexForName(memory, "Auto\(no).E".toInt8()), 0)
+//		AEMemorySetValue(memory, AEMemoryIndexForName(memory, "Auto\(no).F".toInt8()), 0)
+//		AEMemorySetValue(memory, AEMemoryIndexForName(memory, "Auto\(no).G".toInt8()), 0)
+//		AEMemorySetValue(memory, AEMemoryIndexForName(memory, "Auto\(no).H".toInt8()), 0)
+//		AEMemorySetValue(memory, AEMemoryIndexForName(memory, "Auto\(no).Self".toInt8()), 0)
+//	}
 	
 	public func add(state: State) {
 		add(state)
@@ -94,8 +92,8 @@ public final class Auto: Aexel, TowerDelegate {
 	
 // Events ==========================================================================================
 	override public func onLoad() {
-		statesChain.tower = Tower(aether: aether, token: aether.variableToken(tag: "AtS_\(no)"), delegate: statesChain)
-		resultChain.tower = Tower(aether: aether, token: aether.variableToken(tag: "AtR_\(no)"), delegate: resultChain)
+        statesChain.tower = aether.createTower(tag: "\(key).states", towerDelegate: statesChain)
+        resultChain.tower = aether.createTower(tag: "\(key).result", towerDelegate: resultChain)
 		
 		statesTower.tailForWeb = web
 		resultTower.tailForWeb = web
@@ -104,9 +102,8 @@ public final class Auto: Aexel, TowerDelegate {
 	}
 	
 // Aexel ===========================================================================================
-	public override var towers: Set<Tower> {
-		return spaceTowers.union([statesTower, resultTower])
-	}
+    public override var code: String { "Au" }
+	public override var towers: Set<Tower> { spaceTowers.union([statesTower, resultTower]) }
 	
 // Domain ==========================================================================================
 	override public var properties: [String] {

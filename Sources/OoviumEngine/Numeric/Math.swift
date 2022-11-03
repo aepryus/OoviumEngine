@@ -41,21 +41,10 @@ public enum Morph: Int {
 public func objToString(_ obj: Obj) -> UnsafeMutablePointer<Int8> { Def.format(obj: obj).toInt8() }
 
 public final class Math {
-	static var morphs = [String:Int]()
+	private static var morphs = [String:Int]()
 	
-	static func registerMorph(key: String, morph: Morph) {
-		morphs[key] = morph.rawValue
-	}
-	static func registerMorph(key: String, int: Int) {
-		morphs[key] = int
-	}
-	static func deregisterMorph(key: String) {
-		morphs[key] = nil
-	}
-	static func deregisterCustomMorphs() {
-		morphs = morphs.filter { $0.value < 128 }
-	}
-	static func registerOperator(token: Token, defs: [Def], morph: Morph) {
+	private static func registerMorph(key: String, morph: Morph) { morphs[key] = morph.rawValue }
+	private static func registerOperator(token: Token, defs: [Def], morph: Morph) {
 		var key = "\(token.tag);"
 		defs.forEach { key += "\($0.key);" }
 		registerMorph(key: key, morph: morph)
@@ -207,6 +196,7 @@ public final class Math {
 // Start ===========================================================================================
 	public static func start() {
 		startAegean()
+        Token.start()
 
 		registerOperator(token: Token.add,				defs: [RealDef.def, RealDef.def],	morph: .add)
 		registerOperator(token: Token.subtract,			defs: [RealDef.def, RealDef.def],	morph: .sub)
@@ -261,91 +251,6 @@ public final class Math {
 		registerOperator(token: Token.add,			defs: [StringDef.def, VectorDef.def],	morph: .strAdd)
 		registerOperator(token: Token.add,			defs: [RecipeDef.def, StringDef.def],	morph: .strAdd)
 		registerOperator(token: Token.add,			defs: [StringDef.def, RecipeDef.def],	morph: .strAdd)
-
-		Token.register(token: Token.period)
-		Token.register(token: Token.zero)
-		Token.register(token: Token.one)
-		Token.register(token: Token.two)
-		Token.register(token: Token.three)
-		Token.register(token: Token.four)
-		Token.register(token: Token.five)
-		Token.register(token: Token.six)
-		Token.register(token: Token.seven)
-		Token.register(token: Token.eight)
-		Token.register(token: Token.nine)
-
-		Token.register(token: Token.e)
-		Token.register(token: Token.i)
-		Token.register(token: Token.pi)
-		Token.register(token: Token.yes)
-		Token.register(token: Token.no)
-
-		Token.register(token: Token.add)
-		Token.register(token: Token.subtract)
-		Token.register(token: Token.multiply)
-		Token.register(token: Token.divide)
-		Token.register(token: Token.dot)
-		Token.register(token: Token.mod)
-		Token.register(token: Token.power)
-		Token.register(token: Token.equal)
-		Token.register(token: Token.less)
-		Token.register(token: Token.greater)
-		Token.register(token: Token.notEqual)
-		Token.register(token: Token.lessOrEqual)
-		Token.register(token: Token.greaterOrEqual)
-		Token.register(token: Token.and)
-		Token.register(token: Token.or)
-		Token.register(token: Token.not)
-		Token.register(token: Token.neg)
-		Token.register(token: Token.leftParen)
-		Token.register(token: Token.comma)
-		Token.register(token: Token.rightParen)
-		Token.register(token: Token.bra)
-		Token.register(token: Token.ket)
-		Token.register(token: Token.quote)
-
-		Token.register(token: Token.abs)
-		Token.register(token: Token.round)
-		Token.register(token: Token.floor)
-		Token.register(token: Token.sqrt)
-		Token.register(token: Token.fac)
-		Token.register(token: Token.exp)
-		Token.register(token: Token.ln)
-		Token.register(token: Token.log)
-		Token.register(token: Token.tenth)
-		Token.register(token: Token.second)
-		Token.register(token: Token.log2)
-		Token.register(token: Token.sin)
-		Token.register(token: Token.cos)
-		Token.register(token: Token.tan)
-		Token.register(token: Token.asin)
-		Token.register(token: Token.acos)
-		Token.register(token: Token.atan)
-		Token.register(token: Token.sec)
-		Token.register(token: Token.csc)
-		Token.register(token: Token.cot)
-		Token.register(token: Token.sinh)
-		Token.register(token: Token.cosh)
-		Token.register(token: Token.tanh)
-		Token.register(token: Token.asinh)
-		Token.register(token: Token.acosh)
-		Token.register(token: Token.atanh)
-		Token.register(token: Token.random)
-		Token.register(token: Token.iif)
-		Token.register(token: Token.min)
-		Token.register(token: Token.max)
-		Token.register(token: Token.sum)
-		Token.register(token: Token.complex)
-		Token.register(token: Token.vector)
-
-		Token.register(token: Token.k)
-
-		Token.register(token: Token.chill)
-		Token.register(token: Token.eat)
-		Token.register(token: Token.flirt)
-		Token.register(token: Token.fight)
-		Token.register(token: Token.flee)
-		Token.register(token: Token.wander)
 
 		registerMorph(key: "−;num;", morph: .neg)
 		registerMorph(key: "!;num;", morph: .not)

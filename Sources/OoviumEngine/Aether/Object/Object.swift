@@ -9,48 +9,24 @@
 import Acheron
 import Foundation
 
-public final class Object: Aexel {
-	@objc public var chain: Chain!
-	@objc public var label: String = "" {
-		didSet {
-			if label.count > 0 { chain.label = label }
-			else { chain.label = nil }
-		}
-	}
-	
-	public var tower: Tower {
-		return chain.tower
-	}
-	public var token: VariableToken {
-		return tower.variableToken
-	}
-	
-// Inits ===========================================================================================
-	public required init(no: Int, at: V2, aether: Aether) {
-		chain = Chain()
-		super.init(no: no, at: at, aether: aether)
-	}
-	public required init(attributes: [String:Any], parent: Domain?) {
-		super.init(attributes: attributes, parent: parent)
-	}
+public final class Object: Aexel, VariableTokenDelegate {
+	@objc public var chain: Chain = Chain()
+    @objc public var label: String = ""
+
+    public var token: VariableToken { chain.tower.variableToken }
 	
 // Events ==========================================================================================
-	override public func onLoad() {
-		chain.tower = Tower(aether: aether, token: aether.variableToken(tag: "Ob_\(no)"), delegate: chain)
-		name = chain.tower.name
-		if label.count > 0 {
-			chain.label = label
-			token.label = label
-		}
-	}
+    override public func onLoad() {
+        chain.tower = aether.createTower(tag: key, towerDelegate: chain, tokenDelegate: self)
+    }
 	
 // Aexel ===========================================================================================
-	public override var towers: Set<Tower> {
-		return Set<Tower>([tower])
-	}
+    public override var code: String { "Ob" }
+    public override var towers: Set<Tower> { Set<Tower>([chain.tower]) }
 	
 // Domain ==========================================================================================
-	override public var properties: [String] {
-		return super.properties + ["chain", "label"]
-	}
+	override public var properties: [String] { super.properties + ["chain", "label"] }
+    
+// VariableTokenDelegate ===========================================================================
+    public var alias: String? { label.count > 0 ? label : nil }
 }
