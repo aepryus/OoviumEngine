@@ -429,8 +429,9 @@ public class Migrate {
             })
         }
         
-        if version == "3.0" { migrate = true }
+        if version == "2.1" { migrate = true }
         if migrate {
+            attributes["version"] = "3.0"
             attributes = attributes.modify(condition: { (attributes: [String:Any]) in
                 ["input", "vertebra"].contains(attributes["type"] as! String)
             }, action: { (attributes: [String:Any], no: Int) in

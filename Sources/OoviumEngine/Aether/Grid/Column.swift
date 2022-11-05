@@ -34,7 +34,7 @@ public final class Column: Domain, TowerDelegate, VariableTokenDelegate {
 	
 	fileprivate lazy var header: Header = Header()
     
-    public lazy var tower: Tower = grid.aether.createTower(tag: "\(grid.key).Co\(no)", towerDelegate: header, tokenDelegate: self)
+    public lazy var tower: Tower = grid.aether.createColumnTower(tag: "\(grid.key).Co\(no)", towerDelegate: header, tokenDelegate: self)
     public lazy var footerTower: Tower = grid.aether.createTower(tag: "\(grid.key).Ft\(no)", towerDelegate: self)
 	
 	public var grid: Grid { parent as! Grid }
@@ -43,10 +43,7 @@ public final class Column: Domain, TowerDelegate, VariableTokenDelegate {
     public var colNo: Int { grid.columns.enumerated().first(where: { $0.1 === self })!.0 }
 	
 	public func render() {
-		if aggregate == .none {
-			grid.aether.deregister(tower: footerTower)
-		} else {
-			grid.aether.register(tower: footerTower)
+		if aggregate != .none {
 			grid.aether.buildMemory()
 			footerTower.buildStream()
 			grid.aether.evaluate()

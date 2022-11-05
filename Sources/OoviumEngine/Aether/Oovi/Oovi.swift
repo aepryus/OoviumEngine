@@ -18,7 +18,7 @@ public class Oovi: Aexel, TowerDelegate {
 	@objc public var stepChain: Chain!
 	@objc public var amorousChain: Chain!
 	
-	var web: AnyObject {return self}
+	var web: AnyObject { self }
 
 	var parameterTowers: Set<Tower> = Set<Tower>()
 	

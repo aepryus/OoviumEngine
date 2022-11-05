@@ -39,7 +39,7 @@ import Foundation
 // Evaluate ========================================================================================
 	public func buildMemory() {
 		var vars: [String] = ["k"]
-		vars += tokens.values.filter { $0 is VariableToken }.map { $0.tag }
+        vars += tokens.values.filter { $0.code == .va && $0.status != .deleted }.map { $0.tag }
 		vars.sort(by: { $0.uppercased() < $1.uppercased() })
 
 		let oldMemory: UnsafeMutablePointer<Memory> = memory
@@ -48,12 +48,11 @@ import Foundation
 		AEMemoryLoad(memory, oldMemory)
 		AEMemoryRelease(oldMemory)
 
-		Set(towers.values).filter { $0.variableToken.code == .va }.forEach { $0.buildTask() }
+		towers.values.filter { $0.variableToken.code == .va }.forEach { $0.buildTask() }
 	}
 	public func prepare() {
 		var towers = Set<Tower>()
 		aexels.forEach { towers.formUnion($0.towers) }
-		towers.forEach { register(tower: $0) }
 		towers.forEach { $0.buildStream() }
 		buildMemory()
 	}
@@ -63,21 +62,22 @@ import Foundation
 	private func addAexel(_ aexel: Aexel) {
 		add(aexel)
 		aexels.append(aexel)
-		aexel.towers.forEach { register(tower: $0) }
 
         aexel.towers.forEach { $0.buildStream() }
 		buildMemory()
         Tower.evaluate(towers: aexel.towers)
 	}
-	public func removeAexel(_ aexel: Aexel) {
-		aexel.towers.forEach { deregister(tower: $0) }
-		aexels.remove(object: aexel)
-        remove(aexel)
-	}
-	public func removeAllAexels() {
-        aexels.forEach { removeAexel($0) }
-        buildMemory()
+    public func remove(aexels: [Aexel]) {
+        var removed: [Tower] = []
+        aexels.forEach({
+            removed.append(contentsOf: $0.towers)
+            self.aexels.remove(object: $0)
+            remove($0)
+        })
+        destroy(towers: removed)
     }
+	public func remove(aexel: Aexel) { remove(aexels: [aexel]) }
+	public func removeAllAexels() { remove(aexels: aexels) }
     
     public func create<T: Aexel>(at: V2) -> T {
         let key: String = "\(T.self)".lowercased()
@@ -94,33 +94,29 @@ import Foundation
 	public func outputEdges(for text: Text) -> [Edge] { aexels.compactMap { ($0 as? Text)?.edgeFor(text: text) } }
 	
 // Towers ==========================================================================================
-    func register(tower: Tower) {
-        towers[tower.variableToken] = tower
-        if let mechlikeToken = tower.mechlikeToken { towers[mechlikeToken] = tower }
-    }
-    func deregister(tower: Tower) {
-        towers[tower.variableToken] = nil
-        if let mechlikeToken = tower.mechlikeToken { towers[mechlikeToken] = nil }
-    }
-    
-    public func delete(towers: Set<Tower>) {
+    public func destroy(towers: [Tower]) {
         var affected: Set<Tower> = Set<Tower>()
         towers.forEach { affected.formUnion($0.allDownstream()) }
         affected.subtract(towers)
         
-        towers.forEach {
-            $0.variableToken.status = .deleted
-//            $0.variableToken.label = "DELETED"
-            if $0.variableToken.code == .va { AEMemoryUnfix(memory, $0.index) }
-            $0.abstract()
+        towers.forEach { (tower: Tower) in
+            tower.variableToken.status = .deleted
+            if tower.variableToken.code == .va { AEMemoryUnfix(memory, tower.index) }
+            tower.abstract()
+            self.towers[tower.variableToken] = nil
+            if let mechlikeToken = tower.mechlikeToken { self.towers[mechlikeToken] = nil }
         }
         
         Tower.evaluate(towers: affected)
+        buildMemory()
     }
+    public func destroy(tower: Tower) { destroy(towers: [tower]) }
     func createTower(tag: String, towerDelegate: TowerDelegate, tokenDelegate: VariableTokenDelegate? = nil) -> Tower {
         let token = VariableToken(tag: tag, delegate: tokenDelegate)
         tokens[token.key] = token
-        return Tower(aether: self, token: token, delegate: towerDelegate)
+        let tower = Tower(aether: self, token: token, delegate: towerDelegate)
+        towers[token] = tower
+        return tower
     }
     func createMechlikeTower(tag: String, towerDelegate: TowerDelegate, tokenDelegate: VariableTokenDelegate? = nil) -> Tower {
         let variableToken = VariableToken(tag: tag, delegate: tokenDelegate)
@@ -129,9 +125,16 @@ import Foundation
         let mechlikeToken = MechlikeToken(tower: tower, tag: tag, delegate: tokenDelegate)
         tokens[mechlikeToken.key] = mechlikeToken
         tower.mechlikeToken = mechlikeToken
+        towers[variableToken] = tower
+        towers[mechlikeToken] = tower
         return tower
     }
-    func destroyTower(_ tower: Tower) {
+    func createColumnTower(tag: String, towerDelegate: TowerDelegate, tokenDelegate: VariableTokenDelegate? = nil) -> Tower {
+        let token = ColumnToken(tag: tag, delegate: tokenDelegate)
+        tokens[token.key] = token
+        let tower = Tower(aether: self, token: token, delegate: towerDelegate)
+        towers[token] = tower
+        return tower
     }
     
 // Functions =======================================================================================

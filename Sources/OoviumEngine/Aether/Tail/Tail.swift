@@ -23,7 +23,7 @@ public final class Tail: Aexel, Mechlike, TowerDelegate, VariableTokenDelegate {
     public var whileToken: Token { whileTower.variableToken }
 	public var resultToken: Token { resultTower.variableToken }
 	
-	public var web: AnyObject {return self}
+	public var web: AnyObject { self }
 	public var recipe: UnsafeMutablePointer<Recipe>? = nil
 	public var morphIndex: Int? = nil
 
@@ -56,8 +56,6 @@ public final class Tail: Aexel, Mechlike, TowerDelegate, VariableTokenDelegate {
 		add(vertebra)
 		vertebra.tower.web = web
 		vertebras.append(vertebra)
-		aether.register(tower: vertebra.tower)
-		aether.register(tower: vertebra.chain.tower)
 	}
 	public func addVertebra() -> Vertebra {
 		var name: String = ""
@@ -66,8 +64,11 @@ public final class Tail: Aexel, Mechlike, TowerDelegate, VariableTokenDelegate {
 		} else {
 			name = "p\(vertebras.count+1)"
 		}
-		let vertebra = Vertebra(tail: self, name: name)
-		add(vertebra: vertebra)
+
+        let vertebra = Vertebra(tail: self, name: name)
+        vertebra.no = vertebras.count+1
+        vertebra.onLoad()
+        add(vertebra: vertebra)
         mechlikeToken.params = vertebras.count
         vertebra.chain.tower.attach(tower)
 		return vertebra
@@ -76,8 +77,6 @@ public final class Tail: Aexel, Mechlike, TowerDelegate, VariableTokenDelegate {
 		let vertebra = vertebras.removeLast()
         vertebra.chain.tower.detach(tower)
 		remove(vertebra)
-		aether.deregister(tower: vertebra.tower)
-		aether.deregister(tower: vertebra.chain.tower)
         mechlikeToken.params = vertebras.count
 	}
 	
@@ -112,14 +111,6 @@ public final class Tail: Aexel, Mechlike, TowerDelegate, VariableTokenDelegate {
 			$0.chain.tower.tailForWeb = web
 		}
 	}
-	override public func onRemoved() {
-		aether.deregister(tower: tower)
-		vertebras.forEach {
-			aether.deregister(tower: $0.tower)
-			aether.deregister(tower: $0.chain.tower)
-		}
-//		Math.deregisterMorph(key: morphKey)
-	}
 
 // Aexel ===========================================================================================
     public override var code: String { "Ta" }
@@ -134,8 +125,6 @@ public final class Tail: Aexel, Mechlike, TowerDelegate, VariableTokenDelegate {
 				i += 1
 			}
 			super.name = newName
-
-//            mechlikeToken.label = "\(name)("
 
 			if recipe != nil { AERecipeSetName(recipe, name.toInt8()) }
 		}

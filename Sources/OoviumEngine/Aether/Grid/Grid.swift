@@ -74,7 +74,6 @@ public final class Grid: Aexel {
 			cell.colNo = colNo
 			cell.rowNo = rows-1
 			cells.append(cell)
-			aether.register(tower: cell.tower)
             newCells.append(cell)
 		}
 		aether.buildMemory()
@@ -87,7 +86,6 @@ public final class Grid: Aexel {
 		rows -= 1
 		for i in 0..<columns.count {
 			let cellNo: Int = (rowNo+1)*columns.count - 1 - i
-			aether.deregister(tower: cells[cellNo].tower)
 			cells.remove(at: cellNo)
 		}
 		numberCells()
@@ -108,7 +106,6 @@ public final class Grid: Aexel {
 		column.parent = self
 		column.name = Grid.name(n: cc)
 		columns.append(column)
-		aether.register(tower: column.footerTower)
 		
 		var nc: Int = cc
 		for rowNo in 0..<rows {
@@ -117,7 +114,6 @@ public final class Grid: Aexel {
 			cell.colNo = cc
 			cell.rowNo = rowNo
 			cells.insert(cell, at: nc)
-			aether.register(tower: cell.tower)
 			nc += 1 + cc
 		}
 		aether.buildMemory()
@@ -129,12 +125,8 @@ public final class Grid: Aexel {
 		let colNo: Int = column.colNo
 		for rowNo in 0..<rows {
 			let cellNo = columns.count*(rows-1-rowNo)+colNo
-			let cell: Cell = cells[cellNo]
-			aether.deregister(tower: cell.tower)
 			cells.remove(at: cellNo)
 		}
-		aether.deregister(tower: column.tower)
-		if hasFooter {aether.deregister(tower: columns[colNo].footerTower)}
 		columns.remove(at: colNo)
 		numberCells()
 		aether.buildMemory()
@@ -182,7 +174,7 @@ public final class Grid: Aexel {
 	public override var towers: Set<Tower> {
 		var towers: [Tower] = []
 		cells.forEach { towers.append($0.tower) }
-//		columns.forEach { towers.append($0.tower) }
+		columns.forEach { towers.append($0.tower) }
 		columns.forEach { towers.append($0.footerTower) }
 		return Set<Tower>(towers)
 	}

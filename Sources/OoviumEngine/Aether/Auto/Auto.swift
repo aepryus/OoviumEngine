@@ -24,7 +24,7 @@ public final class Auto: Aexel, TowerDelegate {
 	}
 	public var spaceTowers: Set<Tower> = Set<Tower>()
 	
-	var web: AnyObject {return self}
+	var web: AnyObject { self }
 
 // Inits ===========================================================================================
 	public required init(no: Int, at: V2, aether: Aether) {
