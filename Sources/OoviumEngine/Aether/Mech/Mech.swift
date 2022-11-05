@@ -35,8 +35,6 @@ public final class Mech: Aexel, Mechlike, TowerDelegate, VariableTokenDelegate {
 	public required init(no: Int, at: V2, aether: Aether) {
 		super.init(no: no, at: at, aether: aether)
         
-        onLoad()
-
 		name = "f"
 		addInput()
 	}
@@ -49,21 +47,19 @@ public final class Mech: Aexel, Mechlike, TowerDelegate, VariableTokenDelegate {
 		add(input)
 		input.tower.web = web
 		inputs.append(input)
-		aether.register(tower: input.tower)
 	}
 	public func addInput() {
 		var name: String = ""
         if inputs.count < 4 { name = ["x", "y", "z", "w"][inputs.count] }
         else { name = "p\(inputs.count+1)" }
-		let input = Input(mech: self, name: name)
-        input.no = inputs.count+1
+        let input = Input(mech: self, name: name, no: inputs.count+1)
 		add(input: input)
         mechlikeToken.params = inputs.count
 	}
 	public func removeInput() {
 		let input = inputs.removeLast()
 		remove(input)
-		aether.deregister(tower: input.tower)
+        aether.destroy(tower: input.tower)
         mechlikeToken.params = inputs.count
 	}
 	
@@ -93,16 +89,12 @@ public final class Mech: Aexel, Mechlike, TowerDelegate, VariableTokenDelegate {
 // Events ==========================================================================================
 	override public func onLoad() {
         resultChain.tower = aether.createTower(tag: "\(key).result", towerDelegate: resultChain)
-        
+
         tower = aether.createMechlikeTower(tag: key, towerDelegate: self, tokenDelegate: self)
         tower.mechlikeToken?.params = inputs.count
-        
+
 		resultTower.tailForWeb = web
 		inputs.forEach {$0.tower.web = web}
-	}
-	override public func onRemoved() {
-//		aether.deregister(tower: tower)
-//		inputs.forEach { aether.deregister(tower: $0.tower) }
 	}
 	
 // Aexel ===========================================================================================

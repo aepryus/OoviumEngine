@@ -101,10 +101,13 @@ import Foundation
         
         towers.forEach { (tower: Tower) in
             tower.variableToken.status = .deleted
-            if tower.variableToken.code == .va { AEMemoryUnfix(memory, tower.index) }
             tower.abstract()
             self.towers[tower.variableToken] = nil
-            if let mechlikeToken = tower.mechlikeToken { self.towers[mechlikeToken] = nil }
+            self.tokens[tower.variableToken.key] = nil
+            if let mechlikeToken = tower.mechlikeToken {
+                self.towers[mechlikeToken] = nil
+                self.tokens[mechlikeToken.key] = nil
+            }
         }
         
         Tower.evaluate(towers: affected)

@@ -30,7 +30,7 @@ import Acheron
 import Foundation
 
 public class Token: Hashable {
-    public enum Code: CaseIterable { case dg, ch, sp, cn, un, op, fn, ml, va, pr }
+    public enum Code: CaseIterable { case dg, ch, sp, cn, un, op, fn, ml, va, pr, cl }
 
     var tag: String
 
@@ -242,15 +242,19 @@ public class VariableToken: TowerToken {
     override public var code: Code { .va }
     public override var display: String { details ?? alias ?? value ?? tag }
 }
-public class PropertyToken: TowerToken {
-    public var label: String?
-    init(tower: Tower? = nil, tag: String, label: String? = nil) {
-        self.label = label
-        super.init(tower: tower, tag: tag)
-    }
-    override public var code: Code { .pr }
-    public override var display: String { label ?? tag }
+public class ColumnToken: VariableToken {
+// Tower ===========================================================================================
+    override public var code: Code { .cl }
 }
+//public class PropertyToken: TowerToken {
+//    public var label: String?
+//    init(tower: Tower? = nil, tag: String, label: String? = nil) {
+//        self.label = label
+//        super.init(tower: tower, tag: tag)
+//    }
+//    override public var code: Code { .pr }
+//    public override var display: String { label ?? tag }
+//}
 public class MechlikeToken: TowerToken, Paramsable {
     weak var delegate: VariableTokenDelegate?
     var alias: String? { delegate?.alias }

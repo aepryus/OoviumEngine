@@ -36,8 +36,6 @@ public final class Tail: Aexel, Mechlike, TowerDelegate, VariableTokenDelegate {
 		
 		name = "f"
 		_ = addVertebra()
-		
-		onLoad()
 	}
 	public required init(attributes: [String:Any], parent: Domain?) {
 		super.init(attributes: attributes, parent: parent)
@@ -65,9 +63,7 @@ public final class Tail: Aexel, Mechlike, TowerDelegate, VariableTokenDelegate {
 			name = "p\(vertebras.count+1)"
 		}
 
-        let vertebra = Vertebra(tail: self, name: name)
-        vertebra.no = vertebras.count+1
-        vertebra.onLoad()
+        let vertebra = Vertebra(tail: self, name: name, no: vertebras.count+1)
         add(vertebra: vertebra)
         mechlikeToken.params = vertebras.count
         vertebra.chain.tower.attach(tower)

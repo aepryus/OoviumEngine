@@ -17,12 +17,17 @@ public final class Vertebra: Domain, TowerDelegate, VariableTokenDelegate {
 //    var def: Def = RealDef.def
 
     public lazy var tower: Tower = { tail.aether.createTower(tag: "\(tail.key).\(key)", towerDelegate: self, tokenDelegate: self) }()
+    
+    private func wire() {
+        chain.tower = tail.aether.createTower(tag: "\(tail.key).\(key).chain", towerDelegate: chain)
+        tower.web = tail.web
+    }
 
 // Inits ===========================================================================================
-	init(tail: Tail, name: String) {
+    init(tail: Tail, name: String, no: Int) {
 		self.name = name
-		super.init()
-		parent = tail
+        self.no = no
+		super.init(parent: tail)
 	}
 	required init(attributes: [String : Any], parent: Domain?) {
 		super.init(attributes: attributes, parent: parent)
@@ -35,10 +40,9 @@ public final class Vertebra: Domain, TowerDelegate, VariableTokenDelegate {
     }
 
 // Events ==========================================================================================
-	public override func onLoad() {
-        chain.tower = tail.aether.createTower(tag: "\(tail.key).\(key).chain", towerDelegate: chain)
-		tower.web = tail.web
-	}
+    public override func onCreate() { wire() }
+	public override func onLoad() { wire() }
+    public override func onRemoved() { tail.aether.destroy(towers: [tower, chain.tower]) }
 	
 // Domain ==========================================================================================
 	public override var properties: [String] {

@@ -305,7 +305,7 @@ public final class Column: Domain, TowerDelegate, VariableTokenDelegate {
 fileprivate class Header: TowerDelegate {
     func buildUpstream(tower: Tower) {}
     func renderDisplay(tower: Tower) -> String { "---" }
-    func buildWorker(tower: Tower) {}
+    func buildWorker(tower: Tower) { tower.task = nil }
     func workerCompleted(tower: Tower, askedBy: Tower) -> Bool { true }
     func resetWorker(tower: Tower) {}
     func executeWorker(tower: Tower) {}

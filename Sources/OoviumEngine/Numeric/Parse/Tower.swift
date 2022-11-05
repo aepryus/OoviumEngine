@@ -45,7 +45,7 @@ class Funnel {
 
 public final class Tower: Hashable, CustomStringConvertible {
 	private unowned let aether: Aether
-    unowned let delegate: TowerDelegate
+    weak var delegate: TowerDelegate?
 
     private let _variableToken: VariableToken
     public lazy var variableToken: VariableToken = { _variableToken.tower = self; return _variableToken }()
@@ -60,7 +60,7 @@ public final class Tower: Hashable, CustomStringConvertible {
 
 	public weak var listener: TowerListener? = nil
 
-	var tailForWeb: AnyObject? = nil
+	weak var tailForWeb: AnyObject? = nil
 	weak var _web: AnyObject? = nil
 	public var web: AnyObject? {
 		set { _web = newValue }
@@ -78,7 +78,7 @@ public final class Tower: Hashable, CustomStringConvertible {
 	public weak var thenTo: Tower?
 	public weak var elseTo: Tower?
 	public weak var gate: Tower?
-	var funnel: Funnel? = nil
+	weak var funnel: Funnel? = nil
 
 	var task: UnsafeMutablePointer<Task>? = nil
 	
@@ -96,7 +96,7 @@ public final class Tower: Hashable, CustomStringConvertible {
 	public var value: Double { AEMemoryValue(aether.memory, index) }
 	public var obje: Obje { Obje(memory: aether.memory, index: index) }
 	
-	func workerCompleted(askedBy: Tower) -> Bool { delegate.workerCompleted(tower: self, askedBy: askedBy) }
+	func workerCompleted(askedBy: Tower) -> Bool { delegate?.workerCompleted(tower: self, askedBy: askedBy) ?? true }
 
 // Stream ==========================================================================================
 	public func attach(_ tower: Tower) {
@@ -187,13 +187,15 @@ public final class Tower: Hashable, CustomStringConvertible {
 	}
 	
 // Calculate =======================================================================================
-	public func buildStream() { delegate.buildUpstream(tower: self) }
+	public func buildStream() { delegate?.buildUpstream(tower: self) }
 	public func buildTask() {
+        guard let delegate else { return }
 		AETaskRelease(task)
 		delegate.buildWorker(tower: self)
 	}
 	var calced: Bool { variableToken.code != .va || AEMemoryLoaded(aether.memory, index) != 0 }
 	func attemptToCalculate() -> Bool {
+        guard let delegate else { return false }
 		guard !workerCompleted(askedBy: self),
 			  !upstream.contains(where: { !$0.workerCompleted(askedBy: self) })
 			else { return false }
@@ -245,7 +247,7 @@ public final class Tower: Hashable, CustomStringConvertible {
 	
 // Static ==========================================================================================
     public static func evaluate(towers: Set<Tower>) {
-        towers.forEach { $0.delegate.resetWorker(tower: $0) }
+        towers.forEach { $0.delegate?.resetWorker(tower: $0) }
         var progress: Bool
         repeat {
             progress = false
