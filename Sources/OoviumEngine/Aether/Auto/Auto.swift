@@ -41,17 +41,17 @@ public final class Auto: Aexel, TowerDelegate {
 	}
 	
 	private func buildSpaceTowers(no: Int) {
-        spaceTowers.insert(aether.createTower(tag: "\(key).A", towerDelegate: self, tokenDelegate: StaticVariableTokenDelegate("A")))
-        spaceTowers.insert(aether.createTower(tag: "\(key).B", towerDelegate: self, tokenDelegate: StaticVariableTokenDelegate("B")))
-        spaceTowers.insert(aether.createTower(tag: "\(key).C", towerDelegate: self, tokenDelegate: StaticVariableTokenDelegate("C")))
-        spaceTowers.insert(aether.createTower(tag: "\(key).D", towerDelegate: self, tokenDelegate: StaticVariableTokenDelegate("D")))
-        spaceTowers.insert(aether.createTower(tag: "\(key).E", towerDelegate: self, tokenDelegate: StaticVariableTokenDelegate("E")))
-        spaceTowers.insert(aether.createTower(tag: "\(key).F", towerDelegate: self, tokenDelegate: StaticVariableTokenDelegate("F")))
-        spaceTowers.insert(aether.createTower(tag: "\(key).G", towerDelegate: self, tokenDelegate: StaticVariableTokenDelegate("G")))
-        spaceTowers.insert(aether.createTower(tag: "\(key).H", towerDelegate: self, tokenDelegate: StaticVariableTokenDelegate("H")))
-        spaceTowers.insert(aether.createTower(tag: "\(key).Self", towerDelegate: self, tokenDelegate: StaticVariableTokenDelegate("Self")))
+//        spaceTowers.insert(aether.createTower(tag: "\(key).A", towerDelegate: self, tokenDelegate: StaticVariableTokenDelegate("A")))
+//        spaceTowers.insert(aether.createTower(tag: "\(key).B", towerDelegate: self, tokenDelegate: StaticVariableTokenDelegate("B")))
+//        spaceTowers.insert(aether.createTower(tag: "\(key).C", towerDelegate: self, tokenDelegate: StaticVariableTokenDelegate("C")))
+//        spaceTowers.insert(aether.createTower(tag: "\(key).D", towerDelegate: self, tokenDelegate: StaticVariableTokenDelegate("D")))
+//        spaceTowers.insert(aether.createTower(tag: "\(key).E", towerDelegate: self, tokenDelegate: StaticVariableTokenDelegate("E")))
+//        spaceTowers.insert(aether.createTower(tag: "\(key).F", towerDelegate: self, tokenDelegate: StaticVariableTokenDelegate("F")))
+//        spaceTowers.insert(aether.createTower(tag: "\(key).G", towerDelegate: self, tokenDelegate: StaticVariableTokenDelegate("G")))
+//        spaceTowers.insert(aether.createTower(tag: "\(key).H", towerDelegate: self, tokenDelegate: StaticVariableTokenDelegate("H")))
+//        spaceTowers.insert(aether.createTower(tag: "\(key).Self", towerDelegate: self, tokenDelegate: StaticVariableTokenDelegate("Self")))
 
-        spaceTowers.forEach { $0.web = web }
+//        spaceTowers.forEach { $0.web = web }
 	}
 	
 //	public func foreshadow(_ memory: UnsafeMutablePointer<Memory>) {

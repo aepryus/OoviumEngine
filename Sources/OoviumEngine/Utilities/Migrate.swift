@@ -464,7 +464,6 @@ public class Migrate {
                         no += 1
                     }
                 }
-                subs.forEach { print("from: \($0.from), to: \($0.to)") }
             }
             
             attributes = attributes.modify(query:
