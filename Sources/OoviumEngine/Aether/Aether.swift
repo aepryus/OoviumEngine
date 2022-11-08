@@ -59,7 +59,7 @@ import Foundation
     public func evaluate() { Tower.evaluate(towers: Set(towers.values)) }
 
 // Aexels ==========================================================================================
-	private func addAexel(_ aexel: Aexel) {
+	public func addAexel(_ aexel: Aexel) {
 		add(aexel)
 		aexels.append(aexel)
 
