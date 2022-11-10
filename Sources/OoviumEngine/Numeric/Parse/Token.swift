@@ -210,7 +210,7 @@ public class FunctionToken: Token, Defable, Paramsable {
 
 public class TowerToken: Token, Defable {
     public enum Status { case ok, invalid, deleted, blocked }
-    public unowned var tower: Tower!
+    public weak var tower: Tower!
     public var status: Status = .ok
     public var def: Def? = nil
     fileprivate init(tower: Tower?, tag: String) {
@@ -236,7 +236,7 @@ public class VariableToken: TowerToken {
         super.init(tower: tower, tag: tag)
     }
     
-    public var value: String? { tower?.obje.display }
+    public var value: String? { tower?.obje.display ?? "DELETED" }
     
 // Tower ===========================================================================================
     override public var code: Code { .va }

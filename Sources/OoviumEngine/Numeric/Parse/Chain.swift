@@ -380,8 +380,8 @@ public final class Chain: NSObject, Packable, TowerDelegate {
 	private var constants = [Obje]()
 	private var stack = [String](repeating: "", count: 10)
 	private var sp = 0
-	
-	// Stack
+
+    // Stack
 	private func push(_ key: String) {
 		stack[sp] = key;
 		sp += 1

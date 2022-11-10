@@ -47,14 +47,6 @@ import Foundation
 		vars.enumerated().forEach { AEMemorySetName(memory, UInt16($0), $1.toInt8()) }
 		AEMemoryLoad(memory, oldMemory)
 		AEMemoryRelease(oldMemory)
-
-		towers.values.filter { $0.variableToken.code == .va }.forEach { $0.buildTask() }
-	}
-	public func prepare() {
-		var towers = Set<Tower>()
-		aexels.forEach { towers.formUnion($0.towers) }
-		towers.forEach { $0.buildStream() }
-		buildMemory()
 	}
     public func evaluate() { Tower.evaluate(towers: Set(towers.values)) }
 
@@ -163,9 +155,9 @@ import Foundation
         
         aexels.flatMap({ $0.towers }).compactMap({ $0.delegate as? Chain }).forEach { buildTokens(chain: $0) }
         aexels.compactMap({ $0 as? Grid }).flatMap({ $0.columns }).forEach { buildTokens(chain: $0.chain) }
-
-        prepare()
-		evaluate()
+        aexels.flatMap({ $0.towers }).forEach { $0.buildStream() }
+        buildMemory()
+        evaluate()
 	}
 	
 // Domain ==========================================================================================

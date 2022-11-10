@@ -49,11 +49,9 @@ public final class Tower: Hashable, CustomStringConvertible {
 
     private let _variableToken: VariableToken
     public lazy var variableToken: VariableToken = { _variableToken.tower = self; return _variableToken }()
-    //        aether.variableToken(tower: self, tag: tag, label: label, delegate: tokenDelegate)
+
     private let _mechlikeToken: MechlikeToken? = nil
     public lazy var mechlikeToken: MechlikeToken? = { _mechlikeToken?.tower = self; return _mechlikeToken }()
-    //        guard let mlTag else { return nil }
-    //        return aether.mechlikeToken(tower: self, tag: mlTag)
 
 	var upstream: WeakSet<Tower> = WeakSet<Tower>()
 	var downstream: WeakSet<Tower> = WeakSet<Tower>()
@@ -65,12 +63,9 @@ public final class Tower: Hashable, CustomStringConvertible {
 	public var web: AnyObject? {
 		set { _web = newValue }
 		get {
+            guard mechlikeToken == nil else { return nil }
 			if let web = _web { return web }
-			for tower in upstream {
-				guard tower.tailForWeb == nil else { return nil }
-				if let web = tower.web { return web }
-			}
-			return nil
+            return upstream.first(where: { $0.web != nil })?.web
 		}
 	}
 
@@ -78,7 +73,7 @@ public final class Tower: Hashable, CustomStringConvertible {
 	public weak var thenTo: Tower?
 	public weak var elseTo: Tower?
 	public weak var gate: Tower?
-	weak var funnel: Funnel? = nil
+	var funnel: Funnel? = nil
 
 	var task: UnsafeMutablePointer<Task>? = nil
 	
@@ -189,7 +184,7 @@ public final class Tower: Hashable, CustomStringConvertible {
 // Calculate =======================================================================================
 	public func buildStream() { delegate?.buildUpstream(tower: self) }
 	public func buildTask() {
-        guard let delegate else { return }
+        guard let delegate, variableToken.status == .ok else { return }
 		AETaskRelease(task)
 		delegate.buildWorker(tower: self)
 	}
