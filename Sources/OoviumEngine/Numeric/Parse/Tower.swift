@@ -154,17 +154,12 @@ public final class Tower: Hashable, CustomStringConvertible {
 		}
 		return false
 	}
-	public func stronglyLinked(override: Tower?) -> Set<Tower> {
-		return towersDestinedFor().filter {$0.isStronglyLinked(to: self, override: override)}
-	}
-	public func stronglyLinked() -> Set<Tower> {
-		return stronglyLinked(override: nil)
+	public func stronglyLinked(override: Tower? = nil) -> Set<Tower> {
+		towersDestinedFor().filter {$0.isStronglyLinked(to: self, override: override)}
 	}
 
 // Program =========================================================================================
-	private func isCalced(_ memory: UnsafeMutablePointer<Memory>) -> Bool {
-		return AEMemoryLoaded(memory, index) != 0
-	}
+	private func isCalced(_ memory: UnsafeMutablePointer<Memory>) -> Bool { AEMemoryLoaded(memory, index) != 0 }
 	func attemptToFire(_ memory: UnsafeMutablePointer<Memory>) -> Bool {
 		if isCalced(memory) { return false }
 		
@@ -218,12 +213,8 @@ public final class Tower: Hashable, CustomStringConvertible {
     public func trigger() { Tower.evaluate(towers: allDownstream()) }
 	
 // Hashable ========================================================================================
-	public static func == (left: Tower, right: Tower) -> Bool {
-		return left === right
-	}
-	public func hash(into hasher: inout Hasher) {
-		hasher.combine(name)
-	}
+	public static func == (left: Tower, right: Tower) -> Bool { left === right }
+	public func hash(into hasher: inout Hasher) { hasher.combine(name) }
 	
 // CustomStringConvertible =========================================================================
 	public var description: String {
