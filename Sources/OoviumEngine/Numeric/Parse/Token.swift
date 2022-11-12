@@ -37,7 +37,7 @@ public class Token: Hashable {
     fileprivate init(tag: String) { self.tag = tag }
 
     public var code: Code { fatalError() }
-    var key: String { "\(code):\(tag)" }
+    public var key: String { "\(code):\(tag)" }
     public var display: String { tag }
 
 // Hashable ========================================================================================

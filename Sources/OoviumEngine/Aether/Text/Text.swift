@@ -15,22 +15,12 @@ public final class Text: Aexel, NSCopying {
 	
 	@objc public var edges: [Edge] = []
 	
-	public var outputEdges: [Edge] {
-		return aether.outputEdges(for: self)
-	}
+	public var outputEdges: [Edge] { aether.outputEdges(for: self) }
 	
-	public func edgeFor(text: Text) -> Edge? {
-		for edge in edges {
-			if edge.other === text {return edge}
-		}
-		return nil
-	}
-	public func isLinkedTo(_ text: Text) -> Bool {
-		let edge = edgeFor(text: text)
-		return edge != nil
-	}
+	public func edgeFor(text: Text) -> Edge? { edges.first { $0.other === text } }
+	public func isLinkedTo(_ text: Text) -> Bool { edgeFor(text: text) != nil }
 	public func linkTo(_ text: Text) {
-		let edge = aether.createEdge(parent: self, child: text)
+        let edge: Edge = aether.createEdge(parent: self, child: text)
 		edges.append(edge)
 	}
 	public func unlinkTo(_ text: Text) {
@@ -38,13 +28,11 @@ public final class Text: Aexel, NSCopying {
 		edges.remove(object: edge)
 	}
 	
-//// Events ==========================================================================================
-//	override public func onDelete() {
-//		for edge in outputEdges {
-//			edge.text.unlinkTo(self)
-//		}
-//	}
-//
+// Events ==========================================================================================
+	override public func onDelete() {
+        outputEdges.forEach { $0.text.unlinkTo(self) }
+	}
+
 // Domain ==========================================================================================
 	override public var properties: [String] { super.properties + ["color", "shape"] }
 	override public var children: [String] { super.children + ["edges"] }
