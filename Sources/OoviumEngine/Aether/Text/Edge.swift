@@ -18,9 +18,7 @@ public final class Edge: Domain {
     }
     public required init(attributes: [String : Any], parent: Domain? = nil) { super.init(attributes: attributes, parent: parent) }
 	
-	public var text: Text {
-		return parent! as! Text
-	}
+	public var text: Text { parent! as! Text }
 	public var other: Text { text.aether.aexel(no: textNo)! }
 	
 // Domain ==========================================================================================

@@ -124,6 +124,7 @@ import Foundation
         towers[mechlikeToken] = tower
         return tower
     }
+    public func mechlikeToken(tag: String) -> MechlikeToken? { tokens["\(Token.Code.ml):\(tag)"] as? MechlikeToken }
     func createColumnTower(tag: String, towerDelegate: TowerDelegate, tokenDelegate: VariableTokenDelegate? = nil) -> Tower {
         let token = ColumnToken(tag: tag, delegate: tokenDelegate)
         tokens[token.key] = token

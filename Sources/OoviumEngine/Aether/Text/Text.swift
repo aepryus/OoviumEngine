@@ -17,7 +17,7 @@ public final class Text: Aexel, NSCopying {
 	
 	public var outputEdges: [Edge] { aether.outputEdges(for: self) }
 	
-	public func edgeFor(text: Text) -> Edge? { edges.first { $0.other === text } }
+    public func edgeFor(text: Text) -> Edge? { edges.first { $0.textNo == text.no } }
 	public func isLinkedTo(_ text: Text) -> Bool { edgeFor(text: text) != nil }
 	public func linkTo(_ text: Text) {
         let edge: Edge = aether.createEdge(parent: self, child: text)

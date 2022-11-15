@@ -32,7 +32,7 @@ import Foundation
 public class Token: Hashable {
     public enum Code: CaseIterable { case dg, ch, sp, cn, un, op, fn, ml, va, pr, cl }
 
-    var tag: String
+    public var tag: String
 
     fileprivate init(tag: String) { self.tag = tag }
 
