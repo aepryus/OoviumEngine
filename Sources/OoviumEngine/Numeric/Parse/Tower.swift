@@ -179,7 +179,7 @@ public final class Tower: Hashable, CustomStringConvertible {
 // Calculate =======================================================================================
 	public func buildStream() { delegate?.buildUpstream(tower: self) }
 	public func buildTask() {
-        guard let delegate, variableToken.status == .ok else { return }
+        guard let delegate, variableToken.status != .deleted else { return }
 		AETaskRelease(task)
 		delegate.buildWorker(tower: self)
 	}

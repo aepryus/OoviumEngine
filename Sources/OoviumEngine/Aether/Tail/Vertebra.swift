@@ -10,7 +10,18 @@ import Acheron
 import Foundation
 
 public final class Vertebra: Domain, TowerDelegate, VariableTokenDelegate {
-	@objc public dynamic var name: String = ""
+    @objc public dynamic var name: String = "" {
+        didSet {
+            guard name != "" else { name = oldValue; return }
+            var newName: String = name
+            var i: Int = 2
+            while tail.vertebras.first(where: { $0 !== self && $0.name == newName }) != nil {
+                newName = "\(name)\(i)"
+                i += 1
+            }
+            name = newName
+        }
+    }
     @objc public dynamic var no: Int = 0
 	@objc public dynamic var chain: Chain = Chain()
 

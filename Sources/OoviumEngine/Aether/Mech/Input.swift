@@ -10,7 +10,18 @@ import Acheron
 import Foundation
 
 public final class Input: Domain, TowerDelegate, VariableTokenDelegate {
-    @objc public dynamic var name: String = ""
+    @objc public dynamic var name: String = "" {
+        didSet {
+            guard name != "" else { name = oldValue; return }
+            var newName: String = name
+            var i: Int = 2
+            while mech.inputs.first(where: { $0 !== self && $0.name == newName }) != nil {
+                newName = "\(name)\(i)"
+                i += 1
+            }
+            name = newName
+        }
+    }
     @objc public dynamic var no: Int = 0
     
 //	var def: Def = RealDef.def
