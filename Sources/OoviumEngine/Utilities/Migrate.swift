@@ -464,6 +464,20 @@ public class Migrate {
                         no += 1
                     }
                 }
+
+                let autos: [[String:Any]] = aexels.filter { $0["type"] as! String == "auto" }
+                autos.forEach { (auto: [String:Any]) in
+                    subs.append(Subs(from: "Auto\(auto["no"]!)", to: "Au\(auto["no"]!)"))
+                    subs.append(Subs(from: "Auto\(auto["no"]!).A", to: "Au\(auto["no"]!).A"))
+                    subs.append(Subs(from: "Auto\(auto["no"]!).B", to: "Au\(auto["no"]!).B"))
+                    subs.append(Subs(from: "Auto\(auto["no"]!).C", to: "Au\(auto["no"]!).C"))
+                    subs.append(Subs(from: "Auto\(auto["no"]!).D", to: "Au\(auto["no"]!).D"))
+                    subs.append(Subs(from: "Auto\(auto["no"]!).E", to: "Au\(auto["no"]!).E"))
+                    subs.append(Subs(from: "Auto\(auto["no"]!).F", to: "Au\(auto["no"]!).F"))
+                    subs.append(Subs(from: "Auto\(auto["no"]!).G", to: "Au\(auto["no"]!).G"))
+                    subs.append(Subs(from: "Auto\(auto["no"]!).H", to: "Au\(auto["no"]!).H"))
+                    subs.append(Subs(from: "Auto\(auto["no"]!).Self", to: "Au\(auto["no"]!).Self"))
+                }
             }
             
             attributes = attributes.modify(query:
