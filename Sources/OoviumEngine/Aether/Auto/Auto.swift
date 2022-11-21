@@ -87,15 +87,8 @@ public final class Auto: Aexel, TowerDelegate {
 		let n = min(max(Int(statesTower.value), 2), 32)
 		guard n != states.count else { return }
 
-		if n < states.count {
-			for _ in n..<states.count {
-				states.removeLast()
-			}
-		} else {
-			for _ in states.count..<n {
-				addState()
-			}
-		}
+		if n < states.count { for _ in n..<states.count { states.removeLast() } }
+        else { for _ in states.count..<n { addState() } }
 	}
 	
 // Events ==========================================================================================
