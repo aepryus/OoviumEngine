@@ -47,6 +47,8 @@ import Foundation
 		vars.enumerated().forEach { AEMemorySetName(memory, UInt16($0), $1.toInt8()) }
 		AEMemoryLoad(memory, oldMemory)
 		AEMemoryRelease(oldMemory)
+        
+        Tower.evaluate(towers: Set<Tower>(mechlikeTowers))
 	}
     public func evaluate() { Tower.evaluate(towers: Set(towers.values)) }
 
@@ -132,6 +134,7 @@ import Foundation
         towers[token] = tower
         return tower
     }
+    private var mechlikeTowers: [Tower] { aexels.filter({ $0 is Mechlike }).flatMap({ $0.towers }) }
     
 // Functions =======================================================================================
 	public func functionExists(name: String) -> Bool { aexels.first { $0 is Mechlike && $0.name == name } != nil }
