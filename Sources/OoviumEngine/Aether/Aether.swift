@@ -48,7 +48,7 @@ import Foundation
 		AEMemoryLoad(memory, oldMemory)
 		AEMemoryRelease(oldMemory)
         
-        Tower.evaluate(towers: Set<Tower>(mechlikeTowers))
+        Tower.evaluate(towers: Tower.allDownstream(towers: Set<Tower>(mechlikeTowers)))
 	}
     public func evaluate() { Tower.evaluate(towers: Set(towers.values)) }
 

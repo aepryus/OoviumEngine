@@ -232,6 +232,11 @@ public final class Tower: Hashable, CustomStringConvertible {
 	}
 	
 // Static ==========================================================================================
+    public static func allDownstream(towers: Set<Tower>) -> Set<Tower> {
+        var result: Set<Tower> = Set<Tower>()
+        towers.forEach { result.formUnion($0.allDownstream()) }
+        return result
+    }
     public static func evaluate(towers: Set<Tower>) {
         towers.forEach { $0.delegate?.resetWorker(tower: $0) }
         var progress: Bool
