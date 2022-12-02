@@ -30,7 +30,7 @@ public final class Text: Aexel, NSCopying {
 	
 // Events ==========================================================================================
 	override public func onDelete() {
-        outputEdges.forEach { $0.text.unlinkTo(self) }
+        outputEdges.forEach { if let text = $0.text { text.unlinkTo(self) } }
 	}
 
 // Domain ==========================================================================================
