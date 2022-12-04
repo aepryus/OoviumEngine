@@ -20,15 +20,9 @@ class Expression: Hashable, CustomStringConvertible {
 
 	var order: Int { return 0 }
 
-	func add(_ expression: Expression) -> Expression {
-		return AdditionExpression(expressions: [self, expression])
-	}
-	func negate() -> Expression {
-		return MultiplicationExpression(expressions: [ValueExpression(value: Rational(-1)), self])
-	}
-	func invert() -> Expression {
-		return PowerExpression(expression: self, power: ValueExpression(value: Rational(-1)))
-	}
+	func add(_ expression: Expression) -> Expression { AdditionExpression(expressions: [self, expression]) }
+	func negate() -> Expression { MultiplicationExpression(expressions: [ValueExpression(value: Rational(-1)), self]) }
+	func invert() -> Expression { PowerExpression(expression: self, power: ValueExpression(value: Rational(-1))) }
 
 	static func * (lhs: Expression, rhs: Expression) -> Expression {
 		if let lhs = lhs as? ValueExpression, let lV = lhs.value as? Rational, lV == Rational(1) {
@@ -98,7 +92,5 @@ class Expression: Hashable, CustomStringConvertible {
 	func hash(into hasher: inout Hasher) { }
 
 // CustomStringConvertible =========================================================================
-	var description: String {
-		return "[IMPLEMENT ME]"
-	}
+	var description: String { "[IMPLEMENT ME]" }
 }

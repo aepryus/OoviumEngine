@@ -57,9 +57,7 @@ class AdditionExpression: OperationExpression {
 	}
 
 // Expression ======================================================================================
-	override func add(_ expression: Expression) -> Expression {
-		return AdditionExpression(expressions: expressions + [expression])
-	}
+	override func add(_ expression: Expression) -> Expression { AdditionExpression(expressions: expressions + [expression]) }
 	override func attemptToRemove(variable: Variable) -> Actor? {
 		let dependants: [Expression] = expressions.filter { $0.depends(on: variable) }
 		guard dependants.count > 0 else { return nil }
@@ -114,11 +112,9 @@ class AdditionExpression: OperationExpression {
 		if results.count == 1 { return results[0] }
 		else { return AdditionExpression(expressions: results.sorted(by: { $0.order < $1.order })) }
 	}
-	override func scalar() -> Value {
-		return Rational(1)
-	}
+	override func scalar() -> Value { Rational(1) }
 	override func differentiate(with variable: Variable) -> Expression {
-		return AdditionExpression(expressions: expressions.map { $0.differentiate(with: variable) }).reduce()
+		AdditionExpression(expressions: expressions.map { $0.differentiate(with: variable) }).reduce()
 	}
 
 // CustomStringConvertible =========================================================================

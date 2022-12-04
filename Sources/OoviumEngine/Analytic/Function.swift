@@ -21,22 +21,10 @@ class Function {
 		self.inverse = inverse
 	}
 
-	func analytic(values: [Value]) -> Expression {
-		return Expression()
-	}
-	func numeric(values: [Value]) -> Value {
-		return Value()
-	}
-	func differentiate() -> Function {
-		return self
-	}
-	func integrate() -> Function {
-		return self
-	}
-	func isInverse(_ function: Function) -> Bool {
-		return inverse == function.name
-	}
-	static func == (lhs: Function, rhs: Function) -> Bool {
-		return lhs.name == rhs.name
-	}
+	func analytic(values: [Value]) -> Expression { Expression() }
+	func numeric(values: [Value]) -> Value { Value() }
+	func differentiate() -> Function { self }
+	func integrate() -> Function { self }
+	func isInverse(_ function: Function) -> Bool { inverse == function.name }
+	static func == (lhs: Function, rhs: Function) -> Bool { lhs.name == rhs.name }
 }

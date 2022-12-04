@@ -16,16 +16,10 @@ class VariableExpression: Expression {
 	}
 
 // Expression ======================================================================================
-	override var order: Int { return -1 }
-	override func depends(on variable: Variable) -> Bool {
-		return variable == self.variable
-	}
-	override func isolated(to variable: Variable) -> Bool {
-		return self.variable == variable
-	}
-	override func scalar() -> Value {
-		return Rational(1)
-	}
+	override var order: Int { -1 }
+	override func depends(on variable: Variable) -> Bool { variable == self.variable }
+	override func isolated(to variable: Variable) -> Bool { self.variable == variable }
+	override func scalar() -> Value { Rational(1) }
 	override func differentiate(with variable: Variable) -> Expression {
 		if variable == self.variable {
 			return ValueExpression(value: Rational(1))
@@ -35,15 +29,11 @@ class VariableExpression: Expression {
 	}
 
 // Hashable ========================================================================================
-	static func == (lhs: VariableExpression, rhs: VariableExpression) -> Bool {
-		return lhs.variable == rhs.variable
-	}
+	static func == (lhs: VariableExpression, rhs: VariableExpression) -> Bool { lhs.variable == rhs.variable }
 	override func hash(into hasher: inout Hasher) {
 		hasher.combine(variable.name)
 	}
 
 // CustomStringConvertible =========================================================================
-	override var description: String {
-		return variable.name
-	}
+	override var description: String { variable.name }
 }

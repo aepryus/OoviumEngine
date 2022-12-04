@@ -47,9 +47,7 @@ class PowerExpression: Expression {
 	}
 
 // Hashable ========================================================================================
-	static func == (lhs: PowerExpression, rhs: PowerExpression) -> Bool {
-		return lhs.expression == rhs.expression && lhs.power == rhs.power
-	}
+	static func == (lhs: PowerExpression, rhs: PowerExpression) -> Bool { lhs.expression == rhs.expression && lhs.power == rhs.power }
 	override func hash(into hasher: inout Hasher) {
 		expression.hash(into: &hasher)
 		power.hash(into: &hasher)

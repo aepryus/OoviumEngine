@@ -26,12 +26,8 @@ class ValueExpression: Expression {
 			return ValueExpression(value: 1/a)
 		} else { return self }
 	}
-	override func flavor() -> Expression {
-		return ValueExpression(value: Rational(1))
-	}
-	override func scalar() -> Value {
-		return value
-	}
+	override func flavor() -> Expression { ValueExpression(value: Rational(1)) }
+	override func scalar() -> Value { value }
 
 // Hashable ========================================================================================
 	static func == (lhs: ValueExpression, rhs: ValueExpression) -> Bool {
@@ -44,7 +40,5 @@ class ValueExpression: Expression {
 	}
 
 // CustomStringConvertible =========================================================================
-	override var description: String {
-		return "\(value)"
-	}
+	override var description: String { "\(value)" }
 }

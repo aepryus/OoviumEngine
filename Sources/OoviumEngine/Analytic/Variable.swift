@@ -11,11 +11,7 @@ import Foundation
 class Variable {
 	let name: String
 
-	init(name: String) {
-		self.name = name
-	}
+	init(name: String) { self.name = name }
 
-	static func == (a: Variable, b: Variable) -> Bool {
-		return a.name == b.name
-	}
+	static func == (a: Variable, b: Variable) -> Bool { a.name == b.name }
 }

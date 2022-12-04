@@ -49,7 +49,5 @@ class FunctionActor: Actor {
 	}
 
 // Actor ===========================================================================================
-	func act(on expression: Expression) -> Expression {
-		return FunctionExpression(function: function, expression: expression)
-	}
+	func act(on expression: Expression) -> Expression { FunctionExpression(function: function, expression: expression) }
 }

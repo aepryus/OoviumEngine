@@ -62,7 +62,7 @@ class MultiplicationExpression: OperationExpression {
 		}
 	}
 	func multiply(variableExpression: VariableExpression) -> Expression {
-		return multiply(powerExpression: PowerExpression(expression: variableExpression, power: ValueExpression(value: Rational(1))))
+		multiply(powerExpression: PowerExpression(expression: variableExpression, power: ValueExpression(value: Rational(1))))
 	}
 
 // Expression ======================================================================================

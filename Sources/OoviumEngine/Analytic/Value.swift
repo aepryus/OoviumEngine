@@ -8,8 +8,7 @@
 
 import Foundation
 
-class Value {
-}
+class Value {}
 
 class Rational: Value, CustomStringConvertible {
 	let numerator: Int
@@ -42,29 +41,17 @@ class Rational: Value, CustomStringConvertible {
 		return Rational(negative * numerator, denominator)
 	}
 
-	static prefix func - (a: Rational) -> Rational {
-		return Rational(-a.numerator, a.denominator)
-	}
-	static func + (_ a: Rational, _ b: Rational) -> Rational {
-		return Rational(a.numerator*b.denominator + b.numerator*a.denominator, a.denominator*b.denominator).reduced()
-	}
-	static func * (_ a: Rational, _ b: Rational) -> Rational {
-		return Rational(a.numerator*b.numerator, a.denominator*b.denominator).reduced()
-	}
-	static func *= (a: inout Rational, b: Rational) {
-		a = Rational(a.numerator*b.numerator, a.denominator*b.denominator).reduced()
-	}
-	static func / (_ a: Int, _ b: Rational) -> Rational {
-		return Rational(a*b.denominator, b.numerator)
-	}
+	static prefix func - (a: Rational) -> Rational { Rational(-a.numerator, a.denominator) }
+	static func + (_ a: Rational, _ b: Rational) -> Rational { Rational(a.numerator*b.denominator + b.numerator*a.denominator, a.denominator*b.denominator).reduced() }
+	static func * (_ a: Rational, _ b: Rational) -> Rational { Rational(a.numerator*b.numerator, a.denominator*b.denominator).reduced() }
+	static func *= (a: inout Rational, b: Rational) { a = Rational(a.numerator*b.numerator, a.denominator*b.denominator).reduced() }
+	static func / (_ a: Int, _ b: Rational) -> Rational { Rational(a*b.denominator, b.numerator) }
 	static func == (_ a: Rational, _ b: Rational) -> Bool {
 		let aR = a.reduced()
 		let bR = b.reduced()
 		return aR.numerator == bR.numerator && aR.denominator == bR.denominator
 	}
-	static func != (_ a: Rational, _ b: Rational) -> Bool {
-		return !(a == b)
-	}
+	static func != (_ a: Rational, _ b: Rational) -> Bool { !(a == b) }
 
 // CustomStringConvertable =========================================================================
 	var description: String {
