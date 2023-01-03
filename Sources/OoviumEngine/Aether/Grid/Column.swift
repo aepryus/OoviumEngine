@@ -278,9 +278,7 @@ public final class Column: Domain, TowerDelegate, VariableTokenDelegate {
 			cell.tower.attach(tower)
 		}
 	}
-	func renderDisplay(tower: Tower) -> String {
-		return tower.obje.display
-	}
+	func renderDisplay(tower: Tower) -> String { tower.obje.display }
 	func buildWorker(tower: Tower) {
 		let lambda: UnsafeMutablePointer<Lambda>? = compile(name: tower.name)
 		tower.task = lambda != nil ? AETaskCreateLambda(lambda) : AETaskCreateNull()

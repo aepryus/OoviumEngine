@@ -48,7 +48,7 @@ import Foundation
 		AEMemoryLoad(memory, oldMemory)
 		AEMemoryRelease(oldMemory)
         
-        Tower.evaluate(towers: Tower.allDownstream(towers: Set<Tower>(mechlikeTowers)))
+        Tower.evaluate(towers: Set<Tower>(webTowers))
 	}
     public func evaluate() { Tower.evaluate(towers: Set(towers.values)) }
 
@@ -135,6 +135,7 @@ import Foundation
         return tower
     }
     private var mechlikeTowers: [Tower] { aexels.filter({ $0 is Mechlike }).flatMap({ $0.towers }) }
+    private var webTowers: [Tower] { aexels.flatMap({ $0.towers }).filter({ $0.web != nil }) }
     
 // Functions =======================================================================================
 	public func functionExists(name: String) -> Bool { aexels.first { $0 is Mechlike && $0.name == name } != nil }

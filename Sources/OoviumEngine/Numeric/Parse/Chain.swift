@@ -656,7 +656,7 @@ public final class Chain: NSObject, Packable, TowerDelegate {
 		guard let tower = tower else { return nil }
 		do {
 			try parse(tokens: self.tokens)
-			if tower.variableToken.status == .invalid {tower.variableToken.status = .ok}
+			if tower.variableToken.status == .invalid { tower.variableToken.status = .ok }
 			if let last = morphs.last {
 				if let morph = Morph(rawValue: last) {
 					tower.variableToken.def = morph.def
@@ -665,7 +665,7 @@ public final class Chain: NSObject, Packable, TowerDelegate {
 				}
 			}
 		} catch {
-			if tower.variableToken.status == .ok {tower.variableToken.status = .invalid}
+			if tower.variableToken.status == .ok { tower.variableToken.status = .invalid }
 			return nil
 		}
 		
