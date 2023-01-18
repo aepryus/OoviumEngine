@@ -87,7 +87,9 @@ public final class Tower: Hashable, CustomStringConvertible {
 	}
 	deinit { AETaskRelease(task) }
 
-	public var index: mnimi { AEMemoryIndexForName(aether.memory, variableToken.tag.toInt8()) }
+	public var index: mnimi {
+        AEMemoryIndexForName(aether.memory, variableToken.tag.toInt8())
+    }
 	public var value: Double { AEMemoryValue(aether.memory, index) }
 	public var obje: Obje { Obje(memory: aether.memory, index: index) }
 	

@@ -8,17 +8,17 @@
 
 import Foundation
 
-class Expression: Hashable, CustomStringConvertible {
-	func depends(on variable: Variable) -> Bool { return false }
-	func isolated(to variable: Variable) -> Bool { return false }
-	func attemptToRemove(variable: Variable) -> Actor? { return nil }
-	func attemptToIsolate(variable: Variable) -> Actor? { return nil }
-	func reduce() -> Expression { return self }
-	func flavor() -> Expression { return self }
-	func scalar() -> Value { return Rational(0) }
-	func differentiate(with variable: Variable) -> Expression { return ValueExpression(value: Rational(0)) }
+public class Expression: Hashable, CustomStringConvertible {
+	func depends(on variable: Variable) -> Bool { false }
+	func isolated(to variable: Variable) -> Bool { false }
+	func attemptToRemove(variable: Variable) -> Actor? { nil }
+	func attemptToIsolate(variable: Variable) -> Actor? { nil }
+	func reduce() -> Expression { self }
+	func flavor() -> Expression { self }
+	func scalar() -> Value { Rational(0) }
+	func differentiate(with variable: Variable) -> Expression { ValueExpression(value: Rational(0)) }
 
-	var order: Int { return 0 }
+	var order: Int { 0 }
 
 	func add(_ expression: Expression) -> Expression { AdditionExpression(expressions: [self, expression]) }
 	func negate() -> Expression { MultiplicationExpression(expressions: [ValueExpression(value: Rational(-1)), self]) }
@@ -29,7 +29,7 @@ class Expression: Hashable, CustomStringConvertible {
 			return rhs
 
 		} else if let rhs = rhs as? ValueExpression, let rV = rhs.value as? Rational, rV == Rational(1) {
-				return lhs
+			return lhs
 
 		} else if let lhs = lhs as? ValueExpression, let lV = lhs.value as? Rational, let rhs = rhs as? ValueExpression, let rV = rhs.value as? Rational {
 			return ValueExpression(value: lV*rV)
@@ -77,7 +77,7 @@ class Expression: Hashable, CustomStringConvertible {
 	}
 
 // Hashable ========================================================================================
-	static func == (lhs: Expression, rhs: Expression) -> Bool {
+	public static func == (lhs: Expression, rhs: Expression) -> Bool {
 		guard type(of: lhs) == type(of: rhs) else { return false }
 
 		if lhs is ValueExpression { return (lhs as! ValueExpression) == (rhs as! ValueExpression) }
@@ -89,8 +89,8 @@ class Expression: Hashable, CustomStringConvertible {
 
 		fatalError()
 	}
-	func hash(into hasher: inout Hasher) { }
+	public func hash(into hasher: inout Hasher) { }
 
 // CustomStringConvertible =========================================================================
-	var description: String { "[IMPLEMENT ME]" }
+	public var description: String { "[IMPLEMENT ME]" }
 }

@@ -26,7 +26,7 @@ public final class Mech: Aexel, Mechlike, TowerDelegate, VariableTokenDelegate {
 
 	var web: AnyObject { self }
 	var recipe: UnsafeMutablePointer<Recipe>? = nil
-	var morphIndex: Int? = nil
+//	var morphIndex: Int? = nil
 
     public var variableToken: VariableToken { tower.variableToken }
     public var mechlikeToken: MechlikeToken { tower.mechlikeToken! }

@@ -31,8 +31,22 @@ class PowerExpression: Expression {
 	override func reduce() -> Expression {
 		let expression = expression.reduce()
 		let power = power.reduce()
-		if let power = power as? ValueExpression, let rational = power.value as? Rational, rational == Rational(1) {
-			return expression
+        if let power = power as? ValueExpression, let rational: Rational = power.value as? Rational, rational == Rational(1) {
+            return expression
+        } else if let power = power as? ValueExpression,
+                  let expression = expression as? ValueExpression,
+                  let powRat: Rational = power.value as? Rational,
+                  let expRat: Rational = expression.value as? Rational,
+                  powRat.denominator == 1 {
+            
+            let p: Int = abs(powRat.numerator)
+            let rational: Rational
+            if powRat.numerator > 0 {
+                rational = Rational(AnainMath.pow(expRat.numerator, p), AnainMath.pow(expRat.denominator, p))
+            } else {
+                rational = Rational(AnainMath.pow(expRat.denominator, p), AnainMath.pow(expRat.numerator, p))
+            }
+            return ValueExpression(value: rational)
 		} else { return PowerExpression(expression: expression, power: power) }
 	}
 	override func differentiate(with variable: Variable) -> Expression {
