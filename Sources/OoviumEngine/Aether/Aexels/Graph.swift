@@ -11,16 +11,17 @@ import Aegean
 import Foundation
 
 public class Graph: Aexel, TowerDelegate {
-//    var name: String = ""
-    public var fX: Chain = Chain()
-    public var fY: Chain = Chain()
-    public var fZ: Chain = Chain()
-    public var sUChain: Chain = Chain()
-    public var eUChain: Chain = Chain()
-    public var dUChain: Chain = Chain()
-    public var sVChain: Chain = Chain()
-    public var eVChain: Chain = Chain()
-    public var dVChain: Chain = Chain()
+    @objc public var fXChain: Chain = Chain()
+    @objc public var fYChain: Chain = Chain()
+    @objc public var fZChain: Chain = Chain()
+    @objc public var sUChain: Chain = Chain()
+    @objc public var eUChain: Chain = Chain()
+    @objc public var dUChain: Chain = Chain()
+    @objc public var sVChain: Chain = Chain()
+    @objc public var eVChain: Chain = Chain()
+    @objc public var dVChain: Chain = Chain()
+    @objc public var tChain: Chain = Chain()
+    
     public var system: Int = 0
     public var surfaceOn: Bool = true
     public var lightOn: Bool = true
@@ -42,7 +43,6 @@ public class Graph: Aexel, TowerDelegate {
     public var lightX: String = ""
     public var lightY: String = ""
     public var lightZ: String = ""
-    public var tChain: Chain = Chain()
     
     //    private R3toR3 function;
     //
@@ -101,9 +101,9 @@ public class Graph: Aexel, TowerDelegate {
         AEMemorySetValue(memory, vTower.index, 0)
         AEMemorySetValue(memory, tTower.index, 0)
         
-        xRecipe = Math.compile(result: fX.tower, memory: memory)
-        yRecipe = Math.compile(result: fY.tower, memory: memory)
-        zRecipe = Math.compile(result: fZ.tower, memory: memory)
+        xRecipe = Math.compile(result: fXChain.tower, memory: memory)
+        yRecipe = Math.compile(result: fYChain.tower, memory: memory)
+        zRecipe = Math.compile(result: fZChain.tower, memory: memory)
 
         AERecipeSignature(xRecipe, AEMemoryIndexForName(memory, "\(key).x".toInt8()), UInt8(3))
         AERecipeSignature(yRecipe, AEMemoryIndexForName(memory, "\(key).y".toInt8()), UInt8(3))
@@ -166,17 +166,10 @@ public class Graph: Aexel, TowerDelegate {
 
         tChain.tower = aether.createTower(tag: "\(key).time", towerDelegate: tChain)
         
-        fX.tower = aether.createTower(tag: "\(key).x", towerDelegate: fX)
-        fY.tower = aether.createTower(tag: "\(key).y", towerDelegate: fY)
-        fZ.tower = aether.createTower(tag: "\(key).z", towerDelegate: fZ)
+        fXChain.tower = aether.createTower(tag: "\(key).x", towerDelegate: fXChain)
+        fYChain.tower = aether.createTower(tag: "\(key).y", towerDelegate: fYChain)
+        fZChain.tower = aether.createTower(tag: "\(key).z", towerDelegate: fZChain)
         
-        name = "Waves"
-        sU = -4
-        eU = 4
-        dU = 8/40
-        sV = -4
-        eV = 4
-        dV = 8/40
         view = V3(8.91167255619427, 8.2567481154179, 9.63093990157929)
         look = V3(-0.597824245607881, -0.542194458806552, -0.704535868587812)
         orient = V3(-0.821996365745422, 0.445722968116547, 0.35447568378478912120)
@@ -185,41 +178,50 @@ public class Graph: Aexel, TowerDelegate {
         lightColor = RGB(r: 172, g: 172, b: 215)
         netColor = RGB(r: 255, g: 255, b: 255)
         
-        sUChain.post(token: .neg)
-        sUChain.post(token: .four)
-        
-        eUChain.post(token: .four)
-        
-        dUChain.post(token: .four)
-        dUChain.post(token: .zero)
-        
-        sVChain.post(token: .neg)
-        sVChain.post(token: .four)
-        
-        eVChain.post(token: .four)
-        
-        dVChain.post(token: .four)
-        dVChain.post(token: .zero)
-        
-        fX.post(token: uTower.variableToken)
-        fY.post(token: vTower.variableToken)
-        fZ.post(token: .sin)
-        fZ.post(token: uTower.variableToken)
-        fZ.post(token: .multiply)
-        fZ.post(token: vTower.variableToken)
-        fZ.post(token: .add)
-        fZ.post(token: tTower.variableToken)
-        fZ.post(token: .rightParen)
-        fZ.post(token: .divide)
-        fZ.post(token: .three)
+//        sUChain.post(token: .neg)
+//        sUChain.post(token: .four)
+//        
+//        eUChain.post(token: .four)
+//
+//        dUChain.post(token: .four)
+//        dUChain.post(token: .zero)
+//
+//        sVChain.post(token: .neg)
+//        sVChain.post(token: .four)
+//
+//        eVChain.post(token: .four)
+//
+//        dVChain.post(token: .four)
+//        dVChain.post(token: .zero)
+//
+//        fXChain.post(token: uTower.variableToken)
+//        fYChain.post(token: vTower.variableToken)
+//        fZChain.post(token: .sin)
+//        fZChain.post(token: uTower.variableToken)
+//        fZChain.post(token: .multiply)
+//        fZChain.post(token: vTower.variableToken)
+//        fZChain.post(token: .add)
+//        fZChain.post(token: tTower.variableToken)
+//        fZChain.post(token: .rightParen)
+//        fZChain.post(token: .divide)
+//        fZChain.post(token: .three)
     }
 
 // Aexel ===========================================================================================
     public override var code: String { "Gp" }
-    public override var towers: Set<Tower> { Set<Tower>([uTower, vTower, tTower, fX.tower, fY.tower, fZ.tower]) }
+    public override var towers: Set<Tower> { Set<Tower>([
+        uTower, vTower, tTower,
+        fXChain.tower, fYChain.tower, fZChain.tower,
+        sUChain.tower, eUChain.tower, dUChain.tower,
+        sVChain.tower, eVChain.tower, dVChain.tower,
+        tChain.tower
+    ]) }
 
 // Domain ==========================================================================================
-    override public var properties: [String] { super.properties + [] }
+    override public var properties: [String] { super.properties + [
+        "fXChain", "fYChain", "fZChain", "sUChain", "eUChain", "dUChain",
+        "sVChain", "eVChain", "dVChain", "tChain"
+    ] }
 
 // TowerDelegate ===================================================================================
     func buildUpstream(tower: Tower) {

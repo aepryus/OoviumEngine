@@ -9,9 +9,10 @@
 import Foundation
 
 public class Coordinate: Aexel {
+    @objc public var dimensions: [Dimension] = []
 
 // Aexel ===========================================================================================
     
 // Domain ==========================================================================================
-    override public var properties: [String] { super.properties + [] }
+    override public var properties: [String] { super.properties + ["dimensions"] }
 }
