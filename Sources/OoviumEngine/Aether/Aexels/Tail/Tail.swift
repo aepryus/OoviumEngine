@@ -64,6 +64,8 @@ public final class Tail: Aexel, Mechlike, TowerDelegate, VariableTokenDelegate {
 		}
 
         let vertebra = Vertebra(tail: self, name: name, no: vertebras.count+1)
+        vertebra.tower.web = web
+        vertebra.chain.tower.tailForWeb = web
         add(vertebra: vertebra)
         mechlikeToken.params = vertebras.count
         vertebra.chain.tower.attach(tower)

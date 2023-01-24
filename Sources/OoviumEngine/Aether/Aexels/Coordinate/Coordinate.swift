@@ -9,10 +9,18 @@
 import Foundation
 
 public class Coordinate: Aexel {
-    @objc public var dimensions: [Dimension] = []
+    @objc lazy public var toCart: Web = Web(aexel: self, name: "to")
+    @objc lazy public var fromCart: Web = Web(aexel: self, name: "from")
 
 // Aexel ===========================================================================================
-    
+    public override var code: String { "Cd" }
+    public override var towers: Set<Tower> {
+        var towers = Set<Tower>()
+        toCart.towers.forEach { towers.insert($0) }
+        fromCart.towers.forEach { towers.insert($0) }
+        return towers
+    }
+
 // Domain ==========================================================================================
-    override public var properties: [String] { super.properties + ["dimensions"] }
+    override public var properties: [String] { super.properties + ["toCart", "fromCart"] }
 }

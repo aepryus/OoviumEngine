@@ -22,7 +22,7 @@ protocol TowerDelegate: AnyObject {
 extension TowerDelegate {
 	func buildUpstream(tower: Tower) {}
 	func renderDisplay(tower: Tower) -> String { "---" }
-	func buildWorker(tower: Tower) {}
+    func buildWorker(tower: Tower) { tower.task = nil }
 	func workerCompleted(tower: Tower, askedBy: Tower) -> Bool { true }
 	func workerBlocked(tower: Tower) -> Bool { false }
 	func resetWorker(tower: Tower) {}

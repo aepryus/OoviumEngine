@@ -170,6 +170,10 @@ public class Graph: Aexel, TowerDelegate {
         fYChain.tower = aether.createTower(tag: "\(key).y", towerDelegate: fYChain)
         fZChain.tower = aether.createTower(tag: "\(key).z", towerDelegate: fZChain)
         
+        fXChain.tower.tailForWeb = web
+        fYChain.tower.tailForWeb = web
+        fZChain.tower.tailForWeb = web
+
         view = V3(8.91167255619427, 8.2567481154179, 9.63093990157929)
         look = V3(-0.597824245607881, -0.542194458806552, -0.704535868587812)
         orient = V3(-0.821996365745422, 0.445722968116547, 0.35447568378478912120)
