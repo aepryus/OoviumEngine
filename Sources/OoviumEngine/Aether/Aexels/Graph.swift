@@ -21,8 +21,9 @@ public class Graph: Aexel, TowerDelegate {
     @objc public var eVChain: Chain = Chain()
     @objc public var dVChain: Chain = Chain()
     @objc public var tChain: Chain = Chain()
+    @objc public var coordinateNo: Int = 0
     
-    public var system: Int = 0
+    public var coordinate: Coordinate? = nil
     public var surfaceOn: Bool = true
     public var lightOn: Bool = true
     public var netOn: Bool = true
@@ -124,31 +125,6 @@ public class Graph: Aexel, TowerDelegate {
         zRecipe?.pointee.params[0] = uIndex
         zRecipe?.pointee.params[1] = vIndex
         zRecipe?.pointee.params[2] = tIndex
-        
-//        var towers: Set<Tower> = xTower.towersDestinedFor()
-//        towers.forEach { AEMemoryMarkLoaded(memory, $0.index) }
-//
-//        var index: mnimi = AEMemoryIndexForName(memory, xTower.variableToken.tag.toInt8())
-//        AEMemorySet(memory, index, AEObjRecipe(xRecipe))
-//        AEMemoryFix(memory, index)
-//
-//        towers = yResultTower.towersDestinedFor()
-//        towers.forEach { AEMemoryMarkLoaded(memory, $0.index) }
-//
-//        index = AEMemoryIndexForName(memory, yTower.variableToken.tag.toInt8())
-//        AEMemorySet(memory, index, AEObjRecipe(yRecipe))
-//        AEMemoryFix(memory, index)
-//
-//        towers = zResultTower.towersDestinedFor()
-//        towers.forEach { AEMemoryMarkLoaded(memory, $0.index) }
-//
-//        index = AEMemoryIndexForName(memory, zTower.variableToken.tag.toInt8())
-//        AEMemorySet(memory, index, AEObjRecipe(zRecipe))
-//        AEMemoryFix(memory, index)
-//
-//        AERecipeSetMemory(xRecipe, memory)
-//        AERecipeSetMemory(yRecipe, memory)
-//        AERecipeSetMemory(zRecipe, memory)
     }
 
 // Events ==========================================================================================
@@ -182,33 +158,7 @@ public class Graph: Aexel, TowerDelegate {
         lightColor = RGB(r: 172, g: 172, b: 215)
         netColor = RGB(r: 255, g: 255, b: 255)
         
-//        sUChain.post(token: .neg)
-//        sUChain.post(token: .four)
-//        
-//        eUChain.post(token: .four)
-//
-//        dUChain.post(token: .four)
-//        dUChain.post(token: .zero)
-//
-//        sVChain.post(token: .neg)
-//        sVChain.post(token: .four)
-//
-//        eVChain.post(token: .four)
-//
-//        dVChain.post(token: .four)
-//        dVChain.post(token: .zero)
-//
-//        fXChain.post(token: uTower.variableToken)
-//        fYChain.post(token: vTower.variableToken)
-//        fZChain.post(token: .sin)
-//        fZChain.post(token: uTower.variableToken)
-//        fZChain.post(token: .multiply)
-//        fZChain.post(token: vTower.variableToken)
-//        fZChain.post(token: .add)
-//        fZChain.post(token: tTower.variableToken)
-//        fZChain.post(token: .rightParen)
-//        fZChain.post(token: .divide)
-//        fZChain.post(token: .three)
+        coordinate = aether.aexel(no: coordinateNo)
     }
 
 // Aexel ===========================================================================================
@@ -224,7 +174,7 @@ public class Graph: Aexel, TowerDelegate {
 // Domain ==========================================================================================
     override public var properties: [String] { super.properties + [
         "fXChain", "fYChain", "fZChain", "sUChain", "eUChain", "dUChain",
-        "sVChain", "eVChain", "dVChain", "tChain"
+        "sVChain", "eVChain", "dVChain", "tChain", "coordinateNo"
     ] }
 
 // TowerDelegate ===================================================================================

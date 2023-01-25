@@ -14,7 +14,7 @@ public class Dimension: Domain, TowerDelegate, VariableTokenDelegate {
     @objc public var no: Int = 0
     @objc public var chain: Chain = Chain()
     
-    public lazy var tower: Tower = { coordinate.aether.createTower(tag: "\(coordinate.key).\(key)", towerDelegate: self, tokenDelegate: self) }()
+    public lazy var tower: Tower = { coordinate.aether.createTower(tag: "\(coordinate.key).\(web.key).\(key)", towerDelegate: self, tokenDelegate: self) }()
     
     public init(web: Web, name: String, no: Int) {
         self.name = name
@@ -33,7 +33,7 @@ public class Dimension: Domain, TowerDelegate, VariableTokenDelegate {
 // Events ==========================================================================================
     public override func onLoad() {
         tower.web = web
-        chain.tower = coordinate.aether.createTower(tag: "\(coordinate.key).\(web.key).\(key)", towerDelegate: chain)
+        coordinate.aether.inject(chain: chain, tag: "\(coordinate.key).\(web.key).\(key).result")
     }
     
 // Domain ==========================================================================================

@@ -88,7 +88,7 @@ public final class Mech: Aexel, Mechlike, TowerDelegate, VariableTokenDelegate {
 	
 // Events ==========================================================================================
 	override public func onLoad() {
-        resultChain.tower = aether.createTower(tag: "\(key).result", towerDelegate: resultChain)
+        aether.inject(chain: resultChain, tag: "\(key).result")
 
         tower = aether.createMechlikeTower(tag: key, towerDelegate: self, tokenDelegate: self)
         tower.mechlikeToken?.params = inputs.count

@@ -7,6 +7,7 @@
 //
 
 import Acheron
+import Aegean
 import Foundation
 
 public class Web: Domain, TowerDelegate {
@@ -37,6 +38,29 @@ public class Web: Domain, TowerDelegate {
         }
         return towers.union([tower])
     }
+    
+    public var recipes: [UnsafeMutablePointer<Recipe>] = []
+    
+    public func compileRecipes() {
+        let memory: UnsafeMutablePointer<Memory> = AEMemoryCreateClone(coordinate.aether.memory)
+        AEMemoryClear(memory)
+        
+        dimensions.forEach { AEMemorySetValue(memory, $0.tower.index, 0) }
+        
+        recipes = []
+        dimensions.forEach {
+            let recipe: UnsafeMutablePointer<Recipe> = Math.compile(result: $0.chain.tower, memory: memory)
+            recipes.append(recipe)
+            AERecipeSignature(recipe, AEMemoryIndexForName(memory, "\(coordinate.key).\(key).\($0.key)".toInt8()), UInt8(dimensions.count))
+        }
+        
+        let indexes: [mnimi] = dimensions.map {AEMemoryIndexForName(memory, "\(coordinate.key).\(key).\($0.key)".toInt8()) }
+        
+        recipes.forEach {
+            for i in 0...2 { $0.pointee.params[i] = mnimi(indexes[i]) }
+        }
+    }
+
     
 // Events ==========================================================================================
     public override func onLoaded() {
