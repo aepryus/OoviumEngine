@@ -21,10 +21,11 @@ class OperationExpression: Expression {
 
 // Expression ======================================================================================
 	override func depends(on variable: Variable) -> Bool {
-		for expression in expressions {
-			if expression.depends(on: variable) { return true }
-		}
-		return false
+        expressions.first { $0.depends(on: variable) } != nil
+//		for expression in expressions {
+//			if expression.depends(on: variable) { return true }
+//		}
+//		return false
 	}
 
 // Hashable ========================================================================================

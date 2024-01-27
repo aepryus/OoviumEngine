@@ -22,7 +22,7 @@ protocol TowerDelegate: AnyObject {
 extension TowerDelegate {
 	func buildUpstream(tower: Tower) {}
 	func renderDisplay(tower: Tower) -> String { "---" }
-	func buildWorker(tower: Tower) {}
+    func buildWorker(tower: Tower) { tower.task = nil }
 	func workerCompleted(tower: Tower, askedBy: Tower) -> Bool { true }
 	func workerBlocked(tower: Tower) -> Bool { false }
 	func resetWorker(tower: Tower) {}
@@ -87,7 +87,9 @@ public final class Tower: Hashable, CustomStringConvertible {
 	}
 	deinit { AETaskRelease(task) }
 
-	public var index: mnimi { AEMemoryIndexForName(aether.memory, variableToken.tag.toInt8()) }
+	public var index: mnimi {
+        AEMemoryIndexForName(aether.memory, variableToken.tag.toInt8())
+    }
 	public var value: Double { AEMemoryValue(aether.memory, index) }
 	public var obje: Obje { Obje(memory: aether.memory, index: index) }
 	

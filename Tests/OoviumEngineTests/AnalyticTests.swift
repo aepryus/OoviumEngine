@@ -6,10 +6,17 @@
 //  Copyright © 2021 Aepryus Software. All rights reserved.
 //
 
+import Acheron
 @testable import OoviumEngine
 import XCTest
 
 class AnalyticTests: XCTestCase {
+    
+    override func setUp() {
+        super.setUp()
+        Math.start()
+        Loom.namespaces = ["OoviumEngine"]
+    }
 
 	func test_Rational() {
 		let oneHalf = Rational(1, 2)
@@ -131,4 +138,55 @@ class AnalyticTests: XCTestCase {
 		print("############################     [ \(answer) ]")
 		XCTAssert("\(answer)" == "6x")
 	}
+    
+    func test_Anain() {
+        var anain: Anain = Anain(natural: "3")
+        var expression: Expression? = anain.calculate()
+        if let expression { print("############################     [ \(expression) ]") }
+        else { print("Oops") }
+        XCTAssert("\(expression!)" == "3")
+        
+        anain = Anain(natural: "3.7")
+        expression = anain.calculate()
+        if let expression { print("############################     [ \(expression) ]") }
+        else { print("Oops") }
+        XCTAssert("\(expression!)" == "37/10")
+        
+        XCTAssert(AnainMath.pow(8,3) == 8*8*8)
+        XCTAssert(AnainMath.pow(7,3) == 7*7*7)
+        XCTAssert(AnainMath.pow(7,5) == 7*7*7*7*7)
+        XCTAssert(AnainMath.pow(2,8) == 2*2*2*2*2*2*2*2)
+        XCTAssert(AnainMath.pow(11,4) == 11*11*11*11)
+        
+        anain = Anain(natural: "1/3")
+        expression = anain.calculate()!.reduce()
+        if let expression { print("############################     [ \(expression) ]") }
+        else { print("Oops") }
+        XCTAssert("\(expression!)" == "1/3")
+        
+        anain = Anain(natural: "2/3*1/2")
+        expression = anain.calculate()!.reduce()
+        if let expression { print("############################     [ \(expression) ]") }
+        else { print("Oops") }
+        XCTAssert("\(expression!)" == "1/3")
+
+        anain = Anain(natural: "1/48*3+1/48")
+        expression = anain.calculate()!.reduce()
+        if let expression { print("############################     [ \(expression) ]") }
+        else { print("Oops") }
+        XCTAssert("\(expression!)" == "1/12")
+        
+        anain = Anain(natural: "1/48*5-1/48")
+        expression = anain.calculate()!.reduce()
+        if let expression { print("############################     [ \(expression) ]") }
+        else { print("Oops") }
+        XCTAssert("\(expression!)" == "1/12")
+        
+        anain = Anain(natural: "(1+2)/12+(3+4)/(3+5)")
+        expression = anain.calculate()!.reduce()
+        if let expression { print("############################     [ \(expression) ]") }
+        else { print("Oops") }
+        XCTAssert("\(expression!)" == "9/8")
+
+    }
 }

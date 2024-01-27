@@ -24,10 +24,10 @@ public struct V2 {
 	public static func * (a: V2, b: Double) -> V2 { V2(a.x*b, a.y*b) }
 	public static func / (a: V2, b: Double) -> V2 { V2(a.x/b, a.y/b) }
 	
-	public static func dot(_ a: V2, _ b: V2) -> Double { a.x*b.x+a.y*b.y }
-	public static func det(_ a: V2, _ b: V2) -> Double { a.x*b.y-a.y*b.x }
-	public static func innerAngle(_ a: V2, _ b: V2) -> Double { acos(dot(a,b)/a.len()/b.len()) }
-	public static func clockwiseAngle(_ a: V2, _ b: V2) -> Double { atan2(det(a,b), dot(a,b)) }
+	public func dot(_ a: V2) -> Double { x*a.x+y*a.y }
+	public func det(_ a: V2) -> Double { x*a.y-y*a.x }
+    public func innerAngle(_ a: V2) -> Double { acos(dot(a)/len()/a.len()) }
+	public func clockwiseAngle(_ a: V2) -> Double { atan2(det(a), dot(a)) }
 
 	public static let zero: V2 = V2(0, 0)
 }

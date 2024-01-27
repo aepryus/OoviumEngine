@@ -137,6 +137,11 @@ import Foundation
     private var mechlikeTowers: [Tower] { aexels.filter({ $0 is Mechlike }).flatMap({ $0.towers }) }
     private var webTowers: [Tower] { aexels.flatMap({ $0.towers }).filter({ $0.web != nil }) }
     
+// Chains ==========================================================================================
+    func inject(chain: Chain, tag: String) {
+        chain.tower = createTower(tag: tag, towerDelegate: chain)
+    }
+    
 // Functions =======================================================================================
 	public func functionExists(name: String) -> Bool { aexels.first { $0 is Mechlike && $0.name == name } != nil }
 
