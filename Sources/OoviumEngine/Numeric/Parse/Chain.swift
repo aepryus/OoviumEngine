@@ -303,23 +303,21 @@ public final class Chain: NSObject, Packable, TowerDelegate {
 		guard let braketToken = braketToken() else { return }
 		post(token: braketToken)
 	}
-	public func backspace() -> Token? {
+    private func removeTokenAtCursor() -> Token? {
+        let token: Token = tokens.remove(at: cursor)
+        if let this: Tower = tower, let that: Tower = (token as? TowerToken)?.tower, !tokens.contains(token) {
+            that.detach(this)
+        }
+        return token
+    }
+	public func backspace() -> Token? {             // delete left
 		guard cursor > 0 else { return nil }
 		cursor -= 1
-		let token = tokens.remove(at: cursor)
-        if let this: Tower = tower, let that: Tower = (token as? TowerToken)?.tower {
-			if !tokens.contains(token) {that.detach(this)}
-		}
-		return token
+        return removeTokenAtCursor()
 	}
-	public func delete() -> Token? {
+	public func delete() -> Token? {                // delete right
 		guard cursor < tokens.count else { return nil }
-		let token = tokens.remove(at: cursor)
-        if let this = tower, let towerToken = token as? TowerToken {
-            let that: Tower = towerToken.tower
-			if !tokens.contains(token) {that.detach(this)}
-		}
-		return token
+        return removeTokenAtCursor()
 	}
 	public func leftArrow() -> Bool {
 		guard cursor > 0 else { return false }

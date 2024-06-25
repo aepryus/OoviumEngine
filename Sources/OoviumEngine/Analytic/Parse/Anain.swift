@@ -1,9 +1,11 @@
 //
-//  File.swift
-//  
+//  Anian.swift
+//
 //
 //  Created by Joe Charlier on 1/12/23.
 //
+
+// Anain = Analytical Chain
 
 import Aegean
 import Acheron
