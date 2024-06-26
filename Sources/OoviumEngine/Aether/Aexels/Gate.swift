@@ -20,7 +20,7 @@ public final class Gate: Aexel, TowerDelegate {
 	public var elseTower: Tower { elseChain.tower }
     public lazy var resultTower: Tower = aether.createTower(tag: key, towerDelegate: self)
 	
-	public var token: Token {
+	public var token: VariableToken {
 		return resultTower.variableToken
 	}
 

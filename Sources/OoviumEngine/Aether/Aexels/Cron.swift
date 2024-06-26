@@ -25,7 +25,7 @@ public final class Cron: Aexel, TowerDelegate {
 	@objc public var exposed: Bool = true
 
     public lazy var tower: Tower = aether.createTower(tag: key, towerDelegate: self)
-    public var token: Token { tower.variableToken }
+    public var token: VariableToken { tower.variableToken }
 
 	public var startTower: Tower { startChain.tower }
 	public var stopTower: Tower { stopChain.tower }
