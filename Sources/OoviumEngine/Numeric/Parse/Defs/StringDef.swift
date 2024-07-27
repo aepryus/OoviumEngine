@@ -20,6 +20,7 @@ public final class StringDef: Def {
 	override func format(obj: Obj) -> String {
 		let a = obj.a.p.assumingMemoryBound(to: UInt8.self)
 		let string = String(cString: a)
+        print("QQ:[\(string)]")
 		return string
 	}
 }

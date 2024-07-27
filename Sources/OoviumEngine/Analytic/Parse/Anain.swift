@@ -132,7 +132,7 @@ public final class Anain: NSObject, Packable, TowerDelegate {
     
 // Private =========================================================================================
     private func buildTokens() {
-        tokens = loadedKeys?.map({ Token.token(key: $0)! }) ?? []
+        tokens = loadedKeys?.map({ Token.token(key: TokenKey($0))! }) ?? []
         loadedKeys = nil
     }
     
@@ -219,7 +219,7 @@ public final class Anain: NSObject, Packable, TowerDelegate {
         var i: Int = 0
         while i < natural.count {
             var tag: String = Token.aliases["\(natural[i])"] ?? "\(natural[i])"
-            let code: Token.Code
+            let code: TokenCode
             if natural[i].isNumber || natural[i] == "." { code = .dg }
             else if natural[i] == "!" { code = .un }
             else if natural[i] == "-" && isStart { code = .un }
@@ -227,11 +227,11 @@ public final class Anain: NSObject, Packable, TowerDelegate {
             else if ["(", ",", ")"].contains(natural[i]) { code = .sp }
             else if ["e", "i", "π"].contains(natural[i]) { code = .cn }
             else if natural[i] == "\"" {
-                keys.append("\(Token.Code.sp):\"")
+                keys.append("\(TokenCode.sp):\"")
                 i += 1
                 let end: Int = natural.loc(of: "\"", after: i)!
                 while i < end {
-                    keys.append("\(Token.Code.ch):\(natural[i])")
+                    keys.append("\(TokenCode.ch):\(natural[i])")
                     i += 1
                 }
                 code = .sp
@@ -751,23 +751,19 @@ public final class Anain: NSObject, Packable, TowerDelegate {
 //        if let label = tower.variableToken.alias { return label }
 //        return description
     }
-    func buildWorker(tower: Tower) {
-//        let lambda: UnsafeMutablePointer<Lambda>? = compile(name: tower.name)
-//        tower.task = lambda != nil ? AETaskCreateLambda(lambda) : AETaskCreateNull()
-//        AETaskSetLabels(tower.task, tower.variableToken.tag.toInt8(), "\(tower.variableToken.alias ?? tower.variableToken.tag) = \(tokensDisplay)".toInt8())
-    }
-    func workerCompleted(tower: Tower, askedBy: Tower) -> Bool {
+//    func renderTask(tower: Tower) -> UnsafeMutablePointer<Task>? { nil }
+    func taskCompleted(tower: Tower, askedBy: Tower) -> Bool {
         true
 //        AEMemoryLoaded(tower.memory, tower.index) != 0
     }
-    func workerBlocked(tower: Tower) -> Bool {
+    func taskBlocked(tower: Tower) -> Bool {
         false
 //        tokens.compactMap({ $0 as? TowerToken }).contains { $0.status != .ok }
     }
-    func resetWorker(tower: Tower) {
+    func resetTask(tower: Tower) {
 //        AEMemoryUnfix(tower.memory, tower.index)
     }
-    func executeWorker(tower: Tower) {
+    func executeTask(tower: Tower) {
 //        AETaskExecute(tower.task, tower.memory)
 //        AEMemoryFix(tower.memory, tower.index)
 //        tower.variableToken.def = tower.obje.def

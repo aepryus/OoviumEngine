@@ -936,14 +936,20 @@ Obj AELambdaExecute(Lambda* lambda, Memory* memory) {
 				char* result = (char*)malloc(sizeof(char)*(strlen(a)+strlen(b)+1));
 				strcat(result, a);
 				strcat(result, b);
+                
+                printf("[A][%s] + [%s] = [%s]\n", a, b, result);
 				
 				AEObjWipe(&lmb->stack[lmb->sp-2]);
 				AEObjWipe(&lmb->stack[lmb->sp-1]);
 				
 				lmb->stack[lmb->sp-2] = AEObjString(result);
-				
+
+                printf("[B][%s]\n", (char*)lmb->stack[lmb->sp-2].a.p);
+
 				free(result);
 				
+                printf("[C][%s]\n", (char*)lmb->stack[lmb->sp-2].a.p);
+                
 				lmb->sp--;
 			} break;
 			

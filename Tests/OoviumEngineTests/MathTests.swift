@@ -35,55 +35,74 @@ class MathTests: XCTestCase {
 		let zero: Obj = AEObjReal(0)
 
 		var chain: Chain = Chain()
+        chain.load(state: ChainState(chain: chain))
 		chain.post(token: Token.eight)
 		chain.post(token: Token.nine)
 		chain.post(token: Token.three)
 		chain.post(token: Token.divide)
 		chain.post(token: Token.one)
 		chain.post(token: Token.nine)
+        chain.tokenKeys = chain.tokens.map { $0.key.display }
 		XCTAssertEqual(chain.calculate() ?? zero, AEObjReal(47))
 
 		chain = Chain(natural: "893/19")
+        chain.load(state: ChainState(chain: chain))
 		XCTAssertEqual(chain.calculate() ?? zero, AEObjReal(47))
 
 		chain = Chain(natural: "798+456*12-76/19")
+        chain.load(state: ChainState(chain: chain))
 		XCTAssertEqual(chain.calculate() ?? zero, AEObjReal(6266))
 
 		chain = Chain(natural: "(5^2+12^2)*7")
+        chain.load(state: ChainState(chain: chain))
 		XCTAssertEqual(chain.calculate() ?? zero, AEObjReal(1183))
 
 		chain = Chain(natural: "sin(1)+cos(1)")
+        chain.load(state: ChainState(chain: chain))
 		XCTAssertEqual(chain.calculate() ?? zero, AEObjReal(sin(1)+cos(1)))
 
 		chain = Chain(natural: "min(tan(1),cot(1))")
+        chain.load(state: ChainState(chain: chain))
 		XCTAssertEqual(chain.calculate() ?? zero, AEObjReal(min(tan(1), 1/tan(1))))
 
 		chain = Chain(natural: "max(tan(1),cot(1))")
+        chain.load(state: ChainState(chain: chain))
 		XCTAssertEqual(chain.calculate() ?? zero, AEObjReal(max(tan(1), 1/tan(1))))
 
 		chain = Chain(natural: "tan(1)")
+        chain.load(state: ChainState(chain: chain))
 		XCTAssertEqual(chain.calculate() ?? zero, AEObjReal(tan(1)))
 
 		chain = Chain(natural: "cot(1)")
+        chain.load(state: ChainState(chain: chain))
 		XCTAssertEqual(chain.calculate() ?? zero, AEObjReal(1/tan(1)))
 
 		chain = Chain(natural: "-4-5")
+        chain.load(state: ChainState(chain: chain))
 		XCTAssertEqual(chain.calculate() ?? zero, AEObjReal(-4-5))
 
 		chain = Chain(natural: "e^(i*π)")
+        chain.load(state: ChainState(chain: chain))
 		XCTAssertEqual((chain.calculate() ?? zero).a.x, -1)
 
 		chain = Chain(natural: "(3+7*i)*7*i")
+        chain.load(state: ChainState(chain: chain))
 		XCTAssertEqual(chain.calculate() ?? zero, AEObjComplex(-49, 21))
 
 		chain = Chain(natural: "3+\"みどり\"")
-		XCTAssertEqual(chain.calculate() ?? zero, AEObjString("3みどり".toInt8()))
+        chain.load(state: ChainState(chain: chain))
+        let obj: Obj? = chain.calculate()
+        if let obj { print("\(objToString(obj))") }
+        XCTAssertEqual(obj ?? zero, AEObjString("3みどり".toInt8()))
+//		XCTAssertEqual(chain.calculate() ?? zero, AEObjString("3みどり".toInt8()))
 
 		chain = Chain(natural: "Vector(1,2,3)")
+        chain.load(state: ChainState(chain: chain))
 		XCTAssertEqual(chain.calculate() ?? zero, AEObjVector(1, 2, 3))
 	}
 	func test_AetherManual() {
 		let aether: Aether = Aether()
+        aether.state = AetherState(aether: aether)
 
 		let object1: Object = aether.create(at: V2.zero)
 		object1.chain.replaceWith(natural: "893")
@@ -149,9 +168,10 @@ class MathTests: XCTestCase {
 
 		let aether = Aether()
 		aether.load(attributes: json.toAttributes())
+        aether.state.evaluate()
 
 		let object: Object = aether.aexel(no: 3)!
-		XCTAssertEqual(object.chain.tower.value, 47)
+        XCTAssertEqual(aether.state.tower(key: TokenKey(code: .va, tag: object.key))?.value, 47)
 	}
 	func test_AetherJSONCatSkinTSF() {
         let json = """
@@ -273,7 +293,7 @@ class MathTests: XCTestCase {
 		aether.load(attributes: json.toAttributes())
 
         let object: Object = aether.aexel(no: 4)!
-		XCTAssertEqual(object.chain.tower.value, 19)
+        XCTAssertEqual(aether.state.tower(key: TokenKey(code: .va, tag: object.key))?.value, 19)
 	}
     func test_AetherJSONCatSkinISF() {
         let json = """
@@ -402,9 +422,10 @@ class MathTests: XCTestCase {
 
         let aether = Aether()
         aether.load(attributes: json.toAttributes())
+        aether.state.evaluate()
 
         let object: Object = aether.aexel(no: 5)!
-        XCTAssertEqual(object.chain.tower.value, 19)
+        XCTAssertEqual(aether.state.tower(key: TokenKey(code: .va, tag: object.key))?.value, 19)
     }
     func test_AetherJSONCatSkinRSF() {
         let json = """
@@ -563,7 +584,7 @@ class MathTests: XCTestCase {
         aether.load(attributes: json.toAttributes())
 
         let object: Object = aether.aexel(no: 2)!
-        XCTAssertEqual(object.chain.tower.value, 19)
+        XCTAssertEqual(aether.state.tower(key: TokenKey(code: .va, tag: object.key))?.value, 19)
     }
     func test_AetherJSONSUM() {
         let json = """
@@ -627,6 +648,6 @@ class MathTests: XCTestCase {
         aether.load(attributes: json.toAttributes())
 
         let object: Object = aether.aexel(no: 5)!
-        XCTAssertEqual(object.chain.tower.value, 45)
+        XCTAssertEqual(aether.state.tower(key: TokenKey(code: .va, tag: object.key))?.value, 45)
     }
 }

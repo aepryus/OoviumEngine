@@ -379,7 +379,7 @@ public class Migrate {
                 case "1": sb.append("op")
                 case "2": sb.append("sp")
                 case "3":
-                    if Token.token(key: "fn:\($0[2...])") != nil { sb.append("fn") }
+                    if Token.token(key: TokenKey("fn:\($0[2...])")) != nil { sb.append("fn") }
                     else { sb.append("ml") }
                 case "4": sb.append("va")
                 case "5": sb.append("pr")
