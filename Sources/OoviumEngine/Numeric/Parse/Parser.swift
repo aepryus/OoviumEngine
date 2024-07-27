@@ -88,9 +88,7 @@ class Parser {
     var stack: [String] = [String](repeating: "", count: 10)
     var sp: Int = 0
     
-    init(chain: Chain) {
-        self.chain = chain
-    }
+    init(chain: Chain) { self.chain = chain }
 
     // Stack
     func push(_ key: String) {
@@ -323,7 +321,7 @@ class Parser {
         let cn: Int = constants.count
         let c: UnsafeMutablePointer<Obj> = UnsafeMutablePointer<Obj>.allocate(capacity: cn)
         defer { c.deallocate() }
-        for i in 0..<cn { c[i] = constants[i].obj }
+        for i in 0..<cn { c[i] = AEObjMirror(constants[i].obj) }
         
         let mn: Int = morphs.count
         let m: UnsafeMutablePointer<UInt8> = UnsafeMutablePointer<UInt8>.allocate(capacity: mn)

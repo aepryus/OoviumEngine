@@ -116,8 +116,9 @@ class MathTests: XCTestCase {
 		object3.chain.post(token: object2.token)
 
         aether.onLoad()
-//		aether.evaluate()
-		XCTAssertEqual(object3.chain.tower.value, 47)
+//        aether.state.evaluate()
+        let tower = aether.state.tower(key: TokenKey(code: .va, tag: object3.key))!
+		XCTAssertEqual(tower.value, 47)
 	}
 	func test_AetherJSONBasic() {
 		let json = """
