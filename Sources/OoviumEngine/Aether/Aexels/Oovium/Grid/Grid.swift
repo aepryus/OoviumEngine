@@ -83,15 +83,15 @@ public final class Grid: Aexel {
         return newCells
 	}
 	public func deleteRow(rowNo: Int) {
-		rows -= 1
-        var toDestroy: [Tower] = []
-		for i in 0..<columns.count {
-			let cellNo: Int = (rowNo+1)*columns.count - 1 - i
-            toDestroy.append(cells[cellNo].tower)
-			cells.remove(at: cellNo)
-		}
-		numberCells()
-        aether.state.destroy(towers: toDestroy)
+//		rows -= 1
+//        var toDestroy: [Tower] = []
+//		for i in 0..<columns.count {
+//			let cellNo: Int = (rowNo+1)*columns.count - 1 - i
+//            toDestroy.append(cells[cellNo].tower)
+//			cells.remove(at: cellNo)
+//		}
+//		numberCells()
+//        aether.state.destroy(towers: toDestroy)
 	}
 	public func move(rowNo: Int, to: Int) {
 		let cellNo: Int = rowNo*columns.count
@@ -123,18 +123,18 @@ public final class Grid: Aexel {
         return column
 	}
 	public func deleteColumn(_ column: Column) {
-		let colNo: Int = column.colNo
-        var toDestroy: [Tower] = []
-		for rowNo in 0..<rows {
-			let cellNo = columns.count*(rows-1-rowNo)+colNo
-            toDestroy.append(cells[cellNo].tower)
-			cells.remove(at: cellNo)
-		}
-        toDestroy.append(columns[colNo].chain.tower)
-        toDestroy.append(columns[colNo].footerChain.tower)
-		columns.remove(at: colNo)
-		numberCells()
-        aether.state.destroy(towers: toDestroy)
+//		let colNo: Int = column.colNo
+//        var toDestroy: [Tower] = []
+//		for rowNo in 0..<rows {
+//			let cellNo = columns.count*(rows-1-rowNo)+colNo
+//            toDestroy.append(cells[cellNo].tower)
+//			cells.remove(at: cellNo)
+//		}
+//        toDestroy.append(columns[colNo].chain.tower)
+//        toDestroy.append(columns[colNo].footerChain.tower)
+//		columns.remove(at: colNo)
+//		numberCells()
+//        aether.state.destroy(towers: toDestroy)
 	}
 	public func move(column: Column, to: Int) {
 		let from = column.colNo
@@ -155,7 +155,7 @@ public final class Grid: Aexel {
 	public func column(colNo: Int) -> Column? {
 		return columns[colNo]
 	}
-    public func column(tag: String) -> Column? { columns.first { $0.chain.tower.variableToken.tag == tag } }
+    public func column(tag: String) -> Column? { nil/*columns.first { $0.chain.tower.variableToken.tag == tag }*/ }
 	public var maxCellNo: Int {
 		var max: Int = 0
 		cells.forEach {if $0.no > max {max = $0.no}}
@@ -175,10 +175,10 @@ public final class Grid: Aexel {
 
 // Aexel ===========================================================================================
 	public var towers: Set<Tower> {
-		var towers: [Tower] = []
-		cells.forEach { towers.append($0.tower) }
-        columns.forEach { towers.append($0.chain.tower) }
-        columns.forEach { towers.append($0.footerChain.tower) }
+		let towers: [Tower] = []
+//		cells.forEach { towers.append($0.tower) }
+//        columns.forEach { towers.append($0.chain.tower) }
+//        columns.forEach { towers.append($0.footerChain.tower) }
 		return Set<Tower>(towers)
 	}
     public override var chains: [Chain] {

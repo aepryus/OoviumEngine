@@ -18,9 +18,7 @@ fileprivate class Ops {
     weak private var cOp: OperatorToken?
     weak private var gOp: OperatorToken?
     
-    init(_ parser: Parser) {
-        self.parser = parser
-    }
+    init(_ parser: Parser) { self.parser = parser }
     
     private func doPOP(_ token: OperatorToken?) throws {
         if let pOp = pOp { try parser.apply(token: pOp) }
@@ -80,15 +78,15 @@ fileprivate class Ops {
 enum ParseError: Error { case general }
 
 class Parser {
-    let chain: Chain
+    let tokens: [Token]
     
-    var morphs: [Int] = []
+    var morphs: [UInt32] = []
     var variables: [String] = []
     var constants: [Obje] = []
     var stack: [String] = [String](repeating: "", count: 10)
     var sp: Int = 0
     
-    init(chain: Chain) { self.chain = chain }
+    init(tokens: [Token]) { self.tokens = tokens }
 
     // Stack
     func push(_ key: String) {
@@ -101,14 +99,12 @@ class Parser {
         if sp == -1 {sp = 9}
         return stack[sp]
     }
-    func peek() -> String {
-        return stack[sp-1]
-    }
+    func peek() -> String { stack[sp-1] }
 
-    private func addMorph(_ morph: Int) {
+    private func addMorph(_ morph: UInt32) {
         morphs.append(morph)
-        if let morph = Morph(rawValue: morph) { push(morph.def.key) }
-        else { push("num") }
+        let morph = Morph(rawValue: morph)
+        push(morph.def.key)
     }
     private func addConstant(_ obje: Obje) throws {
         constants.append(obje)
@@ -133,14 +129,14 @@ class Parser {
         try apply(tag: token.tag, params: 1)
     }
 
-    private func parseOperator(tokens:[Token], i:Int, ops:Ops) throws {
+    private func parseOperator(i:Int, ops:Ops) throws {
         if let token: OperatorToken = tokens[i] as? OperatorToken {
             switch token.level {
-                case .add:            try ops.aOp(token)
-                case .multiply:        try ops.mOp(token)
-                case .power:        try ops.pOp(token)
-                case .compare:        try ops.cOp(token)
-                case .gate:            try ops.gOp(token)
+                case .add:      try ops.aOp(token)
+                case .multiply: try ops.mOp(token)
+                case .power:    try ops.pOp(token)
+                case .compare:  try ops.cOp(token)
+                case .gate:     try ops.gOp(token)
             }
         }
         else if tokens[i].code == .sp { try ops.end() }
@@ -151,16 +147,16 @@ class Parser {
         var i: Int = n
         var p: Int = 1
         
-        while p != 0 && i<chain.tokens.count {
-            let token = chain.tokens[i]
-            if chain.tokens[i] === Token.leftParen || chain.tokens[i].code == .fn || chain.tokens[i].code == .ml { p += 1 }
+        while p != 0 && i<tokens.count {
+            let token = tokens[i]
+            if tokens[i] === Token.leftParen || tokens[i].code == .fn || tokens[i].code == .ml { p += 1 }
             else if token === Token.rightParen { p -= 1 }
             i += 1
         }
         if p != 0 { throw ParseError.general }
         return i-1
     }
-    private func parseNumber(tokens: [Token], i: Int) -> String {
+    private func parseNumber(i: Int) -> String {
         var sb = String()
         for i in i..<tokens.count {
             let token = tokens[i]
@@ -169,7 +165,7 @@ class Parser {
         }
         return sb;
     }
-    private func parseChain(tokens: [Token], i: Int) throws -> [Token] {
+    private func parseChain(i: Int) throws -> [Token] {
         var i: Int = i
         var p: Int = 1
         var result: [Token] = []
@@ -182,7 +178,7 @@ class Parser {
         if p > 0 { throw ParseError.general }
         return result
     }
-    private func parseString(tokens: [Token], i: Int) throws -> String  {
+    private func parseString(i: Int) throws -> String  {
         var sb = String()
         var i: Int = i+1
         while i < tokens.count {
@@ -193,18 +189,18 @@ class Parser {
         }
         return sb
     }
-    private func parseOperand(tokens: [Token], i: Int) throws -> Int {
+    private func parseOperand(i: Int) throws -> Int {
         guard tokens.count > i else { throw ParseError.general }
 
         var i: Int = i
         var token: Token = tokens[i]
 
-//        // Fix for imported unary Tokens ========
+        // Fix for imported unary Tokens ========
 //        if tokens[i] === Token.subtract {
-//            chain..tokens[i] = Token.neg
+//            tokens[i] = Token.neg
 //            token = Token.neg
 //        }
-//        // ======================================
+        // ======================================
 
         var unary: UnaryToken?
         if let ut = token as? UnaryToken {
@@ -215,7 +211,7 @@ class Parser {
         }
         
         if token.code == .dg {
-            let n: String = parseNumber(tokens:tokens, i:i)
+            let n: String = parseNumber(i:i)
             let x: Double = Double(n) ?? Double.nan
             try addConstant(Obje(AEObjReal(x)))
             if let unary = unary { try apply(token: unary) }
@@ -238,12 +234,12 @@ class Parser {
             let e = try findEnd(i)
             try parseTokens(start: i, stop: e)
             variables.append(token.tag)
-            addMorph(Morph.recipe.rawValue)
+            addMorph(MorphRecipe.rawValue)
             if let unary = unary { try apply(token: unary) }
             return 2 + e - i + (unary != nil ? 1 : 0)
         } else if token == .bra {
             i += 1
-            let tokens: [Token] = try parseChain(tokens: tokens, i: i)
+            let tokens: [Token] = try parseChain(i: i)
 //            let chain: Chain = Chain(tokens: tokens)
 //            chain.tower = tower
             // The name sent to compile is used to set the lambda index vi, but since vi won't be used in this case I'm sending 'k' in just to ensure the name is found.
@@ -284,33 +280,32 @@ class Parser {
             return 1 + (unary != nil ? 1 : 0)
 
         } else if token == Token.quote {
-            let text: String = try parseString(tokens: tokens, i: i)
+            let text: String = try parseString(i: i)
             try addConstant(Obje(AEObjString(text.toInt8())))
-            constants.forEach { print("\($0.display)") }
             return text.count+2
         }
         
         throw ParseError.general
     }
     private func parseTokens(start:Int, stop:Int) throws {
-        if chain.tokens.count == 0 || start == stop { return }
+        if tokens.count == 0 || start == stop { return }
         let ops: Ops = Ops(self)
         var i: Int = start
-        i += try parseOperand(tokens:chain.tokens, i:i)
+        i += try parseOperand(i:i)
         while i < stop {
-            try parseOperator(tokens:chain.tokens, i:i, ops:ops)
+            try parseOperator(i:i, ops:ops)
             i += 1
-            i += try parseOperand(tokens:chain.tokens, i:i)
+            i += try parseOperand(i:i)
         }
         try ops.end()
     }
 
-    private func compile(memory: UnsafeMutablePointer<Memory>) -> (UnsafeMutablePointer<Lambda>?, Int?) {
-        do { try parseTokens(start:0, stop:chain.tokens.count) }
+    private func compile(tokenKey: TokenKey?, memory: UnsafeMutablePointer<Memory>) -> (UnsafeMutablePointer<Lambda>?, UInt32?) {
+        do { try parseTokens(start:0, stop:tokens.count) }
         catch { return (nil, nil) }
 
         let vi: mnimi
-        if let key: ChainKey = chain.key { vi = AEMemoryIndexForName(memory, key.display.toInt8()) }
+        if let key: TokenKey = tokenKey { vi = AEMemoryIndexForName(memory, key.description.toInt8()) }
         else { vi = 0 }
         
         let vn: Int = variables.count
@@ -328,8 +323,8 @@ class Parser {
         defer { m.deallocate() }
         for i in 0..<mn { m[i] = UInt8(morphs[i]) }
 
-        return (AELambdaCreate(vi, c, UInt8(cn), v, UInt8(vn), m, UInt8(mn), chain.tokensDisplay.toInt8()), morphs.last)
+        return (AELambdaCreate(vi, c, UInt8(cn), v, UInt8(vn), m, UInt8(mn), Token.display(tokens: tokens).toInt8()), morphs.last)
     }
     
-    static func compile(chain: Chain, memory: UnsafeMutablePointer<Memory>) -> (UnsafeMutablePointer<Lambda>?, Int?) { Parser(chain: chain).compile(memory: memory) }
+    static func compile(tokenKey: TokenKey?, tokens: [Token], memory: UnsafeMutablePointer<Memory>) -> (UnsafeMutablePointer<Lambda>?, UInt32?) { Parser(tokens: tokens).compile(tokenKey: tokenKey, memory: memory) }
 }

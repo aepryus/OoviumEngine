@@ -12,6 +12,9 @@
  *  functionality of AepGraph.
  */
 
+
+#if canImport(UIKit)
+
 import Acheron
 import Aegean
 import Foundation
@@ -101,36 +104,36 @@ public class Graph: Aexel, TowerDelegate, Web {
     lazy public var tTower: Tower = aether.state.createTower(tag: "\(key).t", towerDelegate: self, tokenDelegate: tTokenDelegate)
     
     public func compileRecipes() {
-        let memory: UnsafeMutablePointer<Memory> = AEMemoryCreateClone(aether.state.memory)
-        AEMemoryClear(memory)
-        
-        AEMemorySetValue(memory, uTower.index, 0)
-        AEMemorySetValue(memory, vTower.index, 0)
-        AEMemorySetValue(memory, tTower.index, 0)
-        
-        xRecipe = Math.compile(result: fXChain.tower, memory: memory)
-        yRecipe = Math.compile(result: fYChain.tower, memory: memory)
-        zRecipe = Math.compile(result: fZChain.tower, memory: memory)
-
-        AERecipeSignature(xRecipe, AEMemoryIndexForName(memory, "\(key).x".toInt8()), UInt8(3))
-        AERecipeSignature(yRecipe, AEMemoryIndexForName(memory, "\(key).y".toInt8()), UInt8(3))
-        AERecipeSignature(zRecipe, AEMemoryIndexForName(memory, "\(key).z".toInt8()), UInt8(3))
-
-        let uIndex = AEMemoryIndexForName(memory, "\(key).u".toInt8())
-        let vIndex = AEMemoryIndexForName(memory, "\(key).v".toInt8())
-        let tIndex = AEMemoryIndexForName(memory, "\(key).t".toInt8())
-
-        xRecipe?.pointee.params[0] = uIndex
-        xRecipe?.pointee.params[1] = vIndex
-        xRecipe?.pointee.params[2] = tIndex
-        
-        yRecipe?.pointee.params[0] = uIndex
-        yRecipe?.pointee.params[1] = vIndex
-        yRecipe?.pointee.params[2] = tIndex
-
-        zRecipe?.pointee.params[0] = uIndex
-        zRecipe?.pointee.params[1] = vIndex
-        zRecipe?.pointee.params[2] = tIndex
+//        let memory: UnsafeMutablePointer<Memory> = AEMemoryCreateClone(aether.state.memory)
+//        AEMemoryClear(memory)
+//        
+//        AEMemorySetValue(memory, uTower.index, 0)
+//        AEMemorySetValue(memory, vTower.index, 0)
+//        AEMemorySetValue(memory, tTower.index, 0)
+//        
+//        xRecipe = Math.compile(result: fXChain.tower, memory: memory)
+//        yRecipe = Math.compile(result: fYChain.tower, memory: memory)
+//        zRecipe = Math.compile(result: fZChain.tower, memory: memory)
+//
+//        AERecipeSignature(xRecipe, AEMemoryIndexForName(memory, "\(key).x".toInt8()), UInt8(3))
+//        AERecipeSignature(yRecipe, AEMemoryIndexForName(memory, "\(key).y".toInt8()), UInt8(3))
+//        AERecipeSignature(zRecipe, AEMemoryIndexForName(memory, "\(key).z".toInt8()), UInt8(3))
+//
+//        let uIndex = AEMemoryIndexForName(memory, "\(key).u".toInt8())
+//        let vIndex = AEMemoryIndexForName(memory, "\(key).v".toInt8())
+//        let tIndex = AEMemoryIndexForName(memory, "\(key).t".toInt8())
+//
+//        xRecipe?.pointee.params[0] = uIndex
+//        xRecipe?.pointee.params[1] = vIndex
+//        xRecipe?.pointee.params[2] = tIndex
+//        
+//        yRecipe?.pointee.params[0] = uIndex
+//        yRecipe?.pointee.params[1] = vIndex
+//        yRecipe?.pointee.params[2] = tIndex
+//
+//        zRecipe?.pointee.params[0] = uIndex
+//        zRecipe?.pointee.params[1] = vIndex
+//        zRecipe?.pointee.params[2] = tIndex
     }
 
 // Events ==========================================================================================
@@ -152,9 +155,9 @@ public class Graph: Aexel, TowerDelegate, Web {
 //        fYChain.tower = aether.state.createTower(tag: "\(key).y", towerDelegate: fYChain)
 //        fZChain.tower = aether.state.createTower(tag: "\(key).z", towerDelegate: fZChain)
         
-        fXChain.tower.tailForWeb = web
-        fYChain.tower.tailForWeb = web
-        fZChain.tower.tailForWeb = web
+//        fXChain.tower.tailForWeb = web
+//        fYChain.tower.tailForWeb = web
+//        fZChain.tower.tailForWeb = web
 
         view = V3(8.91167255619427, 8.2567481154179, 9.63093990157929)
         look = V3(-0.597824245607881, -0.542194458806552, -0.704535868587812)
@@ -169,13 +172,13 @@ public class Graph: Aexel, TowerDelegate, Web {
 
 // Aexel ===========================================================================================
     public override var code: String { "Gp" }
-    public var towers: Set<Tower> { Set<Tower>([
-        uTower, vTower, tTower,
-        fXChain.tower, fYChain.tower, fZChain.tower,
-        sUChain.tower, eUChain.tower, dUChain.tower,
-        sVChain.tower, eVChain.tower, dVChain.tower,
-        tChain.tower
-    ]) }
+//    public var towers: Set<Tower> { Set<Tower>([
+//        uTower, vTower, tTower,
+//        fXChain.tower, fYChain.tower, fZChain.tower,
+//        sUChain.tower, eUChain.tower, dUChain.tower,
+//        sVChain.tower, eVChain.tower, dVChain.tower,
+//        tChain.tower
+//    ]) }
 
 // Domain ==========================================================================================
     override public var properties: [String] { super.properties + [
@@ -212,3 +215,5 @@ public class Graph: Aexel, TowerDelegate, Web {
         tower.variableToken.def = RecipeDef.def
     }
 }
+
+#endif

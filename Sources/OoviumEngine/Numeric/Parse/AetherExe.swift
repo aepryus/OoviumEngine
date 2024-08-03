@@ -1,5 +1,5 @@
 //
-//  AetherState.swift
+//  AetherExe.swift
 //  OoviumEngine
 //
 //  Created by Joe Charlier on 7/6/24.
@@ -10,18 +10,20 @@ import Acheron
 import Aegean
 import Foundation
 
-public class AetherState {
+public class AetherExe {
     unowned let aether: Aether
     
     private var tokens: [TokenKey:TowerToken] = [:]
     private var towers: [TowerToken:Tower] = [:]
     public private(set) var memory: UnsafeMutablePointer<Memory> = AEMemoryCreate(0)
     var nos: IntMap = IntMap()
+    
+    var chainExes: [TokenKey:ChainExe] = [:]
 
     init(aether: Aether) {
         self.aether = aether
         
-        print("[ Wiring ] ===============================================================")
+//        print("[ Wiring ] ===============================================================")
                 
         aether.aexels.forEach {
             guard $0.no > self.nos.get(key: $0.type) else { return }
@@ -31,26 +33,19 @@ public class AetherState {
         let chains: [Chain] = aether.aexels.flatMap({ $0.chains })
         
         chains.forEach { (chain: Chain) in
-            let state: ChainState = ChainState(chain: chain)
-            if let key = chain.key { state.tower = self.createTower(tag: key.display, towerDelegate: state) }
-            chain.load(state: state)
+            let state: ChainExe = ChainExe(chain: chain)
+            if let key = chain.key { state.tower = self.createTower(tag: key.description, towerDelegate: state) }
+//            chain.load(state: state)
         }
 
-        chains.forEach { (chain: Chain) in
-            chain.load(tokens: chain.tokenKeys.map({ (key: String) in self.token(key: TokenKey(key)) ?? Token.token(key: TokenKey(key)) ?? .zero }))
-        }
-        
-        let syains: [Syain] = aether.aexels.flatMap({ $0.syains })
-        syains.forEach { (syain: Syain) in
-            let state: SyainState = SyainState(syain: syain)
-            state.tower = self.createTower(tag: syain.key, towerDelegate: state)
-            syain.load(state: state)
-        }
-        
+//        chains.forEach { (chain: Chain) in
+//            chain.load(tokens: chain.tokenKeys.map({ (key: String) in self.token(key: TokenKey(key)) ?? Token.token(key: TokenKey(key)) ?? .zero }))
+//        }
+                
         buildMemory()
 //        evaluate()
         
-        print("[ Complete ] ==============================================================")
+//        print("[ Complete ] ==============================================================")
     }
 
     deinit { AEMemoryRelease(memory) }
@@ -58,29 +53,24 @@ public class AetherState {
 // Computed ========================================================================================
 //    private var mechlikeTowers: [Tower] { aether.aexels.filter({ $0 is Mechlike }).flatMap({ $0.towers }) }
 //    private var webTowers: [Tower] { aether.aexels.flatMap({ $0.towers }).filter({ $0.web != nil }) }
+    
+// TokenKeys =======================================================================================
+    public func token(key: TokenKey) -> Token { tokens[key]! }
+    public func chainExe(key: TokenKey) -> ChainExe { chainExes[key]! }
+    public func tokenDisplay(key: TokenKey) -> String { chainExes[key]!.tokensDisplay }
+    public func valueDisplay(key: TokenKey) -> String { chainExes[key]!.valueDisplay }
+    public func naturalDisplay(key: TokenKey) -> String { chainExes[key]!.naturalDisplay }
 
 // Methods =========================================================================================
     func add(chain: Chain) {
-        let state: ChainState = ChainState(chain: chain)
-        if let key: ChainKey = chain.key { state.tower = createTower(tag: key.display, towerDelegate: state) }
-        chain.load(state: state)
+        let state: ChainExe = ChainExe(chain: chain)
+        if let key: TokenKey = chain.key { state.tower = createTower(tag: key.description, towerDelegate: state) }
+//        chain.load(state: state)
         
         buildMemory()
         evaluate()
     }
     func remove(chain: Chain) {}
-    
-    func add(syain: Syain) {
-        let state: SyainState = SyainState(syain: syain)
-        state.tower = createTower(tag: syain.key, towerDelegate: state)
-        syain.load(state: state)
-        
-        buildMemory()
-        evaluate()
-    }
-    func remove(syain: Syain) {}
-
-    
     
     func token(key: TokenKey) -> Token? { tokens[key] }
     func variableToken(tag: String) -> VariableToken {
@@ -138,7 +128,7 @@ public class AetherState {
 //        state.buildMemory()
 //        Tower.evaluate(towers: towers)
 //
-//        state = AetherState(aether: self)
+//        state = AetherExe(aether: self)
 //
 //        return aexels
 //    }

@@ -40,21 +40,14 @@ public class Def {
 		return formatter
 	}()
 
-	func format(obj: Obj) -> String {
-		return "override format(obj: Obj)"
-	}
+	func format(obj: Obj) -> String { "override format(obj: Obj)" }
 
 	static func format(obj: Obj) -> String {
-		if let def: Def = defs[obj.type.rawValue] {
-			return def.format(obj: obj)
-		}
+		if let def: Def = defs[obj.type.rawValue] { return def.format(obj: obj) }
 		return "Def not found [\(obj.type.rawValue)]"
 	}
-	static func def(obj: Obj) -> Def? {
-		return defs[obj.type.rawValue]
-	}
 
-	static var defs: [UInt32:Def] = [
+	private static var defs: [UInt32:Def] = [
 		AETypeReal.rawValue:RealDef.def,
 		AETypeComplex.rawValue:ComplexDef.def,
 		AETypeVector.rawValue:VectorDef.def,
@@ -62,4 +55,5 @@ public class Def {
 		AETypeLambda.rawValue:LambdaDef.def,
 		AETypeRecipe.rawValue:RecipeDef.def
 	]
+    static func def(obj: Obj) -> Def? { defs[obj.type.rawValue] }
 }

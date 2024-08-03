@@ -16,8 +16,8 @@ public final class Automata: Aexel, TowerDelegate, Web {
 	
 	@objc public var states: [State] = []
 	
-	public var statesTower: Tower { statesChain.tower }
-	public var resultTower: Tower { resultChain.tower }
+//	public var statesTower: Tower { statesChain.tower }
+//	public var resultTower: Tower { resultChain.tower }
 	public var spaceTowers: [Tower] = []
 	
 	var web: Web { self }
@@ -38,8 +38,8 @@ public final class Automata: Aexel, TowerDelegate, Web {
 	public required init(at: V2, aether: Aether) {
 		super.init(at:at, aether: aether)
         
-        statesChain = Chain(key: ChainKey("\(key).states"))
-        resultChain = Chain(key: ChainKey("\(key).result"))
+        statesChain = Chain(key: TokenKey(code: .va, tag: "\(key).states"))
+        resultChain = Chain(key: TokenKey(code: .va, tag: "\(key).result"))
 
 		add(state: State(no: 0, color: .clear, automata: self))
 		add(state: State(no: 1, color: .lavender, automata: self))
@@ -84,11 +84,11 @@ public final class Automata: Aexel, TowerDelegate, Web {
 	}
 	
 	public func buildStates() {
-		let n = min(max(Int(statesTower.value), 2), 32)
-		guard n != states.count else { return }
-
-		if n < states.count { for _ in n..<states.count { states.removeLast() } }
-        else { for _ in states.count..<n { addState() } }
+//		let n = min(max(Int(statesTower.value), 2), 32)
+//		guard n != states.count else { return }
+//
+//		if n < states.count { for _ in n..<states.count { states.removeLast() } }
+//        else { for _ in states.count..<n { addState() } }
 	}
 	
 // Events ==========================================================================================
@@ -96,18 +96,18 @@ public final class Automata: Aexel, TowerDelegate, Web {
 //        statesChain.tower = aether.state.createTower(tag: "\(key).states", towerDelegate: statesChain)
 //        resultChain.tower = aether.state.createTower(tag: "\(key).result", towerDelegate: resultChain)
 		
-		statesTower.tailForWeb = web
-		resultTower.tailForWeb = web
+//		statesTower.tailForWeb = web
+//		resultTower.tailForWeb = web
 		
 		buildSpaceTowers(no: no)
 	}
 	
 // Aexel ===========================================================================================
-    public var towers: Set<Tower> {
-        var towers = Set<Tower>()
-        spaceTowers.forEach { towers.insert($0) }
-        return towers.union([resultTower, statesTower])
-    }
+//    public var towers: Set<Tower> {
+//        var towers = Set<Tower>()
+//        spaceTowers.forEach { towers.insert($0) }
+//        return towers.union([resultTower, statesTower])
+//    }
     public override var chains: [Chain] { [statesChain, resultChain] }
     
 // Aexon ===========================================================================================

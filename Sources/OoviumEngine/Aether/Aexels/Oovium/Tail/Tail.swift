@@ -17,11 +17,11 @@ public final class Tail: Aexel, Mechlike, TowerDelegate, VariableTokenDelegate, 
 	
 	public var tower: Tower!
 
-	public var whileTower: Tower { whileChain.tower }
-	public var resultTower: Tower { resultChain.tower }
+//	public var whileTower: Tower { whileChain.tower }
+//	public var resultTower: Tower { resultChain.tower }
 
-    public var whileToken: Token { whileTower.variableToken }
-	public var resultToken: Token { resultTower.variableToken }
+//    public var whileToken: Token { whileTower.variableToken }
+//	public var resultToken: Token { resultTower.variableToken }
 	
 	public var web: Web { self }
 	public var recipe: UnsafeMutablePointer<Recipe>? = nil
@@ -56,42 +56,42 @@ public final class Tail: Aexel, Mechlike, TowerDelegate, VariableTokenDelegate, 
 		vertebras.append(vertebra)
 	}
 	public func addVertebra() -> Vertebra {
-		var name: String = ""
-		if vertebras.count < 4 {
-			name = ["x", "y", "z", "w"][vertebras.count]
-		} else {
-			name = "p\(vertebras.count+1)"
-		}
-
+//		var name: String = ""
+//		if vertebras.count < 4 {
+//			name = ["x", "y", "z", "w"][vertebras.count]
+//		} else {
+//			name = "p\(vertebras.count+1)"
+//		}
+//
         let vertebra = Vertebra(tail: self, name: name)
-        vertebra.tower.web = web
-        vertebra.chain.tower.tailForWeb = web
-        add(vertebra: vertebra)
-        mechlikeToken.params = vertebras.count
-        vertebra.chain.tower.attach(tower)
+//        vertebra.tower.web = web
+//        vertebra.chain.tower.tailForWeb = web
+//        add(vertebra: vertebra)
+//        mechlikeToken.params = vertebras.count
+//        vertebra.chain.tower.attach(tower)
 		return vertebra
 	}
 	public func removeVertebra() {
-		let vertebra = vertebras.removeLast()
-        vertebra.chain.tower.detach(tower)
-		remove(vertebra)
-        mechlikeToken.params = vertebras.count
+//		let vertebra = vertebras.removeLast()
+//        vertebra.chain.tower.detach(tower)
+//		remove(vertebra)
+//        mechlikeToken.params = vertebras.count
 	}
 	
 	private func compileRecipe() {
-        let memory: UnsafeMutablePointer<Memory> = AEMemoryCreateClone(aether.state.memory)
-		AEMemoryClear(memory)
-		vertebras.forEach { AEMemorySetValue(memory, $0.tower.index, 0) }
-		AERecipeRelease(recipe)
-		recipe = Math.compile(tail: self, memory: memory);
-		AERecipeSignature(recipe, AEMemoryIndexForName(memory, "\(key).result".toInt8()), UInt8(vertebras.count))
-		
-		for (i, input) in vertebras.enumerated() {
-			let index = AEMemoryIndexForName(memory, "\(key).\(input.key)".toInt8())
-			recipe!.pointee.params[i] = index
-		}
-		
-		AERecipeSetMemory(recipe, memory)
+//        let memory: UnsafeMutablePointer<Memory> = AEMemoryCreateClone(aether.state.memory)
+//		AEMemoryClear(memory)
+//		vertebras.forEach { AEMemorySetValue(memory, $0.tower.index, 0) }
+//		AERecipeRelease(recipe)
+//		recipe = Math.compile(tail: self, memory: memory);
+//		AERecipeSignature(recipe, AEMemoryIndexForName(memory, "\(key).result".toInt8()), UInt8(vertebras.count))
+//		
+//		for (i, input) in vertebras.enumerated() {
+//			let index = AEMemoryIndexForName(memory, "\(key).\(input.key)".toInt8())
+//			recipe!.pointee.params[i] = index
+//		}
+//		
+//		AERecipeSetMemory(recipe, memory)
 	}
 	
 // Events ==========================================================================================
@@ -128,12 +128,12 @@ public final class Tail: Aexel, Mechlike, TowerDelegate, VariableTokenDelegate, 
 		get { return super.name }
 	}
 	public var towers: Set<Tower> {
-		var towers = Set<Tower>()
-		vertebras.forEach {
-			towers.insert($0.tower)
-			towers.insert($0.chain.tower)
-		}
-		return towers.union([whileTower, resultTower, tower])
+        let towers = Set<Tower>()
+//		vertebras.forEach {
+//			towers.insert($0.tower)
+//			towers.insert($0.chain.tower)
+//		}
+		return towers/*.union([whileTower, resultTower, tower])*/
 	}
     public override var chains: [Chain] { [whileChain, resultChain] + vertebras.map({ $0.chain }) }
 
@@ -147,9 +147,9 @@ public final class Tail: Aexel, Mechlike, TowerDelegate, VariableTokenDelegate, 
 	
 // TowerDelegate ===================================================================================
 	func buildUpstream(tower: Tower) {
-        whileTower.attach(tower)
-        vertebras.forEach { $0.chain.tower.attach(tower) }
-		resultTower.attach(tower)
+//        whileTower.attach(tower)
+//        vertebras.forEach { $0.chain.tower.attach(tower) }
+//		resultTower.attach(tower)
 	}
 	func renderDisplay(tower: Tower) -> String {
 		if tower.variableToken.status == .deleted { fatalError() }
@@ -162,7 +162,8 @@ public final class Tail: Aexel, Mechlike, TowerDelegate, VariableTokenDelegate, 
 			|| (askedBy !== tower && askedBy.web === self)
 	}
 	func taskBlocked(tower: Tower) -> Bool {
-		return resultChain.tower.variableToken.status != .ok
+//		return resultChain.tower.variableToken.status != .ok
+        false
 	}
 	func resetTask(tower: Tower) {
 		recipe = nil

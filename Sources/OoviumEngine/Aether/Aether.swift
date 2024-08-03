@@ -21,7 +21,7 @@ import Foundation
 
 	@objc dynamic public var aexels: [Aexel] = []
     
-    public var state: AetherState!
+    public var state: AetherExe!
 	
 	public override init() { super.init() }
 	public required init(attributes: [String:Any], parent: Domain? = nil) { super.init(attributes: attributes, parent: parent) }
@@ -34,9 +34,9 @@ import Foundation
     
 //    func token(key: String) -> Token? { state.token(key: key) }
     func variableToken(tag: String) -> Token { state.variableToken(tag: tag) }
-    func newNo(key: String) -> Int {
-        state.nos.increment(key: key)
-    }
+    func newNo(key: String) -> Int { state.nos.increment(key: key) }
+    
+    func compile() -> AetherExe { AetherExe(aether: self) }
 
 // Aexels ==========================================================================================
 	public func addAexel(_ aexel: Aexel) {
@@ -48,7 +48,7 @@ import Foundation
 //        Tower.evaluate(towers: aexel.towers)
 	}
     public func remove(aexels: [Aexel]) {
-        var removed: [Tower] = []
+        let removed: [Tower] = []
         aexels.forEach({
 //            removed.append(contentsOf: $0.towers)
             self.aexels.remove(object: $0)
@@ -62,7 +62,6 @@ import Foundation
     public func create<T: Aexel>(at: V2) -> T {
         let aexel: T = T(at: at, aether: self)
         aexel.chains.forEach { self.state.add(chain: $0) }
-        aexel.syains.forEach { self.state.add(syain: $0) }
         addAexel(aexel)
         return aexel
     }
@@ -84,7 +83,7 @@ import Foundation
 
 // Events ==========================================================================================
     override public func onLoad() {
-        state = AetherState(aether: self)
+        state = AetherExe(aether: self)
         state.evaluate()
         print(unload().toJSON())
     }

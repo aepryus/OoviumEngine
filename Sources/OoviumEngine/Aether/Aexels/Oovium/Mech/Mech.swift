@@ -21,8 +21,8 @@ public final class Mech: Aexel, Mechlike, TowerDelegate, VariableTokenDelegate, 
 
 	public var tower: Tower!
 
-	public var resultTower: Tower { resultChain.tower }
-	var resultToken: Token { resultTower.variableToken }
+//	public var resultTower: Tower { resultChain.tower }
+//	var resultToken: Token { resultTower.variableToken }
 
 	var web: Web { self }
 	var recipe: UnsafeMutablePointer<Recipe>? = nil
@@ -64,26 +64,26 @@ public final class Mech: Aexel, Mechlike, TowerDelegate, VariableTokenDelegate, 
 	}
 	
 	private func compileRecipe() {
-        let memory: UnsafeMutablePointer<Memory> = AEMemoryCreateClone(aether.state.memory)
-		AEMemoryClear(memory)
-		inputs.forEach {AEMemorySetValue(memory, $0.tower.index, 0)}
-		AERecipeRelease(recipe)
-		recipe = Math.compile(mech: self, memory: memory)
-		AERecipeSignature(recipe, AEMemoryIndexForName(memory, "\(key).result".toInt8()), UInt8(inputs.count))
-		
-		for (i, input) in inputs.enumerated() {
-			let index = AEMemoryIndexForName(memory, "\(key).\(input.key)".toInt8())
-			recipe!.pointee.params[i] = index
-		}
-        
-        let towers: Set<Tower> = resultTower.towersDestinedFor()
-        towers.forEach { AEMemoryMarkLoaded(memory, $0.index) }
-        
-        let index: mnimi = AEMemoryIndexForName(memory, variableToken.tag.toInt8())
-        AEMemorySet(memory, index, AEObjRecipe(recipe))
-        AEMemoryFix(memory, index)
-
-		AERecipeSetMemory(recipe, memory)
+//        let memory: UnsafeMutablePointer<Memory> = AEMemoryCreateClone(aether.state.memory)
+//		AEMemoryClear(memory)
+//		inputs.forEach {AEMemorySetValue(memory, $0.tower.index, 0)}
+//		AERecipeRelease(recipe)
+//		recipe = Math.compile(mech: self, memory: memory)
+//		AERecipeSignature(recipe, AEMemoryIndexForName(memory, "\(key).result".toInt8()), UInt8(inputs.count))
+//		
+//		for (i, input) in inputs.enumerated() {
+//			let index = AEMemoryIndexForName(memory, "\(key).\(input.key)".toInt8())
+//			recipe!.pointee.params[i] = index
+//		}
+//        
+//        let towers: Set<Tower> = resultTower.towersDestinedFor()
+//        towers.forEach { AEMemoryMarkLoaded(memory, $0.index) }
+//        
+//        let index: mnimi = AEMemoryIndexForName(memory, variableToken.tag.toInt8())
+//        AEMemorySet(memory, index, AEObjRecipe(recipe))
+//        AEMemoryFix(memory, index)
+//
+//		AERecipeSetMemory(recipe, memory)
 	}
 	
 // Events ==========================================================================================
@@ -115,9 +115,9 @@ public final class Mech: Aexel, Mechlike, TowerDelegate, VariableTokenDelegate, 
 		get { super.name }
 	}
 	public var towers: Set<Tower> {
-		var towers = Set<Tower>()
-		inputs.forEach { towers.insert($0.tower) }
-		return towers.union([resultTower, tower])
+        let towers = Set<Tower>()
+//		inputs.forEach { towers.insert($0.tower) }
+		return towers/*.union([resultTower, tower])*/
 	}
     public override var chains: [Chain] { [resultChain] }
     
@@ -131,7 +131,7 @@ public final class Mech: Aexel, Mechlike, TowerDelegate, VariableTokenDelegate, 
 	
 // TowerDelegate ===================================================================================
 	func buildUpstream(tower: Tower) {
-		resultTower.attach(tower)
+//		resultTower.attach(tower)
 	}
 	func renderDisplay(tower: Tower) -> String {
 		if tower.variableToken.status == .deleted { fatalError() }
@@ -143,7 +143,7 @@ public final class Mech: Aexel, Mechlike, TowerDelegate, VariableTokenDelegate, 
 	func taskCompleted(tower: Tower, askedBy: Tower) -> Bool {
         AEMemoryLoaded(tower.memory, AEMemoryIndexForName(aether.state.memory, variableToken.tag.toInt8())) != 0 || (askedBy !== tower && askedBy.web === self)
 	}
-	func workerBlocked(tower: Tower) -> Bool { resultChain.tower.variableToken.status != .ok }
+	func workerBlocked(tower: Tower) -> Bool { false/*resultChain.tower.variableToken.status != .ok*/ }
 	func resetTask(tower: Tower) {
 		recipe = nil
         AEMemoryUnfix(tower.memory, AEMemoryIndexForName(aether.state.memory, variableToken.tag.toInt8()))

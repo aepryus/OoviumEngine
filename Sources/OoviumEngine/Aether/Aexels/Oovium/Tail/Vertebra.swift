@@ -51,7 +51,7 @@ public final class Vertebra: Aexon, TowerDelegate, VariableTokenDelegate {
 // Events ==========================================================================================
     public override func onCreate() { wire() }
 	public override func onLoad() { wire() }
-    public override func onRemoved() { tail.aether.state.destroy(towers: [tower, chain.tower]) }
+//    public override func onRemoved() { tail.aether.state.destroy(towers: [tower, chain.tower]) }
 	
 // Aexon ===========================================================================================
     public override var code: String { "i" }

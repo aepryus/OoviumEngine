@@ -28,9 +28,8 @@ public class Aexel: Aexon {
     public override var aexel: Aexel { self }
     public override var aether: Aether { parent as! Aether }
     
-    public var towerKeys: Set<String> { [] }
+    public var tokenKeys: Set<TokenKey> { [] }
     public var chains: [Chain] { [] }
-    var syains: [Syain] { [] }
     
 // Aexon ===========================================================================================
     override var fullKey: String { key }

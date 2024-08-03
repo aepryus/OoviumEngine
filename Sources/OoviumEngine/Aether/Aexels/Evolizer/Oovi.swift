@@ -25,18 +25,18 @@ public class Oovi: Aexel, TowerDelegate, Web {
 	public var amorousRecipe: UnsafeMutablePointer<Recipe>? = nil
 	public var stepRecipe: UnsafeMutablePointer<Recipe>? = nil
 	
-	var stepTower: Tower {
-		return stepChain.tower
-	}
-	var amorousTower: Tower {
-		return amorousChain.tower
-	}
+//	var stepTower: Tower {
+//		return stepChain.tower
+//	}
+//	var amorousTower: Tower {
+//		return amorousChain.tower
+//	}
 
     public required init(at: V2, aether: Aether) {
         super.init(at:at, aether: aether)
         
-        amorousChain = Chain(key: ChainKey("\(key).amorous"))
-        stepChain = Chain(key: ChainKey("\(key).step"))
+        amorousChain = Chain(key: TokenKey(code: .va, tag: "\(key).amorous"))
+        stepChain = Chain(key: TokenKey(code: .va, tag: "\(key).step"))
     }
 	public required init(attributes: [String:Any], parent: Domain?) {
 		super.init(attributes: attributes, parent: parent)
@@ -80,24 +80,24 @@ public class Oovi: Aexel, TowerDelegate, Web {
 //		AEMemorySetValue(memory, AEMemoryIndexForName(memory, "wander".toInt8()), 0)
 //	}
 	public func compileRecipies() {
-		objc_sync_enter(self)
-		defer {objc_sync_exit(self)}
+//		objc_sync_enter(self)
+//		defer {objc_sync_exit(self)}
 		
-        aether.state.evaluate()
-
-        let memory: UnsafeMutablePointer<Memory> = AEMemoryCreateClone(aether.state.memory)
-
-		AEMemoryClear(memory)
-//		foreshadow(memory: memory)
-		AERecipeRelease(amorousRecipe)
-		amorousRecipe = Math.compile(result: amorousTower, memory: memory)
-
-		AEMemoryClear(memory)
-//		foreshadow(memory: memory)
-		AERecipeRelease(stepRecipe)
-		stepRecipe = Math.compile(result: stepTower, memory: memory)
-		
-		AEMemoryRelease(memory)
+//        aether.state.evaluate()
+//
+//        let memory: UnsafeMutablePointer<Memory> = AEMemoryCreateClone(aether.state.memory)
+//
+//		AEMemoryClear(memory)
+////		foreshadow(memory: memory)
+//		AERecipeRelease(amorousRecipe)
+//		amorousRecipe = Math.compile(result: amorousTower, memory: memory)
+//
+//		AEMemoryClear(memory)
+////		foreshadow(memory: memory)
+//		AERecipeRelease(stepRecipe)
+//		stepRecipe = Math.compile(result: stepTower, memory: memory)
+//		
+//		AEMemoryRelease(memory)
 	}
 	
 	private func buildParameterTowers() {
@@ -141,15 +141,15 @@ public class Oovi: Aexel, TowerDelegate, Web {
 //        amorousChain.tower = aether.state.createTower(tag: "\(key).amorous", towerDelegate: amorousChain)
 //        stepChain.tower = aether.state.createTower(tag: "\(key).step", towerDelegate: stepChain)
 		
-		amorousTower.tailForWeb = web
-		stepTower.tailForWeb = web
+//		amorousTower.tailForWeb = web
+//		stepTower.tailForWeb = web
 		
 		buildParameterTowers()
 	}
 	
 // Aexel ===========================================================================================
     public override var code: String { "Ov" }
-	public var towers: Set<Tower> { parameterTowers.union([amorousTower, stepTower]) }
+//	public var towers: Set<Tower> { parameterTowers.union([amorousTower, stepTower]) }
     public override var chains: [Chain] { [amorousChain, stepChain] }
 
 // Domain ==========================================================================================

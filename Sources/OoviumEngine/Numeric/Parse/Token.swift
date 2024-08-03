@@ -29,42 +29,36 @@ user defined name or else it's formatted value.
 import Acheron
 import Foundation
 
-public enum TokenCode: CaseIterable { case dg, ch, sp, cn, un, op, fn, ml, va, pr, cl }
+public enum TokenCode: CaseIterable { case dg, ch, sp, cn, un, op, fn, va, cl, ml, pr }
 
-public struct TokenKey: Hashable {
-    private let code: TokenCode
-    private let tag: String
-//    private let string: String
+public struct TokenKey: Hashable, CustomStringConvertible {
+    let code: TokenCode
+    let tag: String
+
     init(_ string: String) {
         self.code = TokenCode.from(string: string[0...1])!
         self.tag = string[3...]
-//        self.string = string
     }
     init(code: TokenCode, tag: String) {
         self.code = code
         self.tag = tag
-//        string = "\(code):\(tag)"
     }
 
-    var display: String { "\(code):\(tag)" }
-    var characterToken: Token? {
-        guard code == .ch else { return nil }
-        return Token.characterToken(tag: tag)
-    }
-    
-    static let staticCodes: [TokenCode] = [.dg, .ch, .sp, .cn, .un, .op]
+    private static let staticCodes: [TokenCode] = [.dg, .ch, .sp, .cn, .un, .op, .fn]
+    private static let towerCodes: [TokenCode] = [.va, .cl, .ml, .pr]
+
     var isStatic: Bool { TokenKey.staticCodes.contains(code) }
-    static let towerCodes: [TokenCode] = [.va, .cl, .ml, .pr]
     var isTower: Bool { TokenKey.towerCodes.contains(code) }
-
+    
 // Hashable ========================================================================================
     public static func == (left: TokenKey, right: TokenKey) -> Bool { left.code == right.code && left.tag == right.tag }
-    public func hash(into hasher: inout Hasher) { hasher.combine(display) }
+    public func hash(into hasher: inout Hasher) { hasher.combine(description) }
+    
+// CustomStringConvertible =========================================================================
+    public var description: String { "\(code):\(tag)" }
 }
 
 public class Token: Hashable {
-//    public enum Code: CaseIterable { case dg, ch, sp, cn, un, op, fn, ml, va, pr, cl }
-
     public var tag: String
 
     fileprivate init(tag: String) { self.tag = tag }
@@ -79,8 +73,9 @@ public class Token: Hashable {
 
 // Static ==========================================================================================
     static var tokens: [TokenKey:Token] = [:]
-    static let aliases: [String:String] = ["-":"−", "*":"×", "/":"÷" ]
+    static let aliases: [String:String] = ["-":"−", "*":"×", "/":"÷"]
     
+    public static func display(tokens: [Token]) -> String { tokens.map({ $0.display }).joined() }
 
     // These are used by ChainResponder for handling external keyboards - jjc 10/27/22
     public static func digitToken(tag: String) -> DigitToken { tokens[TokenKey(code: .dg, tag: tag)]! as! DigitToken }
@@ -95,7 +90,8 @@ public class Token: Hashable {
     // This is used by Aether.onLoad to initialize all the chains - jjc 10/27/22
     static func token(key: TokenKey) -> Token? {
         if let token: Token = tokens[key] { return token }
-        return key.characterToken
+        guard key.code == .ch else { return nil }
+        return Token.characterToken(tag: key.tag)
     }
 
     public static let period: DigitToken            = DigitToken(tag: ".")

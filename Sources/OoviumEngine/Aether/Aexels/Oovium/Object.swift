@@ -18,7 +18,7 @@ public final class Object: Aexel, VariableTokenDelegate {
 // Inits ===========================================================================================
     public required init(at: V2, aether: Aether) {
         super.init(at: at, aether: aether)
-        chain = Chain(key: ChainKey(key))
+        chain = Chain(key: TokenKey(code: .va, tag: key))
     }
     public required init(attributes: [String:Any], parent: Domain?) {
         super.init(attributes: attributes, parent: parent)
@@ -31,7 +31,7 @@ public final class Object: Aexel, VariableTokenDelegate {
 //    }
 	
 // Aexel ===========================================================================================
-    public override var towerKeys: Set<String> { Set<String>([chain.key!.display]) }
+    public override var tokenKeys: Set<TokenKey> { Set<TokenKey>([chain.key!]) }
     public override var chains: [Chain] { [chain] }
     
 // Aexon ===========================================================================================

@@ -15,27 +15,27 @@ public final class Gate: Aexel, TowerDelegate {
 	@objc public var thenChain: Chain!
 	@objc public var elseChain: Chain!
     
-    var resultSyain: Syain!
+    public var resultKey: TokenKey!
 	
-	public var ifTower: Tower { ifChain.tower }
-	public var thenTower: Tower { thenChain.tower }
-	public var elseTower: Tower { elseChain.tower }
-    public lazy var resultTower: Tower = aether.state.createTower(tag: key, towerDelegate: self)
+//	public var ifTower: Tower { ifChain.tower }
+//	public var thenTower: Tower { thenChain.tower }
+//	public var elseTower: Tower { elseChain.tower }
+//    public lazy var resultTower: Tower = aether.state.createTower(tag: key, towerDelegate: self)
 	
-    public var token: VariableToken { resultTower.variableToken }
+//    public var token: VariableToken { resultTower.variableToken }
 
 // Inits ===========================================================================================
 	public required init(at: V2, aether: Aether) {
 		super.init(at: at, aether: aether)
         
-        ifChain = Chain(key: ChainKey("\(key).if"))
-        thenChain = Chain(key: ChainKey("\(key).then"))
-        elseChain = Chain(key: ChainKey("\(key).else"))
-        resultSyain = Syain(key: key)
+        ifChain = Chain(key: TokenKey(code: .va, tag: "\(key).if"))
+        thenChain = Chain(key: TokenKey(code: .va, tag: "\(key).then"))
+        elseChain = Chain(key: TokenKey(code: .va, tag: "\(key).else"))
+        resultKey = TokenKey(code: .va, tag: key)
 	}
 	public required init(attributes: [String:Any], parent: Domain?) {
 		super.init(attributes: attributes, parent: parent)
-        resultSyain = Syain(key: key)
+        resultKey = TokenKey(code: .va, tag: key)
 	}
 
 // Events ==========================================================================================
@@ -55,36 +55,37 @@ public final class Gate: Aexel, TowerDelegate {
 //		elseTower.funnel = funnel
 	}
 	override public func onAdded() {
-		resultTower.buildStream()
+//		resultTower.buildStream()
 	}
 	
 // Aexel ===========================================================================================
     public override var code: String { "Gt" }
-	public var towers: Set<Tower> { Set<Tower>([ifTower, thenTower, elseTower, resultTower]) }
+//	public var towers: Set<Tower> { Set<Tower>([ifTower, thenTower, elseTower, resultTower]) }
     public override var chains: [Chain] { [ifChain, thenChain, elseChain] }
-    override var syains: [Syain] { [resultSyain] }
 	
 // Domain ==========================================================================================
     override public var properties: [String] { super.properties + ["ifChain", "thenChain", "elseChain"] }
 
 // TowerDelegate ===================================================================================
 	func buildUpstream(tower: Tower) {
-		ifTower.attach(tower)
-		thenTower.attach(tower)
-		elseTower.attach(tower)
+//		ifTower.attach(tower)
+//		thenTower.attach(tower)
+//		elseTower.attach(tower)
 	}
 	func renderDisplay(tower: Tower) -> String { "if" }
     func renderTask(tower: Tower) -> UnsafeMutablePointer<Task>? {
-		let resultName = resultTower.variableToken.tag
-		let task: UnsafeMutablePointer<Task> = AETaskCreateFork(ifTower.index, thenTower.index, elseTower.index, resultTower.index)
-		AETaskSetLabels(task, resultName.toInt8(), "\(resultName) = ~".toInt8())
-        return task
+//		let resultName = resultTower.variableToken.tag
+//		let task: UnsafeMutablePointer<Task> = AETaskCreateFork(ifTower.index, thenTower.index, elseTower.index, resultTower.index)
+//		AETaskSetLabels(task, resultName.toInt8(), "\(resultName) = ~".toInt8())
+//        return task
+        nil
 	}
 	func taskCompleted(tower: Tower, askedBy: Tower) -> Bool {
 		AEMemoryLoaded(tower.memory, tower.index) != 0
 	}
 	func taskBlocked(tower: Tower) -> Bool {
-		[ifTower,thenTower,elseTower].contains {$0.variableToken.status != .ok}
+//		[ifTower,thenTower,elseTower].contains {$0.variableToken.status != .ok}
+        false
 	}
 	func resetTask(tower: Tower) {
 		AEMemoryUnfix(tower.memory, tower.index)

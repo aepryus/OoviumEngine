@@ -1,5 +1,5 @@
 //
-//  ChainState.swift
+//  ChainExe.swift
 //  OoviumEngine
 //
 //  Created by Joe Charlier on 7/10/24.
@@ -9,24 +9,22 @@
 import Aegean
 import Foundation
 
-class ChainState: TowerDelegate, CustomStringConvertible {
+public class ChainExe: TowerDelegate, CustomStringConvertible {
     let chain: Chain
     
-    var tokens: [Token] = []
-    var tower: Tower?
+    public var tokens: [Token] = []
+    public var tower: Tower?
 
     init(chain: Chain) { self.chain = chain }
     
 // Computed ========================================================================================
-    var key: ChainKey? { chain.key }
+    var key: TokenKey? { chain.key }
     
 // Methods =========================================================================================
-    func buildTokens(aetherState: AetherState?) {
-        tokens = chain.tokenKeys.map({ (key: String) in
-            aetherState?.token(key: TokenKey(key)) ?? Token.token(key: TokenKey(key)) ?? .zero
+    func buildTokens(aetherExe: AetherExe?) {
+        tokens = chain.tokenKeys.map({ (key: TokenKey) in
+            aetherExe?.token(key: key) ?? Token.token(key: key) ?? .zero
         })
-        
-        print("keys: [\(chain.tokenKeys.count)], tokens: [\(tokens.count)]")
     }
     
 // Private =========================================================================================
@@ -194,7 +192,7 @@ class ChainState: TowerDelegate, CustomStringConvertible {
         self.tokens.removeAll()
     }
     public func replaceWith(tokens: String) {
-        let keys = tokens.components(separatedBy: ";")
+        let keys: [TokenKey] = tokens.components(separatedBy: ";").map({ TokenKey($0) })
         chain.tokenKeys = keys
 //            buildTokens()
     }
@@ -210,21 +208,35 @@ class ChainState: TowerDelegate, CustomStringConvertible {
     }
 
 // Calculate =======================================================================================
-    public func calculate() -> Obj? {
-        let memory: UnsafeMutablePointer<Memory> = AEMemoryCreate(0)
-        buildTokens(aetherState: nil)
-        if let lambda: UnsafeMutablePointer<Lambda> = Parser.compile(chain: chain, memory: memory).0 {
+    public func calculate(vars: [String:Obje] = [:]) -> Obj? {
+        let aether: Aether = Aether()
+        let aetherExe: AetherExe = aether.compile()
+        let memory: UnsafeMutablePointer<Memory> = AEMemoryCreate(vars.count)
+        var m: mnimi = 0
+        vars.keys.forEach {
+            guard let obj: Obj = vars[$0]?.obj else { return }
+            AEMemorySetName(memory, m, $0.toInt8())
+            AEMemorySet(memory, m, obj)
+            m += 1
+            let token = aetherExe.variableToken(tag: $0)
+            token.def = Def.def(obj: obj)
+        }
+        buildTokens(aetherExe: aetherExe)
+        
+        if let lambda: UnsafeMutablePointer<Lambda> = Parser.compile(tokenKey: chain.key, tokens: tokens, memory: memory).0 {
             return AELambdaExecute(lambda, memory)
         } else { return nil }
     }
 
 // Compiling =======================================================================================
-    
     public func compile(name: String, tower: Tower) -> UnsafeMutablePointer<Lambda>? {
-        let (lambda, lastMorphNo) = Parser.compile(chain: self.chain, memory: tower.memory)
+        let (lambda, lastMorphNo) = Parser.compile(tokenKey: chain.key, tokens: tokens, memory: tower.memory)
         if let lambda {
             if tower.variableToken.status == .invalid { tower.variableToken.status = .ok }
-            if let lastMorphNo, let morph = Morph(rawValue: lastMorphNo) { tower.variableToken.def = morph.def }
+            if let lastMorphNo {
+                let morph = Morph(rawValue: lastMorphNo)
+                tower.variableToken.def = morph.def
+            }
             else { tower.variableToken.def = RealDef.def }
             return lambda
         } else {

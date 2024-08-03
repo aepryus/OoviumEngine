@@ -27,50 +27,50 @@ public final class Cron: Aexel, TowerDelegate {
     public lazy var tower: Tower = aether.state.createTower(tag: key, towerDelegate: self)
     public var token: VariableToken { tower.variableToken }
 
-	public var startTower: Tower { startChain.tower }
-	public var stopTower: Tower { stopChain.tower }
-	public var stepsTower: Tower { stepsChain.tower }
-	public var rateTower: Tower { rateChain.tower }
-	public var deltaTower: Tower { deltaChain.tower }
-	public var whileTower: Tower { whileChain.tower }
+//	public var startTower: Tower { startChain.tower }
+//	public var stopTower: Tower { stopChain.tower }
+//	public var stepsTower: Tower { stepsChain.tower }
+//	public var rateTower: Tower { rateChain.tower }
+//	public var deltaTower: Tower { deltaChain.tower }
+//	public var whileTower: Tower { whileChain.tower }
 	
 	public var t: Double = 0
 	public var dt: Double = 1
 	public var sealed: Bool = true
 	
 	public func reset() {
-		if endMode == .stop || endMode == .repeat || endMode == .bounce {
-			dt = (stopTower.value - startTower.value)/(stepsTower.value-1)
-		} else {
-			dt = deltaTower.value
-		}
-		t = startTower.value
-		sealed = true
+//		if endMode == .stop || endMode == .repeat || endMode == .bounce {
+//			dt = (stopTower.value - startTower.value)/(stepsTower.value-1)
+//		} else {
+//			dt = deltaTower.value
+//		}
+//		t = startTower.value
+//		sealed = true
 	}
 	public func increment() -> Bool {
-		if sealed {
-			sealed = false
-		} else if (endMode == .stop && t+dt > stopTower.value) || (endMode == .while && whileTower.value == 0) {
-			t = startTower.value
-		} else {
-			t += dt
-		}
-		tower.trigger()
-		switch endMode {
-			case .stop:
-				if t+dt > stopTower.value { return true }
-			case .repeat:
-				if t+dt > stopTower.value {
-					t = startTower.value
-					sealed = true
-					return false
-				}
-			case .bounce:
-				if t+dt > stopTower.value || t+dt < startTower.value {dt = -dt}
-			case .endless: break;
-			case .while:
-				if whileTower.value == 0 {return true}
-		}
+//		if sealed {
+//			sealed = false
+//		} else if (endMode == .stop && t+dt > stopTower.value) || (endMode == .while && whileTower.value == 0) {
+//			t = startTower.value
+//		} else {
+//			t += dt
+//		}
+//		tower.trigger()
+//		switch endMode {
+//			case .stop:
+//				if t+dt > stopTower.value { return true }
+//			case .repeat:
+//				if t+dt > stopTower.value {
+//					t = startTower.value
+//					sealed = true
+//					return false
+//				}
+//			case .bounce:
+//				if t+dt > stopTower.value || t+dt < startTower.value {dt = -dt}
+//			case .endless: break;
+//			case .while:
+//				if whileTower.value == 0 {return true}
+//		}
 		return false
 	}
 
@@ -95,7 +95,7 @@ public final class Cron: Aexel, TowerDelegate {
 	
 // Aexel ===========================================================================================
     public override var code: String { "Cr" }
-	public var towers: Set<Tower> { Set<Tower>([startTower, stopTower, stepsTower, rateTower, deltaTower, whileTower, tower]) }
+//	public var towers: Set<Tower> { Set<Tower>([startTower, stopTower, stepsTower, rateTower, deltaTower, whileTower, tower]) }
     public override var chains: [Chain] { [startChain, stopChain, stepsChain, rateChain, deltaChain, whileChain] }
 	
 // Domain ==========================================================================================

@@ -41,29 +41,29 @@ public class Transform: Aexon, TowerDelegate, Web {
     public var recipes: [UnsafeMutablePointer<Recipe>] = []
     
     public func compileRecipes() {
-        let memory: UnsafeMutablePointer<Memory> = AEMemoryCreateClone(coordinate.aether.state.memory)
-        AEMemoryClear(memory)
-        
-        dimensions.forEach { AEMemorySetValue(memory, $0.tower.index, 0) }
-        
-        recipes = []
-        dimensions.forEach {
-            let recipe: UnsafeMutablePointer<Recipe> = Math.compile(result: $0.chain.tower, memory: memory)
-            recipes.append(recipe)
-            AERecipeSignature(recipe, AEMemoryIndexForName(memory, "\(coordinate.key).\(key).\($0.key)".toInt8()), UInt8(dimensions.count))
-        }
-        
-        let indexes: [mnimi] = dimensions.map {AEMemoryIndexForName(memory, "\(coordinate.key).\(key).\($0.key)".toInt8()) }
-        
-        recipes.forEach {
-            for i in 0...2 { $0.pointee.params[i] = mnimi(indexes[i]) }
-        }
+//        let memory: UnsafeMutablePointer<Memory> = AEMemoryCreateClone(coordinate.aether.state.memory)
+//        AEMemoryClear(memory)
+//        
+//        dimensions.forEach { AEMemorySetValue(memory, $0.tower.index, 0) }
+//        
+//        recipes = []
+//        dimensions.forEach {
+//            let recipe: UnsafeMutablePointer<Recipe> = Math.compile(result: $0.chain.tower, memory: memory)
+//            recipes.append(recipe)
+//            AERecipeSignature(recipe, AEMemoryIndexForName(memory, "\(coordinate.key).\(key).\($0.key)".toInt8()), UInt8(dimensions.count))
+//        }
+//        
+//        let indexes: [mnimi] = dimensions.map {AEMemoryIndexForName(memory, "\(coordinate.key).\(key).\($0.key)".toInt8()) }
+//        
+//        recipes.forEach {
+//            for i in 0...2 { $0.pointee.params[i] = mnimi(indexes[i]) }
+//        }
     }
 
     
 // Events ==========================================================================================
     public override func onLoaded() {
-        dimensions.forEach { $0.chain.tower.tailForWeb = self }
+//        dimensions.forEach { $0.chain.tower.tailForWeb = self }
     }
 
 // Aexon ===========================================================================================

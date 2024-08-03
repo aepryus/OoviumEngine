@@ -274,25 +274,25 @@ public final class Anain: NSObject, Packable, TowerDelegate {
         tower.trigger()
     }
     
-    public func attemptToPost(token: Token) -> Bool {
+    public func attemptToPost(key: TokenKey) -> Bool {
         
-        if let this = tower, let towerToken = token as? TowerToken {
-            let that: Tower = towerToken.tower
-            if this.downstream(contains: that) { return false }
-            if let thisWeb = this.web ?? this.tailForWeb, let thatWeb = that.web {
-                if thisWeb !== thatWeb { return false }
-            }
-            that.attach(this)
-        }
-        
-        tokens.insert(token, at: cursor)
-        
-        cursor += 1
+//        if let this = tower, let towerToken = token as? TowerToken {
+//            let that: Tower = towerToken.tower
+//            if this.downstream(contains: that) { return false }
+//            if let thisWeb = this.web ?? this.tailForWeb, let thatWeb = that.web {
+//                if thisWeb !== thatWeb { return false }
+//            }
+//            that.attach(this)
+//        }
+//        
+//        tokens.insert(token, at: cursor)
+//        
+//        cursor += 1
 
         return true
     }
     public func post(token: Token) {
-        _ = attemptToPost(token: token)
+        _ = attemptToPost(key: token.key)
     }
     public func minusSign() {
         post(token: minusToken())
@@ -377,7 +377,7 @@ public final class Anain: NSObject, Packable, TowerDelegate {
     }
     
 // Parsing =========================================================================================
-    private var morphs: [Int] = []
+    private var morphs: [UInt32] = []
     var variables: [Variable] = []
     private var constants: [Value] = []
     private var stack: [String] = [String](repeating: "", count: 10)
@@ -398,13 +398,10 @@ public final class Anain: NSObject, Packable, TowerDelegate {
         return stack[sp-1]
     }
     
-    private func addMorph(_ morph: Int) {
+    private func addMorph(_ morph: UInt32) {
         morphs.append(morph)
-        if let morph = Morph(rawValue: morph) {
-            push(morph.def.key)
-        } else {
-            push("num")
-        }
+        let morph = Morph(rawValue: morph)
+        push(morph.def.key)
     }
     private func addConstant(_ value: Value) throws {
         constants.append(value)
@@ -645,32 +642,32 @@ public final class Anain: NSObject, Packable, TowerDelegate {
         
         for morph in morphs {
             switch morph {
-                case Morph.numCns.rawValue:
+                case MorphNumCns.rawValue:
                     stack[si] = ValueExpression(value: constants[ci])
                     ci += 1
                     si += 1
-                case Morph.add.rawValue:
+                case MorphAdd.rawValue:
                     si -= 1
                     let b: Expression = stack[si]!
                     si -= 1
                     let a: Expression = stack[si]!
                     stack[si] = AdditionExpression(expressions: [a, b])
                     si += 1
-                case Morph.sub.rawValue:
+                case MorphSub.rawValue:
                     si -= 1
                     let b: Expression = stack[si]!.negate()
                     si -= 1
                     let a: Expression = stack[si]!
                     stack[si] = AdditionExpression(expressions: [a, b])
                     si += 1
-                case Morph.mul.rawValue:
+                case MorphMul.rawValue:
                     si -= 1
                     let b: Expression = stack[si]!
                     si -= 1
                     let a: Expression = stack[si]!
                     stack[si] = MultiplicationExpression(expressions: [a, b])
                     si += 1
-                case Morph.div.rawValue:
+                case MorphDiv.rawValue:
                     si -= 1
                     let denomenator: Expression = stack[si]!.invert()
                     si -= 1

@@ -6,6 +6,8 @@
 //  Copyright © 2017 Aepryus Software. All rights reserved.
 //
 
+#include "Morph.h"
+
 typedef unsigned char byte;
 typedef unsigned short mnimi;
 
@@ -92,24 +94,6 @@ double AEMemoryValueForName(Memory* memory, char* name);
 void AEMemoryLoad(Memory* memory, Memory* from);
 byte AEMemoryLoaded(Memory* memory, mnimi index);
 Obj AEMemoryMirror(Memory* memory, mnimi index);
-
-// Morphs ==
-typedef enum {
-	AEMorphAdd, AEMorphSub, AEMorphMul, AEMorphDiv, AEMorphMod, AEMorphPow, AEMorphEqual, AEMorphNotEqual,				// 0...7
-	AEMorphLessThan, AEMorphLessThanOrEqual, AEMorphGreaterThan, AEMorphGreaterThanOrEqual, AEMorphNot,					// 8...12
-	AEMorphAnd, AEMorphOr, AEMorphNeg, AEMorphAbs, AEMorphRound, AEMorphFloor, AEMorphSqrt, AEMorphFac,					// 12...20
-	AEMorphExp, AEMorphLn, AEMorphLog, AEMorphTen, AEMorphTwo, AEMorphLog2, AEMorphSin, AEMorphCos,						// 21...28
-	AEMorphTan, AEMorphAsin, AEMorphAcos, AEMorphAtan, AEMorphSec, AEMorphCsc, AEMorphCot, AEMorphSinh,					// 29...36
-	AEMorphCosh, AEMorphTanh, AEMorphAsinh, AEMorphAcosh, AEMorphAtanh, AEMorphIf, AEMorphMin, AEMorphMax,				// 37...44
-	AEMorphSum, AEMorphRandom, AEMorphNumVar, AEMorphNumCns,															// 45...48
-	AEMorphComplex, AEMorphCpxVar, AEMorphCpxCns, AEMorphCpxAdd, AEMorphCpxSub, AEMorphCpxMul, AEMorphCpxDiv,			// 49...55
-	AEMorphCpxPow, AEMorphCpxEqual, AEMorphCpxNotEqual, AEMorphCpxSin, AEMorphCpxCos, AEMorphCpxTan,					// 56...61
-	AEMorphCpxLn, AEMorphCpxExp, AEMorphCpxSqrt, AEMorphCpxAbs, AEMorphCpxRound, AEMorphCpxFloor,						// 62...67
-	AEMorphVector, AEMorphVctVar, AEMorphVctCns, AEMorphVctAdd, AEMorphVctSub, AEMorphVctMulL, AEMorphVctMulR, 			// 68...74
-	AEMorphVctDot, AEMorphVctCross, AEMorphVctNeg, AEMorphStrVar, AEMorphStrCns, AEMorphStrAdd, AEMorphRcpVar,			// 75...81
-	AEMorphNumVarForce, AEMorphLmbVar, AEMorphLmbCns, AEMorphLmbIf, AEMorphLmbSum,										// 82...86
-	AEMorphRecipe																										// 87
-} AEMorph;
 
 // Lambda ==
 typedef struct Lambda {
