@@ -13,7 +13,7 @@ public final class Object: Aexel, VariableTokenDelegate {
 	@objc public var chain: Chain!
     @objc public var label: String = ""
 
-    public var token: VariableToken { aether.variableToken(tag: key) as! VariableToken }
+//    public var token: VariableToken { aether.variableToken(tag: key) as! VariableToken }
     
 // Inits ===========================================================================================
     public required init(at: V2, aether: Aether) {

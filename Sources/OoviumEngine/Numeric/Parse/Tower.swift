@@ -45,7 +45,8 @@ class Funnel {
 }
 
 public final class Tower: Hashable, CustomStringConvertible {
-	private unowned let aether: Aether
+//	private unowned let aether: Aether
+    private unowned let aetherExe: AetherExe
     weak var delegate: TowerDelegate?
 
     private let _variableToken: VariableToken
@@ -79,20 +80,20 @@ public final class Tower: Hashable, CustomStringConvertible {
 	var task: UnsafeMutablePointer<Task>? = nil
 	
 	var name: String { variableToken.tag }
-    var memory: UnsafeMutablePointer<Memory> { aether.state.memory }
+    var memory: UnsafeMutablePointer<Memory> { aetherExe.memory }
     
-    init(aether: Aether, token: VariableToken, delegate: TowerDelegate) {
-		self.aether = aether
+    init(aetherExe: AetherExe, token: VariableToken, delegate: TowerDelegate) {
+		self.aetherExe = aetherExe
         self._variableToken = token
 		self.delegate = delegate
 	}
 	deinit { AETaskRelease(task) }
 
 	public var index: mnimi {
-        AEMemoryIndexForName(aether.state.memory, variableToken.tag.toInt8())
+        AEMemoryIndexForName(aetherExe.memory, variableToken.tag.toInt8())
     }
-    public var value: Double { AEMemoryValue(aether.state.memory, index) }
-    public var obje: Obje { Obje(memory: aether.state.memory, index: index) }
+    public var value: Double { AEMemoryValue(aetherExe.memory, index) }
+    public var obje: Obje { Obje(memory: aetherExe.memory, index: index) }
 	
 	func taskCompleted(askedBy: Tower) -> Bool { delegate?.taskCompleted(tower: self, askedBy: askedBy) ?? true }
 
@@ -186,7 +187,7 @@ public final class Tower: Hashable, CustomStringConvertible {
 		AETaskRelease(task)
         task = delegate.renderTask(tower: self)
 	}
-    var calced: Bool { variableToken.code != .va || AEMemoryLoaded(aether.state.memory, index) != 0 }
+    var calced: Bool { variableToken.code != .va || AEMemoryLoaded(aetherExe.memory, index) != 0 }
 	func attemptToCalculate() -> Bool {
         guard let delegate else { return false }
 		guard !taskCompleted(askedBy: self),
@@ -205,7 +206,7 @@ public final class Tower: Hashable, CustomStringConvertible {
 
 		if (web != nil && variableToken.def !== LambdaDef.def) || variableToken.status != .ok {
 			variableToken.details = delegate.renderDisplay(tower: self)
-            AEMemorySetValue(aether.state.memory, index, 0)
+            AEMemorySetValue(aetherExe.memory, index, 0)
 			return true
         } else { variableToken.details = nil }
 		

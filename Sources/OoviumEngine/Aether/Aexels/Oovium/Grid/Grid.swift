@@ -76,7 +76,7 @@ public final class Grid: Aexel {
 			cells.append(cell)
             newCells.append(cell)
 		}
-        aether.state.buildMemory()
+//        aether.state.buildMemory()
 		columns.forEach {
 			if $0.calculated { $0.disseminate() }
 		}
@@ -118,7 +118,7 @@ public final class Grid: Aexel {
 			cells.insert(cell, at: nc)
 			nc += 1 + cc
 		}
-        aether.state.buildMemory()
+//        aether.state.buildMemory()
         
         return column
 	}
@@ -190,9 +190,9 @@ public final class Grid: Aexel {
     
 // Aexon ===========================================================================================
     public override var code: String { "Gr" }
-    public override func newNo(key: String) -> Int {
-        if key == "column" { return columns.count + 1 }
-        else /*if key == "cell"*/ { return aether.newNo(key: key) }
+    public override func newNo(type: String) -> Int {
+        if type == "column" { return columns.count + 1 }
+        else /*if key == "cell"*/ { return aether.newNo(type: type) }
     }
 
 // Domain ==========================================================================================

@@ -52,7 +52,7 @@ public final class Tail: Aexel, Mechlike, TowerDelegate, VariableTokenDelegate, 
 
 	public func add(vertebra: Vertebra) {
 		add(vertebra)
-		vertebra.tower.web = web
+//		vertebra.tower.web = web
 		vertebras.append(vertebra)
 	}
 	public func addVertebra() -> Vertebra {
@@ -139,7 +139,7 @@ public final class Tail: Aexel, Mechlike, TowerDelegate, VariableTokenDelegate, 
 
 // Aexon ===========================================================================================
     public override var code: String { "Ta" }
-    public override func newNo(key: String) -> Int { vertebras.count + 1 }
+    public override func newNo(type: String) -> Int { vertebras.count + 1 }
 
 // Domain ==========================================================================================
 	override public var properties: [String] { super.properties + ["whileChain", "resultChain"] }
@@ -158,7 +158,7 @@ public final class Tail: Aexel, Mechlike, TowerDelegate, VariableTokenDelegate, 
 		return name
 	}
 	func taskCompleted(tower: Tower, askedBy: Tower) -> Bool {
-        return AEMemoryLoaded(tower.memory, AEMemoryIndexForName(aether.state.memory, variableToken.tag.toInt8())) != 0
+        return AEMemoryLoaded(tower.memory, AEMemoryIndexForName(tower.memory, variableToken.tag.toInt8())) != 0
 			|| (askedBy !== tower && askedBy.web === self)
 	}
 	func taskBlocked(tower: Tower) -> Bool {
@@ -167,12 +167,12 @@ public final class Tail: Aexel, Mechlike, TowerDelegate, VariableTokenDelegate, 
 	}
 	func resetTask(tower: Tower) {
 		recipe = nil
-        AEMemoryUnfix(tower.memory, AEMemoryIndexForName(aether.state.memory, variableToken.tag.toInt8()))
+        AEMemoryUnfix(tower.memory, AEMemoryIndexForName(tower.memory, variableToken.tag.toInt8()))
 	}
 	func executeTask(tower: Tower) {
 		compileRecipe()
-        AEMemorySet(tower.memory, AEMemoryIndexForName(aether.state.memory, variableToken.tag.toInt8()), AEObjRecipe(recipe))
-        AEMemoryFix(tower.memory, AEMemoryIndexForName(aether.state.memory, variableToken.tag.toInt8()))
+        AEMemorySet(tower.memory, AEMemoryIndexForName(tower.memory, variableToken.tag.toInt8()), AEObjRecipe(recipe))
+        AEMemoryFix(tower.memory, AEMemoryIndexForName(tower.memory, variableToken.tag.toInt8()))
 		tower.variableToken.def = RecipeDef.def
 	}
     

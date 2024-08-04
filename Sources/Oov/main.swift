@@ -1,30 +1,3 @@
-
-//import Aegean
-//import OoviumEngine
-//
-//Math.start()
-//
-//if CommandLine.arguments.count > 1 {
-//
-//    let natural: String = CommandLine.arguments.dropFirst().joined(separator: " ")
-//    let chain: Chain = Chain(natural: natural)
-//    if let answer = chain.compile().calculate() { print(" = \(Obje(answer).display)") }
-//    
-//} else {
-//
-//    while true {
-//        print("Oov> ", separator: "", terminator: "")
-//        let response: String? = readLine()
-//        if let response = response {
-//            guard response != "exit" else { break }
-//            
-//            let chain: Chain = Chain(natural: response)
-//            let chainExe: ChainExe = chain.compile()
-//            if let answer = chainExe.calculate() { print(" = \(Obje(answer).display)") }
-//        }
-//    }
-//}
-
 import Aegean
 import Darwin.POSIX
 import Foundation

@@ -45,7 +45,7 @@ public final class Mech: Aexel, Mechlike, TowerDelegate, VariableTokenDelegate, 
 	
 	public func add(input: Input) {
 		add(input)
-		input.tower.web = web
+//		input.tower.web = web
 		inputs.append(input)
 	}
 	public func addInput() {
@@ -59,7 +59,7 @@ public final class Mech: Aexel, Mechlike, TowerDelegate, VariableTokenDelegate, 
 	public func removeInput() {
 		let input = inputs.removeLast()
 		remove(input)
-        aether.state.destroy(tower: input.tower)
+//        aether.state.destroy(tower: input.tower)
         mechlikeToken.params = inputs.count
 	}
 	
@@ -123,7 +123,7 @@ public final class Mech: Aexel, Mechlike, TowerDelegate, VariableTokenDelegate, 
     
 // Aexon ===========================================================================================
     public override var code: String { "Me" }
-    public override func newNo(key: String) -> Int { inputs.count + 1 }
+    public override func newNo(type: String) -> Int { inputs.count + 1 }
 	
 // Domain ==========================================================================================
 	override public var properties: [String] { super.properties + ["resultChain"] }
@@ -141,17 +141,17 @@ public final class Mech: Aexel, Mechlike, TowerDelegate, VariableTokenDelegate, 
 	}
 //    func renderTask(tower: Tower) -> UnsafeMutablePointer<Task>? { nil }
 	func taskCompleted(tower: Tower, askedBy: Tower) -> Bool {
-        AEMemoryLoaded(tower.memory, AEMemoryIndexForName(aether.state.memory, variableToken.tag.toInt8())) != 0 || (askedBy !== tower && askedBy.web === self)
+        AEMemoryLoaded(tower.memory, AEMemoryIndexForName(tower.memory, variableToken.tag.toInt8())) != 0 || (askedBy !== tower && askedBy.web === self)
 	}
-	func workerBlocked(tower: Tower) -> Bool { false/*resultChain.tower.variableToken.status != .ok*/ }
+	func workerBlocked(tower: Tower) -> Bool { tower.variableToken.status != .ok }
 	func resetTask(tower: Tower) {
 		recipe = nil
-        AEMemoryUnfix(tower.memory, AEMemoryIndexForName(aether.state.memory, variableToken.tag.toInt8()))
+        AEMemoryUnfix(tower.memory, AEMemoryIndexForName(tower.memory, variableToken.tag.toInt8()))
 	}
 	func executeTask(tower: Tower) {
 		compileRecipe()
-        AEMemorySet(tower.memory, AEMemoryIndexForName(aether.state.memory, variableToken.tag.toInt8()), AEObjRecipe(recipe))
-        AEMemoryFix(tower.memory, AEMemoryIndexForName(aether.state.memory, variableToken.tag.toInt8()))
+        AEMemorySet(tower.memory, AEMemoryIndexForName(tower.memory, variableToken.tag.toInt8()), AEObjRecipe(recipe))
+        AEMemoryFix(tower.memory, AEMemoryIndexForName(tower.memory, variableToken.tag.toInt8()))
 		tower.variableToken.def = RecipeDef.def
 	}
     

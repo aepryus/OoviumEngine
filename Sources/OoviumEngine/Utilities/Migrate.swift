@@ -405,11 +405,16 @@ public class Migrate {
         
         return sb
     }
+    public static func migrateChainTo31(_ tokensString: String, tag: String) -> String {
+        "\(tag)::\(tokensString)"
+    }
 	public static func migrateAether(json: String) -> String {
 		var attributes: [String:Any] = json.toAttributes()
 		let version: String = attributes["version"] as? String ?? "2.0.2"
 
 		guard version != Aether.engineVersion else { return json }
+        
+        let chainNames: [String] = ["chain", "ifChain", "thenChain", "elseChain", "resultChain", "whileChain", "startChain", "stopChain", "stepChain", "rateChain", "deltaChain", "statesChain", "amorousChain"]
 
 		print("migrate file from [\(version)] to [\(Aether.engineVersion)]")
         
@@ -417,14 +422,7 @@ public class Migrate {
         
         if version == "2.0.2" { migrate = true }
         if migrate {
-            attributes = attributes.modify(query:
-                ["chain",
-                 "ifChain", "thenChain", "elseChain",
-                 "resultChain", "whileChain",
-                 "startChain", "stopChain", "stepChain", "rateChain", "deltaChain",
-                 "statesChain", "amorousChain"
-                ],
-            convert: { (value: Any) in
+            attributes = attributes.modify(query: chainNames, convert: { (value: Any) in
                 Migrate.migrateChainTo21(value as! String)
             })
         }
@@ -480,16 +478,70 @@ public class Migrate {
                 }
             }
             
-            attributes = attributes.modify(query:
-                ["chain",
-                 "ifChain", "thenChain", "elseChain",
-                 "resultChain", "whileChain",
-                 "startChain", "stopChain", "stepChain", "rateChain", "deltaChain",
-                 "statesChain", "amorousChain"
-                ],
-            convert: { (value: Any) in
+            attributes = attributes.modify(query: chainNames, convert: { (value: Any) in
                 Migrate.migrateChainTo30(value as! String, subs: subs)
             })
+        }
+        
+        if version == "3.0" { migrate = true }
+        if migrate {
+            attributes["version"] = "3.1"
+            if var aexelArray: [[String:Any]] = attributes["aexels"] as? [[String:Any]] {
+                for (index, var aexelAtts): (Int, [String:Any]) in aexelArray.enumerated() {
+                    guard let type: String = aexelAtts["type"] as? String,
+                          let no: Int = aexelAtts["no"] as? Int
+                    else { continue }
+                    
+                    switch type {
+                        case "object":
+                            if let tokens: String = aexelAtts["chain"] as? String { aexelAtts["chain"] = "Ob\(no)::\(tokens)" }
+                        case "gate":
+                            if let tokens: String = aexelAtts["ifChain"] as? String { aexelAtts["ifChain"] = "Gt\(no).if::\(tokens)" }
+                            if let tokens: String = aexelAtts["thenChain"] as? String { aexelAtts["thenChain"] = "Gt\(no).then::\(tokens)" }
+                            if let tokens: String = aexelAtts["elseChain"] as? String { aexelAtts["elseChain"] = "Gt\(no).else::\(tokens)" }
+                        case "cron":
+                            if let tokens: String = aexelAtts["startChain"] as? String { aexelAtts["startChain"] = "Cr\(no).start::\(tokens)" }
+                            if let tokens: String = aexelAtts["stopChain"] as? String { aexelAtts["stopChain"] = "Cr\(no).stop::\(tokens)" }
+                            if let tokens: String = aexelAtts["stepsChain"] as? String { aexelAtts["stepsChain"] = "Cr\(no).steps::\(tokens)" }
+                            if let tokens: String = aexelAtts["rateChain"] as? String { aexelAtts["rateChain"] = "Cr\(no).rate::\(tokens)" }
+                            if let tokens: String = aexelAtts["deltaChain"] as? String { aexelAtts["deltaChain"] = "Cr\(no).delta::\(tokens)" }
+                            if let tokens: String = aexelAtts["whileChain"] as? String { aexelAtts["whileChain"] = "Cr\(no).while::\(tokens)" }
+                        case "mech":
+                            if let tokens: String = aexelAtts["resultChain"] as? String { aexelAtts["resultChain"] = "Me\(no)::\(tokens)" }
+                        case "tail":
+                            if let tokens: String = aexelAtts["whileChain"] as? String { aexelAtts["whileChain"] = "Ta\(no).while::\(tokens)" }
+                            if let tokens: String = aexelAtts["resultChain"] as? String { aexelAtts["resultChain"] = "Ta\(no).result::\(tokens)" }
+                            if var subArray: [[String:Any]] = aexelAtts["vertebras"] as? [[String:Any]] {
+                                for (subIndex, var subAtts): (Int, [String:Any]) in subArray.enumerated() {
+                                    guard let subNo: Int = subAtts["no"] as? Int else { continue }
+                                    if let tokens: String = subAtts["chain"] as? String { subAtts["chain"] = "Ta\(no).Ve\(subNo).result::\(tokens)" }
+                                    subArray[subIndex] = subAtts
+                                }
+                                aexelAtts["vertebras"] = subArray
+                            }
+                        case "grid":
+                            if var subArray: [[String:Any]] = aexelAtts["columns"] as? [[String:Any]] {
+                                for (subIndex, var subAtts): (Int, [String:Any]) in subArray.enumerated() {
+                                    guard let subNo: Int = subAtts["no"] as? Int else { continue }
+                                    if let tokens: String = subAtts["chain"] as? String { subAtts["chain"] = "Gr\(no).Co\(subNo)::\(tokens)" }
+                                    subArray[subIndex] = subAtts
+                                }
+                                aexelAtts["columns"] = subArray
+                            }
+                            if var subArray: [[String:Any]] = aexelAtts["cells"] as? [[String:Any]] {
+                                for (subIndex, var subAtts): (Int, [String:Any]) in subArray.enumerated() {
+                                    guard let subNo: Int = subAtts["no"] as? Int else { continue }
+                                    if let tokens: String = subAtts["chain"] as? String { subAtts["chain"] = "Gr\(no).Ce\(subNo)::\(tokens)" }
+                                    subArray[subIndex] = subAtts
+                                }
+                                aexelAtts["cells"] = subArray
+                            }
+                        default: break
+                    }
+                    aexelArray[index] = aexelAtts
+                }
+                attributes["aexels"] = aexelArray
+            }
         }
 
         return attributes.toJSON()

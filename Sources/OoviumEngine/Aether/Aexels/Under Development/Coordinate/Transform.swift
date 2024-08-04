@@ -17,7 +17,7 @@ public class Transform: Aexon, TowerDelegate, Web {
     public var token: Token = .add
     public var recipeToken: Token = .add
     
-    public lazy var tower: Tower = coordinate.aether.state.createTower(tag: "key", towerDelegate: self)
+//    public lazy var tower: Tower = coordinate.aether.state.createTower(tag: "key", towerDelegate: self)
     
     public init(aexel: Aexel, name: String) {
         self.name = name
@@ -67,7 +67,7 @@ public class Transform: Aexon, TowerDelegate, Web {
     }
 
 // Aexon ===========================================================================================
-    public override func newNo(key: String) -> Int { dimensions.count + 1 }
+    public override func newNo(type: String) -> Int { dimensions.count + 1 }
 
 // Domain ==========================================================================================
     override public var properties: [String] { super.properties + ["name", "dimensions"] }

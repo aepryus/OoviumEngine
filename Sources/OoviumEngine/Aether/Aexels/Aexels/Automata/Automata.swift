@@ -49,17 +49,17 @@ public final class Automata: Aexel, TowerDelegate, Web {
 	}
 	
 	private func buildSpaceTowers(no: Int) {
-        spaceTowers.append(aether.state.createTower(tag: "\(key).A", towerDelegate: self, tokenDelegate: tokenDelegates[0]))
-        spaceTowers.append(aether.state.createTower(tag: "\(key).B", towerDelegate: self, tokenDelegate: tokenDelegates[1]))
-        spaceTowers.append(aether.state.createTower(tag: "\(key).C", towerDelegate: self, tokenDelegate: tokenDelegates[2]))
-        spaceTowers.append(aether.state.createTower(tag: "\(key).D", towerDelegate: self, tokenDelegate: tokenDelegates[3]))
-        spaceTowers.append(aether.state.createTower(tag: "\(key).E", towerDelegate: self, tokenDelegate: tokenDelegates[4]))
-        spaceTowers.append(aether.state.createTower(tag: "\(key).F", towerDelegate: self, tokenDelegate: tokenDelegates[5]))
-        spaceTowers.append(aether.state.createTower(tag: "\(key).G", towerDelegate: self, tokenDelegate: tokenDelegates[6]))
-        spaceTowers.append(aether.state.createTower(tag: "\(key).H", towerDelegate: self, tokenDelegate: tokenDelegates[7]))
-        spaceTowers.append(aether.state.createTower(tag: "\(key).Self", towerDelegate: self, tokenDelegate: tokenDelegates[8]))
-
-        spaceTowers.forEach { $0.web = web }
+//        spaceTowers.append(aether.state.createTower(tag: "\(key).A", towerDelegate: self, tokenDelegate: tokenDelegates[0]))
+//        spaceTowers.append(aether.state.createTower(tag: "\(key).B", towerDelegate: self, tokenDelegate: tokenDelegates[1]))
+//        spaceTowers.append(aether.state.createTower(tag: "\(key).C", towerDelegate: self, tokenDelegate: tokenDelegates[2]))
+//        spaceTowers.append(aether.state.createTower(tag: "\(key).D", towerDelegate: self, tokenDelegate: tokenDelegates[3]))
+//        spaceTowers.append(aether.state.createTower(tag: "\(key).E", towerDelegate: self, tokenDelegate: tokenDelegates[4]))
+//        spaceTowers.append(aether.state.createTower(tag: "\(key).F", towerDelegate: self, tokenDelegate: tokenDelegates[5]))
+//        spaceTowers.append(aether.state.createTower(tag: "\(key).G", towerDelegate: self, tokenDelegate: tokenDelegates[6]))
+//        spaceTowers.append(aether.state.createTower(tag: "\(key).H", towerDelegate: self, tokenDelegate: tokenDelegates[7]))
+//        spaceTowers.append(aether.state.createTower(tag: "\(key).Self", towerDelegate: self, tokenDelegate: tokenDelegates[8]))
+//
+//        spaceTowers.forEach { $0.web = web }
 	}
 	
 	public func foreshadow(_ memory: UnsafeMutablePointer<Memory>) {

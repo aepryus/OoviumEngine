@@ -13,7 +13,7 @@ public class Dimension: Aexon, TowerDelegate, VariableTokenDelegate {
     @objc public var name: String = ""
     @objc public var chain: Chain!
     
-    public lazy var tower: Tower = { coordinate.aether.state.createTower(tag: "\(coordinate.key).\(web.key).\(key)", towerDelegate: self, tokenDelegate: self) }()
+//    public lazy var tower: Tower = { coordinate.aether.state.createTower(tag: "\(coordinate.key).\(web.key).\(key)", towerDelegate: self, tokenDelegate: self) }()
     
     public init(web: Transform, name: String) {
         self.name = name

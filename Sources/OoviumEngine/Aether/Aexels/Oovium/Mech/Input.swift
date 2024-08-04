@@ -25,7 +25,7 @@ public final class Input: Aexon, TowerDelegate, VariableTokenDelegate {
     
 //	var def: Def = RealDef.def
 	
-    public lazy var tower: Tower = { mech.aether.state.createTower(tag: "\(mech.key).\(key)", towerDelegate: self, tokenDelegate: self) }()
+//    public lazy var tower: Tower = { mech.aether.state.createTower(tag: "\(mech.key).\(key)", towerDelegate: self, tokenDelegate: self) }()
 	
     init(mech: Mech, name: String) {
 		self.name = name
@@ -42,9 +42,9 @@ public final class Input: Aexon, TowerDelegate, VariableTokenDelegate {
     }
 	
 // Events ==========================================================================================
-    public override func onCreate() { wire() }
-	public override func onLoad() { wire() }
-    public override func onRemoved() { mech.aether.state.destroy(tower: tower) }
+    public override func onCreate() { /*wire()*/ }
+	public override func onLoad() { /*wire()*/ }
+    public override func onRemoved() { /*mech.aether.state.destroy(tower: tower)*/ }
     
 // Aexon ===========================================================================================
     public override var code: String { "i" }

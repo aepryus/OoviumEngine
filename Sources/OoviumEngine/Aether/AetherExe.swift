@@ -16,36 +16,24 @@ public class AetherExe {
     private var tokens: [TokenKey:TowerToken] = [:]
     private var towers: [TowerToken:Tower] = [:]
     public private(set) var memory: UnsafeMutablePointer<Memory> = AEMemoryCreate(0)
-    var nos: IntMap = IntMap()
     
     var chainExes: [TokenKey:ChainExe] = [:]
 
     init(aether: Aether) {
         self.aether = aether
         
-//        print("[ Wiring ] ===============================================================")
-                
-        aether.aexels.forEach {
-            guard $0.no > self.nos.get(key: $0.type) else { return }
-            self.nos.set(key: $0.type, to: $0.no)
-        }
-        
         let chains: [Chain] = aether.aexels.flatMap({ $0.chains })
         
         chains.forEach { (chain: Chain) in
-            let state: ChainExe = ChainExe(chain: chain)
-            if let key = chain.key { state.tower = self.createTower(tag: key.description, towerDelegate: state) }
-//            chain.load(state: state)
+            guard let key = chain.key else { return }
+            let chainExe: ChainExe = ChainExe(chain: chain)
+            chainExe.tower = createTower(key: key, towerDelegate: chainExe)
+            chainExes[key] = chainExe
         }
-
-//        chains.forEach { (chain: Chain) in
-//            chain.load(tokens: chain.tokenKeys.map({ (key: String) in self.token(key: TokenKey(key)) ?? Token.token(key: TokenKey(key)) ?? .zero }))
-//        }
-                
+        chainExes.values.forEach { $0.buildTokens(aetherExe: self) }
+        towers.values.forEach { $0.buildStream() }
         buildMemory()
-//        evaluate()
-        
-//        print("[ Complete ] ==============================================================")
+        Tower.evaluate(towers: Set(towers.values))
     }
 
     deinit { AEMemoryRelease(memory) }
@@ -64,11 +52,11 @@ public class AetherExe {
 // Methods =========================================================================================
     func add(chain: Chain) {
         let state: ChainExe = ChainExe(chain: chain)
-        if let key: TokenKey = chain.key { state.tower = createTower(tag: key.description, towerDelegate: state) }
+        if let key: TokenKey = chain.key { state.tower = createTower(key: key, towerDelegate: state) }
 //        chain.load(state: state)
         
         buildMemory()
-        evaluate()
+//        evaluate()
     }
     func remove(chain: Chain) {}
     
@@ -148,7 +136,6 @@ public class AetherExe {
         
 //        Tower.evaluate(towers: Set<Tower>(webTowers))
     }
-    public func evaluate() { Tower.evaluate(towers: Set(towers.values)) }
     
 // Towers ==========================================================================================
     public func destroy(towers: [Tower]) {
@@ -171,17 +158,18 @@ public class AetherExe {
         buildMemory()
     }
     public func destroy(tower: Tower) { destroy(towers: [tower]) }
-    func createTower(tag: String, towerDelegate: TowerDelegate, tokenDelegate: VariableTokenDelegate? = nil) -> Tower {
-        let token = VariableToken(tag: tag, delegate: tokenDelegate)
+    func createTower(key: TokenKey, towerDelegate: TowerDelegate, tokenDelegate: VariableTokenDelegate? = nil) -> Tower {
+        let token = VariableToken(tag: key.tag, delegate: tokenDelegate)
         tokens[token.key] = token
-        let tower = Tower(aether: aether, token: token, delegate: towerDelegate)
+        let tower = Tower(aetherExe: self, token: token, delegate: towerDelegate)
         towers[token] = tower
+        token.tower = tower
         return tower
     }
     func createMechlikeTower(tag: String, towerDelegate: TowerDelegate, tokenDelegate: VariableTokenDelegate? = nil) -> Tower {
         let variableToken = VariableToken(tag: tag, delegate: tokenDelegate)
         tokens[variableToken.key] = variableToken
-        let tower = Tower(aether: aether, token: variableToken, delegate: towerDelegate)
+        let tower = Tower(aetherExe: self, token: variableToken, delegate: towerDelegate)
         let mechlikeToken = MechlikeToken(tower: tower, tag: tag, delegate: tokenDelegate)
         tokens[mechlikeToken.key] = mechlikeToken
         tower.mechlikeToken = mechlikeToken
@@ -193,7 +181,7 @@ public class AetherExe {
     func createColumnTower(tag: String, towerDelegate: TowerDelegate, tokenDelegate: VariableTokenDelegate? = nil) -> Tower {
         let token = ColumnToken(tag: tag, delegate: tokenDelegate)
         tokens[token.key] = token
-        let tower = Tower(aether: aether, token: token, delegate: towerDelegate)
+        let tower = Tower(aetherExe: self, token: token, delegate: towerDelegate)
         towers[token] = tower
         return tower
     }

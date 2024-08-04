@@ -21,8 +21,8 @@ import Foundation
 
 	@objc dynamic public var aexels: [Aexel] = []
     
-    public var state: AetherExe!
-	
+//    public var state: AetherExe!
+
 	public override init() { super.init() }
 	public required init(attributes: [String:Any], parent: Domain? = nil) { super.init(attributes: attributes, parent: parent) }
 	public init(json: String) {
@@ -33,8 +33,8 @@ import Foundation
 
     
 //    func token(key: String) -> Token? { state.token(key: key) }
-    func variableToken(tag: String) -> Token { state.variableToken(tag: tag) }
-    func newNo(key: String) -> Int { state.nos.increment(key: key) }
+//    func variableToken(tag: String) -> Token { state.variableToken(tag: tag) }
+    func newNo(type: String) -> Int { (aexels.filter({ $0.type == type }).map({ $0.no }).max() ?? 0) + 1 }
     
     func compile() -> AetherExe { AetherExe(aether: self) }
 
@@ -48,20 +48,20 @@ import Foundation
 //        Tower.evaluate(towers: aexel.towers)
 	}
     public func remove(aexels: [Aexel]) {
-        let removed: [Tower] = []
+//        let removed: [Tower] = []
         aexels.forEach({
 //            removed.append(contentsOf: $0.towers)
             self.aexels.remove(object: $0)
             remove($0)
         })
-        state.destroy(towers: removed)
+//        state.destroy(towers: removed)
     }
 	public func remove(aexel: Aexel) { remove(aexels: [aexel]) }
 	public func removeAllAexels() { remove(aexels: aexels) }
     
     public func create<T: Aexel>(at: V2) -> T {
         let aexel: T = T(at: at, aether: self)
-        aexel.chains.forEach { self.state.add(chain: $0) }
+//        aexel.chains.forEach { self.state.add(chain: $0) }
         addAexel(aexel)
         return aexel
     }
@@ -82,16 +82,16 @@ import Foundation
 	public func functionExists(name: String) -> Bool { aexels.first { $0 is Mechlike && $0.name == name } != nil }
 
 // Events ==========================================================================================
-    override public func onLoad() {
-        state = AetherExe(aether: self)
-        state.evaluate()
-        print(unload().toJSON())
-    }
+//    override public func onLoad() {
+//        state = AetherExe(aether: self)
+//        state.evaluate()
+//        print(unload().toJSON())
+//    }
 	
 // Domain ==========================================================================================
     override public var properties: [String] { super.properties + ["name", "width", "height", "xOffset", "yOffset", "readOnly", "version"] }
     override public var children: [String] { super.children + ["aexels"] }
 
 // Static ==========================================================================================
-	public static var engineVersion: String { "3.0" }
+	public static var engineVersion: String { "3.1" }
 }

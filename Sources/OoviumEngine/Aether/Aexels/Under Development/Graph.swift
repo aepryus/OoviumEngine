@@ -99,9 +99,9 @@ public class Graph: Aexel, TowerDelegate, Web {
     private var vTokenDelegate = StaticVariableTokenDelegate("v")
     private var tTokenDelegate = StaticVariableTokenDelegate("t")
 
-    lazy public var uTower: Tower = aether.state.createTower(tag: "\(key).u", towerDelegate: self, tokenDelegate: uTokenDelegate)
-    lazy public var vTower: Tower = aether.state.createTower(tag: "\(key).v", towerDelegate: self, tokenDelegate: vTokenDelegate)
-    lazy public var tTower: Tower = aether.state.createTower(tag: "\(key).t", towerDelegate: self, tokenDelegate: tTokenDelegate)
+//    lazy public var uTower: Tower = aether.state.createTower(tag: "\(key).u", towerDelegate: self, tokenDelegate: uTokenDelegate)
+//    lazy public var vTower: Tower = aether.state.createTower(tag: "\(key).v", towerDelegate: self, tokenDelegate: vTokenDelegate)
+//    lazy public var tTower: Tower = aether.state.createTower(tag: "\(key).t", towerDelegate: self, tokenDelegate: tTokenDelegate)
     
     public func compileRecipes() {
 //        let memory: UnsafeMutablePointer<Memory> = AEMemoryCreateClone(aether.state.memory)
@@ -138,9 +138,9 @@ public class Graph: Aexel, TowerDelegate, Web {
 
 // Events ==========================================================================================
     override public func onLoad() {
-        uTower.web = web
-        vTower.web = web
-        tTower.web = web
+//        uTower.web = web
+//        vTower.web = web
+//        tTower.web = web
         
 //        sUChain.tower = aether.state.createTower(tag: "\(key).sU", towerDelegate: sUChain)
 //        eUChain.tower = aether.state.createTower(tag: "\(key).eU", towerDelegate: eUChain)
@@ -211,7 +211,7 @@ public class Graph: Aexel, TowerDelegate, Web {
     func executeTask(tower: Tower) {
 //        compileRecipe()
 //        AEMemorySet(tower.memory, AEMemoryIndexForName(aether.memory, tower.variableToken.tag.toInt8()), AEObjRecipe(recipe))
-        AEMemoryFix(tower.memory, AEMemoryIndexForName(aether.state.memory, tower.variableToken.tag.toInt8()))
+//        AEMemoryFix(tower.memory, AEMemoryIndexForName(aether.state.memory, tower.variableToken.tag.toInt8()))
         tower.variableToken.def = RecipeDef.def
     }
 }

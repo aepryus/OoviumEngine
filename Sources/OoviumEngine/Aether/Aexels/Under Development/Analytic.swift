@@ -22,7 +22,7 @@ public class Analytic: Aexel, VariableTokenDelegate {
 
 // Events ==========================================================================================
     override public func onLoad() {
-        anain.tower = aether.state.createTower(tag: key, towerDelegate: anain, tokenDelegate: self)
+//        anain.tower = aether.state.createTower(tag: key, towerDelegate: anain, tokenDelegate: self)
     }
     
 // Aexel ===========================================================================================

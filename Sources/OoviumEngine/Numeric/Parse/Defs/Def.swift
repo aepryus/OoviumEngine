@@ -15,14 +15,11 @@ public class Def {
 	public let properties: [String]
 	public let order: Int
 	
-	init(name: String, key: String, properties: [String], order: Int) {
+	init(name: String, key: String, properties: [String], order: Int = 9) {
 		self.name = name
 		self.key = key
 		self.properties = properties
 		self.order = order
-	}
-	convenience init(name: String, key:String, properties: [String]) {
-		self.init(name:name, key:key, properties:properties, order:9)
 	}
 	
 	static let normalFormatter: NumberFormatter =  {

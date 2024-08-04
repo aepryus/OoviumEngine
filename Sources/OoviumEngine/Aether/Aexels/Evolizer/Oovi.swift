@@ -101,7 +101,7 @@ public class Oovi: Aexel, TowerDelegate, Web {
 	}
 	
 	private func buildParameterTowers() {
-        parameterTowers.insert(aether.state.createTower(tag: "\(key).speed", towerDelegate: self))
+//        parameterTowers.insert(aether.state.createTower(tag: "\(key).speed", towerDelegate: self))
     
 //		parameterTowers.insert(Tower(aether: aether, token: aether.variableToken(tag: "Oovi\(no).speed", label: "speed"), delegate: self))
 //		parameterTowers.insert(Tower(aether: aether, token: aether.variableToken(tag: "Oovi\(no).energy", label: "energy"), delegate: self))

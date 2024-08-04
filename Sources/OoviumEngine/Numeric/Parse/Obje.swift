@@ -9,7 +9,7 @@
 import Aegean
 import Foundation
 
-public class Obje {
+public class Obje: CustomStringConvertible {
 	var obj: Obj
 	
 	init(memory: UnsafeMutablePointer<Memory>, index: mnimi) {
@@ -24,6 +24,8 @@ public class Obje {
 	
 	public var def: Def { Def.def(obj: obj) ?? RealDef.def }
 	public var display: String { def.format(obj: obj) }
+    
+    public var description: String { display }
 
 	public static let i = Obje(AEObjComplex(0,1))
 	public static let e = Obje(AEObjReal(M_E))

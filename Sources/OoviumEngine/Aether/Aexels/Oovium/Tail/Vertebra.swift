@@ -26,7 +26,7 @@ public final class Vertebra: Aexon, TowerDelegate, VariableTokenDelegate {
 
 //    var def: Def = RealDef.def
 
-    public lazy var tower: Tower = { tail.aether.state.createTower(tag: "\(tail.key).\(key)", towerDelegate: self, tokenDelegate: self) }()
+//    public lazy var tower: Tower = { tail.aether.state.createTower(tag: "\(tail.key).\(key)", towerDelegate: self, tokenDelegate: self) }()
     
     private func wire() {
 //        chain.tower = tail.aether.state.createTower(tag: "\(tail.key).\(key).chain", towerDelegate: chain)

@@ -17,9 +17,9 @@ public class Aexon: Domain {
         let typeName: String = String(describing: Self.self).lowercased()
         
         if let aether: Aether = parent as? Aether {
-            self.no = aether.newNo(key: typeName)
+            self.no = aether.newNo(type: typeName)
         }
-        else { self.no = (parent as! Aexon).newNo(key: typeName) }
+        else { self.no = (parent as! Aexon).newNo(type: typeName) }
         super.init(parent: parent)
     }
     public required init(attributes: [String:Any], parent: Domain?) {
@@ -36,7 +36,7 @@ public class Aexon: Domain {
     var fullKey: String { "\((parent as! Aexon).key).\(key)" }
     
 // Methods =========================================================================================
-    func newNo(key: String) -> Int { aether.newNo(key: key) }
+    func newNo(type: String) -> Int { aether.newNo(type: type) }
 
 // Domain ==========================================================================================
     override open var properties: [String] { super.properties + ["no"] }

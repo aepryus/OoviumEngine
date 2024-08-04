@@ -37,14 +37,14 @@ public final class Chain: NSObject, Packable {
 	public init(_ chainString: String) {
         var chainString = chainString
         if let index = chainString.loc(of: "::") {
-            key = TokenKey(chainString[..<index])
+            key = TokenKey(code: .va, tag: chainString[..<index])
             chainString.removeFirst(index+2)
         } else { key = nil }
         tokenKeys = chainString.components(separatedBy: ";").map({ TokenKey($0) })
 	}
 	public func pack() -> String {
         var chainString: String = ""
-        if let key { chainString += "\(key)::" }
+        if let key { chainString += "\(key.tag)::" }
         chainString += tokenKeys.map({ $0.description }).joined(separator: ";")
         return chainString
 	}

@@ -305,7 +305,7 @@ class Parser {
         catch { return (nil, nil) }
 
         let vi: mnimi
-        if let key: TokenKey = tokenKey { vi = AEMemoryIndexForName(memory, key.description.toInt8()) }
+        if let key: TokenKey = tokenKey { vi = AEMemoryIndexForName(memory, key.tag.toInt8()) }
         else { vi = 0 }
         
         let vn: Int = variables.count

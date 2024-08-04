@@ -20,7 +20,7 @@ public final class Type: Aexel {
 	@objc public dynamic var fields: [Field] = []
     
 // Aexon ===========================================================================================
-    override public func newNo(key: String) -> Int { fields.count + 1 }
+    override public func newNo(type: String) -> Int { fields.count + 1 }
 
 // Domain ==========================================================================================
     override public var properties: [String] { super.properties + ["color"] }
