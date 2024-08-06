@@ -36,5 +36,5 @@ public class Coordinate: Aexel {
     public override var code: String { "Cd" }
 
 // Domain ==========================================================================================
-    override public var properties: [String] { super.properties + ["toCart", "fromCart"] }
+    public override var properties: [String] { super.properties + ["toCart", "fromCart"] }
 }

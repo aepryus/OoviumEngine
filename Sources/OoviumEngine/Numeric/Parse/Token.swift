@@ -87,13 +87,6 @@ public class Token: Hashable {
         return token
     }() }
 
-    // This is used by Aether.onLoad to initialize all the chains - jjc 10/27/22
-    static func token(key: TokenKey) -> Token? {
-        if let token: Token = tokens[key] { return token }
-        guard key.code == .ch else { return nil }
-        return Token.characterToken(tag: key.tag)
-    }
-
     public static let period: DigitToken            = DigitToken(tag: ".")
     public static let zero: DigitToken              = DigitToken(tag: "0")
     public static let one: DigitToken               = DigitToken(tag: "1")
@@ -180,6 +173,11 @@ public class Token: Hashable {
     public static let flee: ConstantToken           = ConstantToken(tag: "flee")
     public static let wander: ConstantToken         = ConstantToken(tag: "wander")
     
+    static func token(key: TokenKey) -> Token? {
+        if let token: Token = tokens[key] { return token }
+        guard key.code == .ch else { return nil }
+        return Token.characterToken(tag: key.tag)
+    }
     static func start() {
         [   period, zero, one, two, three, four, five, six, seven, eight, nine, e, i, pi, yes, no,
             k, add, subtract, multiply, divide, dot, mod, power, equal, less, greater, notEqual,
@@ -195,24 +193,24 @@ public protocol Paramsable: Token { var params: Int { get set } }
 public protocol Defable: Token { var def: Def? { get set } }
 
 public class DigitToken: Token {
-    override public var code: TokenCode { .dg }
+    public override var code: TokenCode { .dg }
 }
 public class CharacterToken: Token {
-    override public var code: TokenCode { .ch }
+    public override var code: TokenCode { .ch }
 }
 public class SeparatorToken: Token {
-    override public var code: TokenCode { .sp }
+    public override var code: TokenCode { .sp }
 }
 public class UnaryToken: Token {
-    override public var code: TokenCode { .un }
+    public override var code: TokenCode { .un }
 }
 public class ConstantToken: Token, Defable {
 	public var def: Def? = nil
-    override public var code: TokenCode { .cn }
+    public override var code: TokenCode { .cn }
 }
 public class KToken: Token {
     public init() { super.init(tag: "k") }
-    override public var code: TokenCode { .va }
+    public override var code: TokenCode { .va }
 }
 public class OperatorToken: Token {
     public enum Level: Int { case add, multiply, power, compare, gate }
@@ -223,7 +221,7 @@ public class OperatorToken: Token {
 		self.level = level
 		super.init(tag: tag)
 	}
-    override public var code: TokenCode { .op }
+    public override var code: TokenCode { .op }
 	public override var display: String { alias ?? tag }
 }
 public class FunctionToken: Token, Defable, Paramsable {
@@ -233,7 +231,7 @@ public class FunctionToken: Token, Defable, Paramsable {
         self.params = params
         super.init(tag: tag)
     }
-    override public var code: TokenCode { .fn }
+    public override var code: TokenCode { .fn }
     public override var display: String { "\(tag)(" }
 }
 
@@ -268,12 +266,12 @@ public class VariableToken: TowerToken {
     public var value: String? { tower?.obje.display ?? "DELETED" }
     
 // Token ===========================================================================================
-    override public var code: TokenCode { .va }
+    public override var code: TokenCode { .va }
     public override var display: String { details ?? alias ?? value ?? tag }
 }
 public class ColumnToken: VariableToken {
 // Token ===========================================================================================
-    override public var code: TokenCode { .cl }
+    public override var code: TokenCode { .cl }
 }
 //public class PropertyToken: TowerToken {
 //    public var label: String?
@@ -281,7 +279,7 @@ public class ColumnToken: VariableToken {
 //        self.label = label
 //        super.init(tower: tower, tag: tag)
 //    }
-//    override public var code: Code { .pr }
+//    public override var code: Code { .pr }
 //    public override var display: String { label ?? tag }
 //}
 public class MechlikeToken: TowerToken, Paramsable {
@@ -294,6 +292,6 @@ public class MechlikeToken: TowerToken, Paramsable {
 	}
     
 // Token ===========================================================================================
-    override public var code: TokenCode { .ml }
+    public override var code: TokenCode { .ml }
 	public override var display: String { "\(alias ?? tag)(" }
 }

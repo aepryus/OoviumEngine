@@ -22,7 +22,7 @@ public enum EqualMode {
 	}
 }
 
-public final class Grid: Aexel {
+public class Grid: Aexel {
 	@objc public var typeID: Int = 0
 	@objc public var rows: Int = 0
 	@objc public var exposed: Bool = true
@@ -77,9 +77,9 @@ public final class Grid: Aexel {
             newCells.append(cell)
 		}
 //        aether.state.buildMemory()
-		columns.forEach {
-			if $0.calculated { $0.disseminate() }
-		}
+//		columns.forEach {
+//			if $0.calculated { $0.disseminate() }
+//		}
         return newCells
 	}
 	public func deleteRow(rowNo: Int) {
@@ -168,8 +168,8 @@ public final class Grid: Aexel {
 	}
 
 // Events ==========================================================================================
-	override public func onLoad() {}
-	override public func onCreate() {
+	public override func onLoad() {}
+	public override func onCreate() {
 		exposed = true
 	}
 
@@ -181,7 +181,7 @@ public final class Grid: Aexel {
 //        columns.forEach { towers.append($0.footerChain.tower) }
 		return Set<Tower>(towers)
 	}
-    public override var chains: [Chain] {
+    public var chains: [Chain] {
         var chains: [Chain] = []
         cells.forEach { chains.append($0.chain) }
         columns.forEach { chains.append($0.chain) }
@@ -194,10 +194,14 @@ public final class Grid: Aexel {
         if type == "column" { return columns.count + 1 }
         else /*if key == "cell"*/ { return aether.newNo(type: type) }
     }
+    override public func createCores() -> [Core] {
+        columns.flatMap({ $0.createCores() })
+        + cells.flatMap({ $0.createCores() })
+    }
 
 // Domain ==========================================================================================
-    override public var properties: [String] { super.properties + ["typeID", "rows", "exposed"] }
-	override public var children: [String] { super.children + ["columns", "cells"] }
+    public override var properties: [String] { super.properties + ["typeID", "rows", "exposed"] }
+	public override var children: [String] { super.children + ["columns", "cells"] }
 
 // Static ==========================================================================================
 	static func name(n: Int) -> String {

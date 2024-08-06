@@ -9,7 +9,7 @@
 import Acheron
 import Foundation
 
-public class Dimension: Aexon, TowerDelegate, VariableTokenDelegate {
+public class Dimension: Aexon, VariableTokenDelegate {
     @objc public var name: String = ""
     @objc public var chain: Chain!
     
@@ -37,9 +37,9 @@ public class Dimension: Aexon, TowerDelegate, VariableTokenDelegate {
     public override var code: String { "d" }
 
 // Domain ==========================================================================================
-    override public var properties: [String] { super.properties + ["name", "chain"] }
+    public override var properties: [String] { super.properties + ["name", "chain"] }
     
-// TowerDelegate ===================================================================================
+// Core ===================================================================================
     func renderDisplay(tower: Tower) -> String { name }
     
 // VariableTokenDelegate ===========================================================================

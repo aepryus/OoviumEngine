@@ -10,7 +10,7 @@ import Acheron
 import Aegean
 import Foundation
 
-public class Transform: Aexon, TowerDelegate, Web {
+public class Transform: Aexon, Web {
     @objc public var name: String = ""
     @objc public var dimensions: [Dimension] = []
     
@@ -70,5 +70,5 @@ public class Transform: Aexon, TowerDelegate, Web {
     public override func newNo(type: String) -> Int { dimensions.count + 1 }
 
 // Domain ==========================================================================================
-    override public var properties: [String] { super.properties + ["name", "dimensions"] }
+    public override var properties: [String] { super.properties + ["name", "dimensions"] }
 }

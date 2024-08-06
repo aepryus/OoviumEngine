@@ -10,7 +10,7 @@ import Aegean
 import Acheron
 import Foundation
 
-public final class Tail: Aexel, Mechlike, TowerDelegate, VariableTokenDelegate, Web {
+public class Tail: Aexel, Mechlike, VariableTokenDelegate, Web {
 	@objc public var whileChain: Chain!
 	@objc public var resultChain: Chain!
 	@objc public var vertebras: [Vertebra] = []	
@@ -23,25 +23,21 @@ public final class Tail: Aexel, Mechlike, TowerDelegate, VariableTokenDelegate, 
 //    public var whileToken: Token { whileTower.variableToken }
 //	public var resultToken: Token { resultTower.variableToken }
 	
-	public var web: Web { self }
-	public var recipe: UnsafeMutablePointer<Recipe>? = nil
-	public var morphIndex: Int? = nil
-
-    public var mechlikeToken: MechlikeToken { tower.mechlikeToken! }
-    public var variableToken: VariableToken { tower.variableToken }
+    public var mechlikeTokenKey: TokenKey { TokenKey(code: .ml, tag: name) }
+    public var variableTokenKey: TokenKey { TokenKey(code: .va, tag: name) }
 
 // Inits ===========================================================================================
 	public required init(at: V2, aether: Aether) {
 		super.init(at: at, aether: aether)
-		
+		        
+        whileChain = Chain(key: TokenKey(code: .va, tag: "\(key).while"))
+        resultChain = Chain(key: TokenKey(code: .va, tag: "\(key).result"))
+
 		name = "f"
 		_ = addVertebra()
 	}
 	public required init(attributes: [String:Any], parent: Domain?) {
 		super.init(attributes: attributes, parent: parent)
-	}
-	deinit {
-		AERecipeRelease(recipe)
 	}
 
 	public var morphKey: String {
@@ -77,25 +73,9 @@ public final class Tail: Aexel, Mechlike, TowerDelegate, VariableTokenDelegate, 
 //		remove(vertebra)
 //        mechlikeToken.params = vertebras.count
 	}
-	
-	private func compileRecipe() {
-//        let memory: UnsafeMutablePointer<Memory> = AEMemoryCreateClone(aether.state.memory)
-//		AEMemoryClear(memory)
-//		vertebras.forEach { AEMemorySetValue(memory, $0.tower.index, 0) }
-//		AERecipeRelease(recipe)
-//		recipe = Math.compile(tail: self, memory: memory);
-//		AERecipeSignature(recipe, AEMemoryIndexForName(memory, "\(key).result".toInt8()), UInt8(vertebras.count))
-//		
-//		for (i, input) in vertebras.enumerated() {
-//			let index = AEMemoryIndexForName(memory, "\(key).\(input.key)".toInt8())
-//			recipe!.pointee.params[i] = index
-//		}
-//		
-//		AERecipeSetMemory(recipe, memory)
-	}
-	
+		
 // Events ==========================================================================================
-	override public func onLoad() {
+	public override func onLoad() {
 //        whileChain.tower = aether.state.createTower(tag: "\(key).while", towerDelegate: whileChain)
 //        resultChain.tower = aether.state.createTower(tag: "\(key).result", towerDelegate: resultChain)
 		
@@ -123,59 +103,26 @@ public final class Tail: Aexel, Mechlike, TowerDelegate, VariableTokenDelegate, 
 			}
 			super.name = newName
 
-			if recipe != nil { AERecipeSetName(recipe, name.toInt8()) }
+//			if recipe != nil { AERecipeSetName(recipe, name.toInt8()) }
 		}
 		get { return super.name }
 	}
-	public var towers: Set<Tower> {
-        let towers = Set<Tower>()
-//		vertebras.forEach {
-//			towers.insert($0.tower)
-//			towers.insert($0.chain.tower)
-//		}
-		return towers/*.union([whileTower, resultTower, tower])*/
-	}
-    public override var chains: [Chain] { [whileChain, resultChain] + vertebras.map({ $0.chain }) }
+    override public func createCores() -> [Core] {
+        vertebras.flatMap({ $0.createCores() }) + [
+            ChainCore(chain: whileChain),
+            ChainCore(chain: resultChain),
+            TailCore(tail: self)
+        ]
+    }
 
 // Aexon ===========================================================================================
     public override var code: String { "Ta" }
     public override func newNo(type: String) -> Int { vertebras.count + 1 }
 
 // Domain ==========================================================================================
-	override public var properties: [String] { super.properties + ["whileChain", "resultChain"] }
-	override public var children: [String] { super.children + ["vertebras"] }
+	public override var properties: [String] { super.properties + ["whileChain", "resultChain"] }
+	public override var children: [String] { super.children + ["vertebras"] }
 	
-// TowerDelegate ===================================================================================
-	func buildUpstream(tower: Tower) {
-//        whileTower.attach(tower)
-//        vertebras.forEach { $0.chain.tower.attach(tower) }
-//		resultTower.attach(tower)
-	}
-	func renderDisplay(tower: Tower) -> String {
-		if tower.variableToken.status == .deleted { fatalError() }
-		if tower.variableToken.status == .invalid { return "INVALID" }
-		if tower.variableToken.status == .blocked { return "BLOCKED" }
-		return name
-	}
-	func taskCompleted(tower: Tower, askedBy: Tower) -> Bool {
-        return AEMemoryLoaded(tower.memory, AEMemoryIndexForName(tower.memory, variableToken.tag.toInt8())) != 0
-			|| (askedBy !== tower && askedBy.web === self)
-	}
-	func taskBlocked(tower: Tower) -> Bool {
-//		return resultChain.tower.variableToken.status != .ok
-        false
-	}
-	func resetTask(tower: Tower) {
-		recipe = nil
-        AEMemoryUnfix(tower.memory, AEMemoryIndexForName(tower.memory, variableToken.tag.toInt8()))
-	}
-	func executeTask(tower: Tower) {
-		compileRecipe()
-        AEMemorySet(tower.memory, AEMemoryIndexForName(tower.memory, variableToken.tag.toInt8()), AEObjRecipe(recipe))
-        AEMemoryFix(tower.memory, AEMemoryIndexForName(tower.memory, variableToken.tag.toInt8()))
-		tower.variableToken.def = RecipeDef.def
-	}
-    
 // VariableTokenDelegate ===========================================================================
     var alias: String? { "\(name)" }
 }

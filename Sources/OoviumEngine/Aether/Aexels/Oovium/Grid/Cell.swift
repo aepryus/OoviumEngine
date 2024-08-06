@@ -9,7 +9,7 @@
 import Acheron
 import Foundation
 
-public final class Cell: Aexon {
+public class Cell: Aexon {
 	@objc public var colNo: Int = 0
 	@objc public var rowNo: Int = 0
 	@objc public var chain: Chain!
@@ -30,14 +30,12 @@ public final class Cell: Aexon {
     public var grid: Grid { parent as! Grid }
     public var column: Column { grid.columns[colNo] }
     
-// Events ==========================================================================================
-	public override func onLoad() {
-//        chain.tower = grid.aether.state.createTower(tag: fullKey, towerDelegate: chain)
-	}
-    
 // Aexon ===========================================================================================
     override var code: String { "Ce" }
+    override func createCores() -> [Core] { [
+        ChainCore(chain: chain)
+    ] }
 
 // Domain ==========================================================================================
-	override public var properties: [String] { super.properties + ["colNo", "rowNo", "chain"] }
+	public override var properties: [String] { super.properties + ["colNo", "rowNo", "chain"] }
 }

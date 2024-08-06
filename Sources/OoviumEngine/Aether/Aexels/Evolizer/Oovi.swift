@@ -10,8 +10,8 @@ import Aegean
 import Acheron
 import Foundation
 
-public class Oovi: Aexel, TowerDelegate, Web {
-	@objc override public var name: String {
+public class Oovi: Aexel, Web {
+	@objc public override var name: String {
 		didSet{nameChanged()}
 	}
 	@objc public var color: OOColor = OOColor.white
@@ -137,7 +137,7 @@ public class Oovi: Aexel, TowerDelegate, Web {
 	}
 	
 // Events ==========================================================================================
-	override public func onLoad() {
+	public override func onLoad() {
 //        amorousChain.tower = aether.state.createTower(tag: "\(key).amorous", towerDelegate: amorousChain)
 //        stepChain.tower = aether.state.createTower(tag: "\(key).step", towerDelegate: stepChain)
 		
@@ -150,7 +150,7 @@ public class Oovi: Aexel, TowerDelegate, Web {
 // Aexel ===========================================================================================
     public override var code: String { "Ov" }
 //	public var towers: Set<Tower> { parameterTowers.union([amorousTower, stepTower]) }
-    public override var chains: [Chain] { [amorousChain, stepChain] }
+    public var chains: [Chain] { [amorousChain, stepChain] }
 
 // Domain ==========================================================================================
     override open var properties: [String] {

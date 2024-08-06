@@ -106,7 +106,7 @@ if CommandLine.arguments.count > 1 {
         if input == "exit" { break }
         
         let chain = Chain(natural: input)
-        let chainExe: ChainExe = chain.compile()
+        let chainExe: ChainCore = chain.compile()
         var vars: [String:Obje] = [:]
         vars["prev"] = previousObje
         if let answer = chainExe.calculate(vars: vars) {

@@ -9,7 +9,7 @@
 import Aegean
 import Foundation
 
-public final class RealDef: Def {
+public class RealDef: Def {
 	public static let def = RealDef()
 	
 	init() {

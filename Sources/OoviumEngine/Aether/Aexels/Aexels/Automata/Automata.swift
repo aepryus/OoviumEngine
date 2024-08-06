@@ -10,7 +10,7 @@ import Aegean
 import Acheron
 import Foundation
 
-public final class Automata: Aexel, TowerDelegate, Web {
+public class Automata: Aexel, Web {
 	@objc public var statesChain: Chain!
 	@objc public var resultChain: Chain!
 	
@@ -92,7 +92,7 @@ public final class Automata: Aexel, TowerDelegate, Web {
 	}
 	
 // Events ==========================================================================================
-	override public func onLoad() {
+	public override func onLoad() {
 //        statesChain.tower = aether.state.createTower(tag: "\(key).states", towerDelegate: statesChain)
 //        resultChain.tower = aether.state.createTower(tag: "\(key).result", towerDelegate: resultChain)
 		
@@ -108,12 +108,12 @@ public final class Automata: Aexel, TowerDelegate, Web {
 //        spaceTowers.forEach { towers.insert($0) }
 //        return towers.union([resultTower, statesTower])
 //    }
-    public override var chains: [Chain] { [statesChain, resultChain] }
+    public var chains: [Chain] { [statesChain, resultChain] }
     
 // Aexon ===========================================================================================
     public override var code: String { "Au" }
 
 // Domain ==========================================================================================
-    override public var properties: [String] { super.properties + ["statesChain", "resultChain"] }
-    override public var children: [String] { super.children + ["states"] }
+    public override var properties: [String] { super.properties + ["statesChain", "resultChain"] }
+    public override var children: [String] { super.children + ["states"] }
 }

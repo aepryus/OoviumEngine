@@ -19,7 +19,7 @@ responsible for compiling itself and uploading the LambdaTask to the tower.
 import Acheron
 import Foundation
 
-public final class Chain: NSObject, Packable {
+public class Chain: NSObject, Packable {
     public let key: TokenKey?
     public var tokenKeys: [TokenKey]
     
@@ -34,7 +34,7 @@ public final class Chain: NSObject, Packable {
 	}
     
 // Packable ========================================================================================
-	public init(_ chainString: String) {
+    public required init(_ chainString: String) {
         var chainString = chainString
         if let index = chainString.loc(of: "::") {
             key = TokenKey(code: .va, tag: chainString[..<index])
@@ -55,9 +55,9 @@ public final class Chain: NSObject, Packable {
 // Methods =========================================================================================
     func post(key: TokenKey) { tokenKeys.append(key) }
     func removeKey() { tokenKeys.removeLast() }
-    public func compile() -> ChainExe { ChainExe(chain: self) }
+    public func compile() -> ChainCore { ChainCore(chain: self) }
 
-// ChainExe ======================================================================================
+// ChainCore ======================================================================================
     public func replaceWith(natural: String) { tokenKeys = Chain.convert(natural: natural) }
     
 // Static ==========================================================================================

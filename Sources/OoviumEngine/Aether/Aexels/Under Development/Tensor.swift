@@ -18,5 +18,5 @@ public class Tensor: Aexel {
 // Aexel ===========================================================================================
     
 // Domain ==========================================================================================
-    override public var properties: [String] { super.properties + [] }
+    public override var properties: [String] { super.properties + [] }
 }

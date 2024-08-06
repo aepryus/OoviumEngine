@@ -19,7 +19,7 @@ import Acheron
 import Aegean
 import Foundation
 
-public class Graph: Aexel, TowerDelegate, Web {
+public class Graph: Aexel, Web {
     @objc public var fXChain: Chain!
     @objc public var fYChain: Chain!
     @objc public var fZChain: Chain!
@@ -137,7 +137,7 @@ public class Graph: Aexel, TowerDelegate, Web {
     }
 
 // Events ==========================================================================================
-    override public func onLoad() {
+    public override func onLoad() {
 //        uTower.web = web
 //        vTower.web = web
 //        tTower.web = web
@@ -181,12 +181,12 @@ public class Graph: Aexel, TowerDelegate, Web {
 //    ]) }
 
 // Domain ==========================================================================================
-    override public var properties: [String] { super.properties + [
+    public override var properties: [String] { super.properties + [
         "fXChain", "fYChain", "fZChain", "sUChain", "eUChain", "dUChain",
         "sVChain", "eVChain", "dVChain", "tChain", "coordinateNo"
     ] }
 
-// TowerDelegate ===================================================================================
+// Core ===================================================================================
     func buildUpstream(tower: Tower) {
 //        xResultTower.attach(xTower)
 //        yResultTower.attach(yTower)

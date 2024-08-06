@@ -9,7 +9,7 @@
 import Acheron
 import Foundation
 
-public final class State: Aexon {
+public class State: Aexon {
 //	@objc public var no: Int = 0
 	@objc public var color: Int = 0
 	
@@ -23,5 +23,5 @@ public final class State: Aexon {
 	}
 	
 // Domain ==========================================================================================
-	override public var properties: [String] { super.properties + ["no", "color"] }
+	public override var properties: [String] { super.properties + ["no", "color"] }
 }

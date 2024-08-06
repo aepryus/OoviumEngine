@@ -94,7 +94,7 @@ fileprivate class Ops {
     }
 }
 
-public final class Anain: NSObject, Packable, TowerDelegate {
+public class Anain: NSObject, Packable {
     public var tokens: [Token] = []
     public var tower: Tower!
     
@@ -118,7 +118,7 @@ public final class Anain: NSObject, Packable, TowerDelegate {
     }
 
 // Packable ========================================================================================
-    public init(_ tokensString: String) {
+    public required init(_ tokensString: String) {
         guard !tokensString.isEmpty else { return }
         loadedKeys = tokensString.components(separatedBy: ";")
         cursor = loadedKeys!.count
@@ -732,7 +732,7 @@ public final class Anain: NSObject, Packable, TowerDelegate {
 //        return lambda
     }
     
-// TowerDelegate ===================================================================================
+// Core ===================================================================================
     func buildUpstream(tower: Tower) {
 //        tokens.compactMap { $0 as? TowerToken }.forEach {
 //            let upstream: Tower = $0.tower
@@ -768,7 +768,7 @@ public final class Anain: NSObject, Packable, TowerDelegate {
 
 // CustomStringConvertible =========================================================================
     private var shouldDisplayTokens: Bool { editing || tower?.web != nil || tower?.variableToken.status != .ok || alwaysShow }
-    override public var description: String {
+    public override var description: String {
         if let expression: Expression = calculate()?.reduce() { return "\(expression)" }
         else { return "ERROR" }
 //        guard tokens.count > 0 else { return "" }

@@ -9,7 +9,7 @@
 import Acheron
 import Foundation
 
-public final class Field: Aexon {
+public class Field: Aexon {
 	@objc public dynamic var name: String = ""
 	@objc public dynamic var typeName: String = ""
 	@objc public dynamic var orderNo: Int = 0
@@ -17,7 +17,7 @@ public final class Field: Aexon {
 	var def: Def = RealDef.def
 
 // Domain ==========================================================================================
-	override public var properties: [String] {
+	public override var properties: [String] {
 		return super.properties + ["name", "typeName", "orderNo"]
 	}
 }

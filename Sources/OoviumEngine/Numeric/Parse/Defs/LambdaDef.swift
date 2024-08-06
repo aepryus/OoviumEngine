@@ -9,7 +9,7 @@
 import Aegean
 import Foundation
 
-public final class LambdaDef: Def {
+public class LambdaDef: Def {
 	public static let def = LambdaDef(name:"lambda", key:"lmb", properties:["f"], order: 6)
 	
 // Def =============================================================================================

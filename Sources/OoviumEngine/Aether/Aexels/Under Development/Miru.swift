@@ -13,11 +13,11 @@
 
 import Foundation
 
-public final class Miru: Aexel {
+public class Miru: Aexel {
 	@objc public var gridID: Int = 0
 
 // Aexel ===========================================================================================
 	
 // Domain ==========================================================================================
-	override public var properties: [String] { super.properties + ["gridID"] }
+	public override var properties: [String] { super.properties + ["gridID"] }
 }

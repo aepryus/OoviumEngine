@@ -14,15 +14,15 @@
 
 import Foundation
 
-public final class Type: Aexel {
+public class Type: Aexel {
 	@objc public dynamic var color: OOColor = .black
 	
 	@objc public dynamic var fields: [Field] = []
     
 // Aexon ===========================================================================================
-    override public func newNo(type: String) -> Int { fields.count + 1 }
+    public override func newNo(type: String) -> Int { fields.count + 1 }
 
 // Domain ==========================================================================================
-    override public var properties: [String] { super.properties + ["color"] }
-	override public var children: [String] { super.children + ["fields"] }
+    public override var properties: [String] { super.properties + ["color"] }
+	public override var children: [String] { super.children + ["fields"] }
 }

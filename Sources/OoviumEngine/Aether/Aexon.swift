@@ -37,7 +37,8 @@ public class Aexon: Domain {
     
 // Methods =========================================================================================
     func newNo(type: String) -> Int { aether.newNo(type: type) }
-
+    func createCores() -> [Core] { [] }
+    
 // Domain ==========================================================================================
     override open var properties: [String] { super.properties + ["no"] }
 }

@@ -18,6 +18,6 @@ public class System: Aexel {
     @objc public var variables: [SystemValue] = []
 
 // Domain ==========================================================================================
-//    override public var properties: [String] { super.properties + [] }
-    override public var children: [String] { super.children + ["constants", "variables"] }
+//    public override var properties: [String] { super.properties + [] }
+    public override var children: [String] { super.children + ["constants", "variables"] }
 }

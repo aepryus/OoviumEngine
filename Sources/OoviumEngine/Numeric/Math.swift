@@ -31,8 +31,8 @@ public extension Morph {
 @_cdecl("Oovium_objToString")
 public func objToString(_ obj: Obj) -> UnsafeMutablePointer<Int8> { Def.format(obj: obj).toInt8() }
 
-public final class Math {
-	private static var morphs = [String:UInt32]()
+public class Math {
+    private static var morphs: [String:UInt32] = [:]
 	
 	private static func registerMorph(key: String, morph: Morph) { morphs[key] = morph.rawValue }
 	private static func registerOperator(token: Token, defs: [Def], morph: Morph) {
@@ -47,89 +47,7 @@ public final class Math {
 		}
 		return morph
 	}
-	
-// Recipe ==========================================================================================
-	private static func program(tasks: inout [UnsafeMutablePointer<Task>], tail: Tower, memory: UnsafeMutablePointer<Memory>, additional: Set<Tower>, completed: Set<Tower>, n: Int) -> Int {
-		var n = n
-		var completed = completed
-		var progress: Bool
-		
-		var gates: [Tower] = []
-		
-		completed.formUnion(additional)
-		
-		repeat {
-			progress = false
-			
-			for tower in additional {
-				guard tower.attemptToFire(memory) else {continue}
-				
-				progress = true
-				tasks.append(AETaskCreateClone(tower.task!))
-				n += 1
-				
-				if tower.gateTo != nil {gates.append(tower)}
-			}
-			
-			for gate in gates {
-				let thenTowers: Set<Tower> = tail.stronglyLinked(override: gate.thenTo).subtracting(completed)
-				let elseTowers: Set<Tower> = tail.stronglyLinked(override: gate.elseTo).subtracting(completed)
-				
-				guard thenTowers != elseTowers else { continue }
-				
-				progress = true
-				
-				let ifGotoIndex = n
-				tasks.append(AETaskCreateIfGoto(0, 0))
-				n += 1
-				
-				n = program(tasks: &tasks, tail: tail, memory: AEMemoryCreateClone(memory), additional: thenTowers, completed: completed, n: n)
-                var ifGotoN = n+1
-				
-				let gotoIndex = n
-				tasks.append(AETaskCreateGoto(0))
-				n += 1
-				let oldN = n
-				n = program(tasks: &tasks, tail: tail, memory: AEMemoryCreateClone(memory), additional: elseTowers, completed: completed, n: n)
-				if oldN != n {
-					AETaskRelease(tasks[gotoIndex])
-					tasks[gotoIndex] = AETaskCreateGoto(UInt8(n))
-					AETaskSetLabels(tasks[gotoIndex], "".toInt8(), "GOTO \(n)".toInt8())
-				} else {
-					tasks.removeLast()
-					n -= 1
-                    ifGotoN -= 1
-				}
-                
-                AETaskRelease(tasks[ifGotoIndex])
-                tasks[ifGotoIndex] = AETaskCreateIfGoto(AEMemoryIndexForName(memory, gate.name.toInt8()), UInt8(ifGotoN))
-                AETaskSetLabels(tasks[ifGotoIndex], "".toInt8(), "IF \(gate.name) == FALSE GOTO \(ifGotoN)".toInt8())
-				
-				memory.pointee.slots[Int(gate.gateTo!.index)].loaded = 1
-				tasks.append(AETaskCreateClone(gate.gateTo!.task!))
-				n += 1
-			}
-			gates.removeAll()
-			
-		} while (progress)
-		
-		return n
-	}
-	public static func compile(result: Tower, memory: UnsafeMutablePointer<Memory>) -> UnsafeMutablePointer<Recipe> {
-		var tasks = [UnsafeMutablePointer<Task>]()
-		
-		_ = program(tasks: &tasks, tail: result, memory: memory, additional: result.stronglyLinked(), completed: Set<Tower>(), n: 0)
-		
-		let recipe = AERecipeCreate(tasks.count)!
-		var i = 0
-		for task in tasks {
-			recipe.pointee.tasks[i] = task
-			i += 1
-		}
-		
-		return recipe
-	}
-	
+
 // Start ===========================================================================================
 	public static func start() {
 		startAegean()

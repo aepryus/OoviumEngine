@@ -10,25 +10,6 @@ import Aegean
 import Acheron
 import Foundation
 
-protocol TowerDelegate: AnyObject {
-	func buildUpstream(tower: Tower)
-	func renderDisplay(tower: Tower) -> String
-	func renderTask(tower: Tower) -> UnsafeMutablePointer<Task>?
-	func taskCompleted(tower: Tower, askedBy: Tower) -> Bool
-	func taskBlocked(tower: Tower) -> Bool
-	func resetTask(tower: Tower)
-	func executeTask(tower: Tower)
-}
-extension TowerDelegate {
-	func buildUpstream(tower: Tower) {}
-	func renderDisplay(tower: Tower) -> String { "---" }
-    func renderTask(tower: Tower) -> UnsafeMutablePointer<Task>? { nil }
-	func taskCompleted(tower: Tower, askedBy: Tower) -> Bool { true }
-	func taskBlocked(tower: Tower) -> Bool { false }
-	func resetTask(tower: Tower) {}
-	func executeTask(tower: Tower) {}
-}
-
 public protocol TowerListener: AnyObject {
 	func onTriggered()
 }
@@ -44,10 +25,10 @@ class Funnel {
 	}
 }
 
-public final class Tower: Hashable, CustomStringConvertible {
+public class Tower: Hashable, CustomStringConvertible {
 //	private unowned let aether: Aether
     private unowned let aetherExe: AetherExe
-    weak var delegate: TowerDelegate?
+    let core: Core?
 
     private let _variableToken: VariableToken
     public lazy var variableToken: VariableToken = { _variableToken.tower = self; return _variableToken }()
@@ -82,10 +63,10 @@ public final class Tower: Hashable, CustomStringConvertible {
 	var name: String { variableToken.tag }
     var memory: UnsafeMutablePointer<Memory> { aetherExe.memory }
     
-    init(aetherExe: AetherExe, token: VariableToken, delegate: TowerDelegate) {
+    init(aetherExe: AetherExe, token: VariableToken, core: Core) {
 		self.aetherExe = aetherExe
         self._variableToken = token
-		self.delegate = delegate
+		self.core = core
 	}
 	deinit { AETaskRelease(task) }
 
@@ -95,7 +76,7 @@ public final class Tower: Hashable, CustomStringConvertible {
     public var value: Double { AEMemoryValue(aetherExe.memory, index) }
     public var obje: Obje { Obje(memory: aetherExe.memory, index: index) }
 	
-	func taskCompleted(askedBy: Tower) -> Bool { delegate?.taskCompleted(tower: self, askedBy: askedBy) ?? true }
+	func taskCompleted(askedBy: Tower) -> Bool { core?.taskCompleted(tower: self, askedBy: askedBy) ?? true }
 
 // Stream ==========================================================================================
 	public func attach(_ tower: Tower) {
@@ -181,21 +162,21 @@ public final class Tower: Hashable, CustomStringConvertible {
 	}
 	
 // Calculate =======================================================================================
-	public func buildStream() { delegate?.buildUpstream(tower: self) }
+	public func buildStream() { core?.buildUpstream(tower: self) }
 	public func buildTask() {
-        guard let delegate, variableToken.status != .deleted else { return }
+        guard let core, variableToken.status != .deleted else { return }
 		AETaskRelease(task)
-        task = delegate.renderTask(tower: self)
+        task = core.renderTask(tower: self)
 	}
     var calced: Bool { variableToken.code != .va || AEMemoryLoaded(aetherExe.memory, index) != 0 }
 	func attemptToCalculate() -> Bool {
-        guard let delegate else { return false }
+        guard let core else { return false }
 		guard !taskCompleted(askedBy: self),
 			  !upstream.contains(where: { !$0.taskCompleted(askedBy: self) })
 			else { return false }
 
 		if variableToken.status == .ok || variableToken.status == .blocked {
-			variableToken.status = delegate.taskBlocked(tower: self) ? .blocked : .ok
+			variableToken.status = core.taskBlocked(tower: self) ? .blocked : .ok
             mechlikeToken?.status = variableToken.status
 		}
 
@@ -205,12 +186,12 @@ public final class Tower: Hashable, CustomStringConvertible {
 		// =========================================================
 
 		if (web != nil && variableToken.def !== LambdaDef.def) || variableToken.status != .ok {
-			variableToken.details = delegate.renderDisplay(tower: self)
+			variableToken.details = core.renderDisplay(tower: self)
             AEMemorySetValue(aetherExe.memory, index, 0)
 			return true
         } else { variableToken.details = nil }
 		
-		delegate.executeTask(tower: self)
+        core.executeTask(tower: self)
 
 		return true
 	}
@@ -242,7 +223,7 @@ public final class Tower: Hashable, CustomStringConvertible {
         return result
     }
     public static func evaluate(towers: Set<Tower>) {
-        towers.forEach { $0.delegate?.resetTask(tower: $0) }
+        towers.forEach { $0.core?.resetTask(tower: $0) }
         var progress: Bool
         repeat {
             progress = false

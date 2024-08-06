@@ -9,7 +9,7 @@
 import Aegean
 import Foundation
 
-public final class ComplexDef: Def {
+public class ComplexDef: Def {
 	public static let def = ComplexDef()
 	
 	init() {

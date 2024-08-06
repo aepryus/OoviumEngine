@@ -9,7 +9,7 @@
 import Aegean
 import Foundation
 
-public final class RecipeDef: Def {
+public class RecipeDef: Def {
 	public static let def = RecipeDef(name:"recipe", key:"rcp", properties:["f"], order: 4)
 	
 // Def =============================================================================================

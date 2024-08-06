@@ -13,5 +13,5 @@ public class SystemValue: Aexon {
     @objc public var name: String = ""
     
 // Domain ==========================================================================================
-    override public var properties: [String] { super.properties + ["name"] }
+    public override var properties: [String] { super.properties + ["name"] }
 }

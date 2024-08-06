@@ -21,7 +21,7 @@ public class Analytic: Aexel, VariableTokenDelegate {
     public var token: VariableToken { anain.tower.variableToken }
 
 // Events ==========================================================================================
-    override public func onLoad() {
+    public override func onLoad() {
 //        anain.tower = aether.state.createTower(tag: key, towerDelegate: anain, tokenDelegate: self)
     }
     
@@ -30,7 +30,7 @@ public class Analytic: Aexel, VariableTokenDelegate {
     public var towers: Set<Tower> { Set<Tower>([]) }
     
 // Domain ==========================================================================================
-    override public var properties: [String] { super.properties + ["label"] }
+    public override var properties: [String] { super.properties + ["label"] }
     
 // VariableTokenDelegate ===========================================================================
     public var alias: String? { label.count > 0 ? label : nil }

@@ -9,7 +9,7 @@
 import Acheron
 import Foundation
 
-public final class Edge: Aexon {
+public class Edge: Aexon {
 	@objc public var textNo: Int = 0
     
     init(parent: Text, child: Text) {

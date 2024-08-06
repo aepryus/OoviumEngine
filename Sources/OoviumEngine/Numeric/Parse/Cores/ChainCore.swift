@@ -1,5 +1,5 @@
 //
-//  ChainExe.swift
+//  ChainCore.swift
 //  OoviumEngine
 //
 //  Created by Joe Charlier on 7/10/24.
@@ -9,23 +9,12 @@
 import Aegean
 import Foundation
 
-public class ChainExe: TowerDelegate, CustomStringConvertible {
+public class ChainCore: Core, CustomStringConvertible {
     let chain: Chain
     
     public var tokens: [Token] = []
-    public var tower: Tower?
 
     init(chain: Chain) { self.chain = chain }
-    
-// Computed ========================================================================================
-    var key: TokenKey? { chain.key }
-    
-// Methods =========================================================================================
-    func buildTokens(aetherExe: AetherExe?) {
-        tokens = chain.tokenKeys.map({ (key: TokenKey) in
-            aetherExe?.token(key: key) ?? Token.token(key: key) ?? .zero
-        })
-    }
     
 // Private =========================================================================================
     private var currentParam: Int {
@@ -221,7 +210,7 @@ public class ChainExe: TowerDelegate, CustomStringConvertible {
             let token = aetherExe.variableToken(tag: $0)
             token.def = Def.def(obj: obj)
         }
-        buildTokens(aetherExe: aetherExe)
+        self.aetherExe = aetherExe
         
         if let lambda: UnsafeMutablePointer<Lambda> = Parser.compile(tokenKey: chain.key, tokens: tokens, memory: memory).0 {
             return AELambdaExecute(lambda, memory)
@@ -245,14 +234,18 @@ public class ChainExe: TowerDelegate, CustomStringConvertible {
         }
     }
 
-// TowerDelegate ===================================================================================
-    func buildUpstream(tower: Tower) {
-        tokens.compactMap { $0 as? TowerToken }.forEach {
-            let upstream: Tower = $0.tower
-            upstream.attach(tower)
+// Core ===================================================================================
+    override var key: TokenKey { chain.key! }
+    override var aetherExe: AetherExe! {
+        didSet {
+            tokens = chain.tokenKeys.map({ (key: TokenKey) in
+                aetherExe?.token(key: key) ?? Token.token(key: key) ?? .zero
+            })
         }
     }
-    func renderDisplay(tower: Tower) -> String {
+    
+    override func buildUpstream(tower: Tower) { tokens.compactMap { $0 as? TowerToken }.forEach { $0.tower.attach(tower) } }
+    override func renderDisplay(tower: Tower) -> String {
         if tower.variableToken.status == .deleted { fatalError() }
         if tower.variableToken.status == .invalid { return "INVALID" }
         if tower.variableToken.status == .blocked { return "BLOCKED" }
@@ -260,22 +253,22 @@ public class ChainExe: TowerDelegate, CustomStringConvertible {
         if let label = tower.variableToken.alias { return label }
         return description
     }
-    func renderTask(tower: Tower) -> UnsafeMutablePointer<Task>? {
+    override func renderTask(tower: Tower) -> UnsafeMutablePointer<Task>? {
         let lambda: UnsafeMutablePointer<Lambda>? = compile(name: tower.name, tower: tower)
         let task: UnsafeMutablePointer<Task> = lambda != nil ? AETaskCreateLambda(lambda) : AETaskCreateNull()
         AETaskSetLabels(task, tower.variableToken.tag.toInt8(), "\(tower.variableToken.alias ?? tower.variableToken.tag) = \(tokensDisplay)".toInt8())
         return task
     }
-    func taskCompleted(tower: Tower, askedBy: Tower) -> Bool {
+    override func taskCompleted(tower: Tower, askedBy: Tower) -> Bool {
         AEMemoryLoaded(tower.memory, tower.index) != 0
     }
-    func taskBlocked(tower: Tower) -> Bool {
+    override func taskBlocked(tower: Tower) -> Bool {
         tokens.compactMap({ $0 as? TowerToken }).contains { $0.status != .ok }
     }
-    func resetTask(tower: Tower) {
+    override func resetTask(tower: Tower) {
         AEMemoryUnfix(tower.memory, tower.index)
     }
-    func executeTask(tower: Tower) {
+    override func executeTask(tower: Tower) {
         AETaskExecute(tower.task, tower.memory)
         AEMemoryFix(tower.memory, tower.index)
         tower.variableToken.def = tower.obje.def

@@ -41,7 +41,7 @@ class MathTests: XCTestCase {
 		chain.post(key: Token.divide.key)
 		chain.post(key: Token.one.key)
 		chain.post(key: Token.nine.key)
-        var chainExe: ChainExe = chain.compile()
+        var chainExe: ChainCore = chain.compile()
 		XCTAssertEqual(chainExe.calculate() ?? zero, AEObjReal(47))
 
 		chain = Chain(natural: "893/19")
@@ -188,7 +188,7 @@ class MathTests: XCTestCase {
                       "iden" : "FA5AED43-38D0-4B9F-8C93-9A37778FE1EC"
                     }
                   ],
-                  "resultChain" : "Me1::ml:Ta1;va:Me1.i1;sp:,;dg:2;sp:)",
+                  "resultChain" : "Me1.result::ml:Ta1;va:Me1.i1;sp:,;dg:2;sp:)",
                   "x" : 1676.765625,
                   "y" : 1263.5390625
                 },
@@ -218,7 +218,7 @@ class MathTests: XCTestCase {
                   "iden" : "B21944AB-6A7C-4CA4-8CE2-54981FAF557A",
                   "name" : "iTSF",
                   "x" : 1685.8359375,
-                  "resultChain" : "Ta1::va:Gt1",
+                  "resultChain" : "Ta1.result::va:Gt1",
                   "type" : "tail"
                 },
                 {

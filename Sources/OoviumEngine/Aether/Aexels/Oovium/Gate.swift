@@ -10,7 +10,7 @@ import Aegean
 import Acheron
 import Foundation
 
-public final class Gate: Aexel, TowerDelegate {
+public class Gate: Aexel {
 	@objc public var ifChain: Chain!
 	@objc public var thenChain: Chain!
 	@objc public var elseChain: Chain!
@@ -39,7 +39,7 @@ public final class Gate: Aexel, TowerDelegate {
 	}
 
 // Events ==========================================================================================
-	override public func onLoaded() {
+	public override func onLoaded() {
 //        ifChain.tower = aether.state.createTower(tag: "\(key).if", towerDelegate: ifChain)
 //        thenChain.tower = aether.state.createTower(tag: "\(key).then", towerDelegate: thenChain)
 //        elseChain.tower = aether.state.createTower(tag: "\(key).else", towerDelegate: elseChain)
@@ -54,45 +54,21 @@ public final class Gate: Aexel, TowerDelegate {
 //		thenTower.funnel = funnel
 //		elseTower.funnel = funnel
 	}
-	override public func onAdded() {
+	public override func onAdded() {
 //		resultTower.buildStream()
 	}
 	
 // Aexel ===========================================================================================
-    public override var code: String { "Gt" }
-//	public var towers: Set<Tower> { Set<Tower>([ifTower, thenTower, elseTower, resultTower]) }
-    public override var chains: [Chain] { [ifChain, thenChain, elseChain] }
-	
-// Domain ==========================================================================================
-    override public var properties: [String] { super.properties + ["ifChain", "thenChain", "elseChain"] }
+    public override func createCores() -> [Core] { [
+        ChainCore(chain: ifChain),
+        ChainCore(chain: elseChain),
+        ChainCore(chain: thenChain),
+        GateCore(gate: self)
+    ] }
 
-// TowerDelegate ===================================================================================
-	func buildUpstream(tower: Tower) {
-//		ifTower.attach(tower)
-//		thenTower.attach(tower)
-//		elseTower.attach(tower)
-	}
-	func renderDisplay(tower: Tower) -> String { "if" }
-    func renderTask(tower: Tower) -> UnsafeMutablePointer<Task>? {
-//		let resultName = resultTower.variableToken.tag
-//		let task: UnsafeMutablePointer<Task> = AETaskCreateFork(ifTower.index, thenTower.index, elseTower.index, resultTower.index)
-//		AETaskSetLabels(task, resultName.toInt8(), "\(resultName) = ~".toInt8())
-//        return task
-        nil
-	}
-	func taskCompleted(tower: Tower, askedBy: Tower) -> Bool {
-		AEMemoryLoaded(tower.memory, tower.index) != 0
-	}
-	func taskBlocked(tower: Tower) -> Bool {
-//		[ifTower,thenTower,elseTower].contains {$0.variableToken.status != .ok}
-        false
-	}
-	func resetTask(tower: Tower) {
-		AEMemoryUnfix(tower.memory, tower.index)
-	}
-	func executeTask(tower: Tower) {
-		AETaskExecute(tower.task, tower.memory)
-		AEMemoryFix(tower.memory, tower.index)
-//		tower.variableToken.label = Oovium.format(value: tower.value)
-	}
+// Aexon ===========================================================================================
+    public override var code: String { "Gt" }
+
+// Domain ==========================================================================================
+    public override var properties: [String] { super.properties + ["ifChain", "thenChain", "elseChain"] }
 }

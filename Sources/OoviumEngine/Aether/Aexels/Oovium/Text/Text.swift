@@ -9,7 +9,7 @@
 import Acheron
 import Foundation
 
-public final class Text: Aexel, NSCopying {
+public class Text: Aexel, NSCopying {
 	@objc public var color: OOColor = .orange
 	@objc public var shape: OOShape = .ellipse
 	
@@ -29,13 +29,13 @@ public final class Text: Aexel, NSCopying {
 	}
 	
 // Events ==========================================================================================
-	override public func onDelete() {
+	public override func onDelete() {
         outputEdges.forEach { if let text = $0.text { text.unlinkTo(self) } }
 	}
 
 // Domain ==========================================================================================
-	override public var properties: [String] { super.properties + ["color", "shape"] }
-	override public var children: [String] { super.children + ["edges"] }
+	public override var properties: [String] { super.properties + ["color", "shape"] }
+	public override var children: [String] { super.children + ["edges"] }
 	
 // NSCopying =======================================================================================
 	public func copy(with zone: NSZone? = nil) -> Any {

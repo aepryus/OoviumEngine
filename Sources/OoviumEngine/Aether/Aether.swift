@@ -10,7 +10,7 @@ import Aegean
 import Acheron
 import Foundation
 
-@objc public final class Aether: Domain {
+@objc public class Aether: Domain {
 	@objc dynamic public var name: String = ""
 	@objc dynamic public var width: Double = 0
 	@objc dynamic public var height: Double = 0
@@ -82,16 +82,23 @@ import Foundation
 	public func functionExists(name: String) -> Bool { aexels.first { $0 is Mechlike && $0.name == name } != nil }
 
 // Events ==========================================================================================
-//    override public func onLoad() {
+//    public override func onLoad() {
 //        state = AetherExe(aether: self)
 //        state.evaluate()
 //        print(unload().toJSON())
 //    }
 	
 // Domain ==========================================================================================
-    override public var properties: [String] { super.properties + ["name", "width", "height", "xOffset", "yOffset", "readOnly", "version"] }
-    override public var children: [String] { super.children + ["aexels"] }
+    public override var properties: [String] { super.properties + ["name", "width", "height", "xOffset", "yOffset", "readOnly", "version"] }
+    public override var children: [String] { super.children + ["aexels"] }
 
 // Static ==========================================================================================
+    static func ensureUniquiness(name: String, names: [String]) -> String {
+        var newName: String = name
+        var i: Int = 2
+        while names.contains(newName) { newName = "\(name)\(i)"; i += 1 }
+        return newName
+    }
+    
 	public static var engineVersion: String { "3.1" }
 }
