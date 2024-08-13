@@ -64,7 +64,6 @@ class CronCore: Core {
     }
     
 // Core ===================================================================================
-    
     override func aetherExeCompleted(_ aetherExe: AetherExe) {
         startTower = aetherExe.tower(key: cron.startChain.key!)
         stopTower = aetherExe.tower(key: cron.stopChain.key!)
@@ -91,5 +90,4 @@ class CronCore: Core {
         AEMemoryFix(tower.memory, tower.index)
 //        tower.variableToken.value = tower.obje.display
     }
-
 }

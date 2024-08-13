@@ -97,13 +97,9 @@ public class ChainCore: Core, CustomStringConvertible {
         return p != 0
     }
     private func braketToken() -> Token? {
-        if lastIsOperator || isNewSection {
-            return .bra
-        } else if isWithinBracket() {
-            return .ket
-        } else {
-            return nil
-        }
+        if lastIsOperator || isNewSection { return .bra }
+        else if isWithinBracket() { return .ket }
+        else { return nil }
     }
     
 // Public ==========================================================================================

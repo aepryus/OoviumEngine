@@ -199,13 +199,6 @@ class Parser {
         var i: Int = i
         var token: Token = tokens[i]
 
-        // Fix for imported unary Tokens ========
-//        if tokens[i] === Token.subtract {
-//            tokens[i] = Token.neg
-//            token = Token.neg
-//        }
-        // ======================================
-
         var unary: UnaryToken?
         if let ut = token as? UnaryToken {
             unary = ut

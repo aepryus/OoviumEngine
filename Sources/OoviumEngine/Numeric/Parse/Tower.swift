@@ -44,16 +44,6 @@ public class Tower: Hashable, CustomStringConvertible {
 
 	public weak var listener: TowerListener? = nil
 
-//	weak var tailForWeb: Fog? = nil
-//	weak var _web: Fog? = nil
-//	public var web: Fog? {
-//		set { _web = newValue }
-//		get {
-//            guard mechlikeToken == nil else { return nil }
-//			if let web = _web { return web }
-//            return upstream.first(where: { $0.web != nil })?.web
-//		}
-//	}
     public var fog: TokenKey? { core?.fog }
     public var isFogFirewall: Bool { core?.fog != nil }
 

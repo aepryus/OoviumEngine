@@ -34,20 +34,6 @@ class TailCore: Core {
         tasks.append(AETaskCreateIfGoto(0, 0))
         n += 1
         
-//        for vertebra in tail.vertebras {
-//            additional = vertebra.chain.tower.stronglyLinked()
-//            n = program(tasks: &tasks, tail: vertebra.chain.tower, memory: memory, additional: additional, completed: completed, n: n)
-//            completed.formUnion(additional)
-//        }
-//        
-//        for vertebra in tail.vertebras {
-//            tasks.append(AETaskCreateAssign(
-//                AEMemoryIndexForName(memory, vertebra.chain.tower.name.toInt8()),
-//                AEMemoryIndexForName(memory, vertebra.tower.name.toInt8())
-//            ));
-//            AETaskSetLabels(tasks[n], "".toInt8(), "\(vertebra.tower.name) = \(vertebra.chain.tower.name)".toInt8())
-//            n += 1
-//        }
         for vertebra in tail.vertebras {
             let vertebraTower: Tower = aetherExe.tower(key: vertebra.chain.key!)!
             additional = vertebraTower.stronglyLinked()
@@ -55,14 +41,6 @@ class TailCore: Core {
             completed.formUnion(additional)
         }
         
-//        for vertebra in tail.vertebras {
-//            tasks.append(AETaskCreateAssign(
-//                AEMemoryIndexForName(memory, vertebra.chain.tower.name.toInt8()),
-//                AEMemoryIndexForName(memory, vertebra.tower.name.toInt8())
-//            ));
-//            AETaskSetLabels(tasks[n], "".toInt8(), "\(vertebra.tower.name) = \(vertebra.chain.tower.name)".toInt8())
-//            n += 1
-//        }
         for vertebra in tail.vertebras {
             tasks.append(AETaskCreateAssign(
                 AEMemoryIndexForName(memory, aetherExe.tower(key: vertebra.chain.key!)!.name.toInt8()),

@@ -9,18 +9,6 @@
 import Aegean
 import Foundation
 
-//protocol Core: AnyObject {
-//    func buildUpstream(tower: Tower)
-//    func renderDisplay(tower: Tower) -> String
-//    func renderTask(tower: Tower) -> UnsafeMutablePointer<Task>?
-//    func taskCompleted(tower: Tower, askedBy: Tower) -> Bool
-//    func taskBlocked(tower: Tower) -> Bool
-//    func resetTask(tower: Tower)
-//    func executeTask(tower: Tower)
-//}
-//extension Core {
-//}
-
 public class Core: Hashable {
     var key: TokenKey { fatalError() }
 
