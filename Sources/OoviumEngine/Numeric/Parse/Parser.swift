@@ -237,7 +237,7 @@ class Parser {
         } else if token == .bra {
             i += 1
             let tokens: [Token] = try parseChain(i: i)
-            let lambda: UnsafeMutablePointer<Lambda> = Parser.compile(tokens: tokens, memory: memory).0!
+            guard let lambda: UnsafeMutablePointer<Lambda> = Parser.compile(tokens: tokens, memory: memory).0 else { throw ParseError.general }
             try addConstant(Obje(AEObjLambda(lambda)))
             return tokens.count + 2
         } else if let token = token as? VariableToken {

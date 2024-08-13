@@ -287,10 +287,7 @@ public class ChainCore: Core, CustomStringConvertible {
     public var description: String {
         guard tokens.count > 0 else { return "" }
         guard shouldDisplayTokens else { return tower?.obje.display ?? "" }
-        
-        var sb = String()
-        tokens.forEach { sb.append("\($0.display)") }
-        return sb
+        return tokens.map({ $0.display }).joined()
     }
 
 }
