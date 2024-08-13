@@ -19,7 +19,7 @@ import Acheron
 import Aegean
 import Foundation
 
-public class Graph: Aexel, Web {
+public class Graph: Aexel {
     @objc public var fXChain: Chain!
     @objc public var fYChain: Chain!
     @objc public var fZChain: Chain!
@@ -89,8 +89,6 @@ public class Graph: Aexel, Web {
 //    var vertices: [Vertex] = []
 //    var tiles: [Tile] = []
     
-    var web: Web { self }
-
     public var xRecipe: UnsafeMutablePointer<Recipe>? = nil
     public var yRecipe: UnsafeMutablePointer<Recipe>? = nil
     public var zRecipe: UnsafeMutablePointer<Recipe>? = nil

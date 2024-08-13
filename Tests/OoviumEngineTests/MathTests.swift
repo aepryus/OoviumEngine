@@ -287,361 +287,357 @@ class MathTests: XCTestCase {
         let aether = Aether(json: json)
         let aetherExe: AetherExe = aether.compile()
         let key: TokenKey = TokenKey(code: .va, tag: "Ob4")
-        XCTAssertEqual(aetherExe.tower(key: key)?.value, 47)
+        XCTAssertEqual(aetherExe.tower(key: key)?.value, 19)
 	}
-//    func test_AetherJSONCatSkinISF() {
-//        let json = """
-//            {
-//              "type" : "aether",
-//              "xOffset" : 1000,
-//              "readOnly" : false,
-//              "width" : 1194,
-//              "name" : "aether41",
-//              "version" : "3.0",
-//              "modified" : "2022-08-30T05:19:54+0900",
-//              "height" : 834,
-//              "yOffset" : 706,
-//              "aexels" : [
-//                {
-//                  "resultChain" : "ml:Me2;va:Me1.i1;sp:,;dg:2;sp:)",
-//                  "type" : "mech",
-//                  "modified" : "2022-08-29T16:58:02+0900",
-//                  "x" : 1689.5,
-//                  "name" : "ISF",
-//                  "y" : 901,
-//                  "inputs" : [
-//                    {
-//                      "modified" : "2022-08-29T16:58:02+0900",
-//                      "type" : "input",
-//                      "name" : "n",
-//                      "no" : 1,
-//                      "iden" : "CE64A376-5305-4C0A-B1CA-15A19449050D"
-//                    }
-//                  ],
-//                  "iden" : "8B6ECADC-CE92-435B-AA21-C11EA448E5FA",
-//                  "no" : 1
-//                },
-//                {
-//                  "y" : 799,
-//                  "label" : "",
-//                  "iden" : "7D02A9FA-43BF-44F5-9AE4-64646FCF2FAB",
-//                  "no" : 4,
-//                  "type" : "object",
-//                  "name" : "Ob_4",
-//                  "x" : 1996,
-//                  "chain" : "dg:8;dg:9;dg:3"
-//                },
-//                {
-//                  "iden" : "51083427-34B2-45E0-9999-23B590DE2586",
-//                  "label" : "",
-//                  "chain" : "ml:Me1;va:Ob4;sp:)",
-//                  "type" : "object",
-//                  "y" : 884,
-//                  "no" : 5,
-//                  "name" : "Ob_5",
-//                  "x" : 1938
-//                },
-//                {
-//                  "no" : 2,
-//                  "type" : "mech",
-//                  "iden" : "A6C099FD-DFBD-483E-AD4E-35750917DE53",
-//                  "name" : "iISF",
-//                  "modified" : "2022-08-29T16:58:50+0900",
-//                  "y" : 976.5,
-//                  "resultChain" : "va:Gt1",
-//                  "x" : 1446,
-//                  "inputs" : [
-//                    {
-//                      "name" : "n",
-//                      "no" : 1,
-//                      "modified" : "2022-08-29T16:58:40+0900",
-//                      "type" : "input",
-//                      "iden" : "0F60515D-64B7-4CD9-9C54-927701E2EC27"
-//                    },
-//                    {
-//                      "iden" : "A75067BE-ACD9-42A7-B6ED-56EFFF23093A",
-//                      "name" : "p",
-//                      "no" : 2,
-//                      "modified" : "2022-08-29T16:58:50+0900",
-//                      "type" : "input"
-//                    }
-//                  ]
-//                },
-//                {
-//                  "iden" : "BC02BEEA-B491-450D-84E9-DD3AC2FE7438",
-//                  "x" : 1315.5,
-//                  "name" : "Ob_6",
-//                  "y" : 990,
-//                  "chain" : "va:Me2.i1;op:÷;va:Me2.i2",
-//                  "no" : 6,
-//                  "label" : "",
-//                  "type" : "object"
-//                },
-//                {
-//                  "label" : "",
-//                  "x" : 1178.5,
-//                  "no" : 7,
-//                  "y" : 1043.5,
-//                  "chain" : "fn:floor;va:Ob6;sp:)",
-//                  "iden" : "2A9115BA-3320-49A4-B7B5-9FC8953E89B1",
-//                  "name" : "Ob_7",
-//                  "type" : "object"
-//                },
-//                {
-//                  "y" : 1136,
-//                  "thenChain" : "va:Me2.i2",
-//                  "name" : "",
-//                  "elseChain" : "va:Gt2",
-//                  "no" : 1,
-//                  "ifChain" : "va:Ob6;op:=;va:Ob7",
-//                  "type" : "gate",
-//                  "iden" : "E84E558B-7EEE-411F-93F4-395FA77D4858",
-//                  "x" : 1094
-//                },
-//                {
-//                  "type" : "gate",
-//                  "y" : 1219,
-//                  "elseChain" : "ml:Me2;va:Me2.i1;sp:,;va:Me2.i2;op:+;dg:1;sp:)",
-//                  "thenChain" : "va:Me2.i1",
-//                  "name" : "",
-//                  "no" : 2,
-//                  "ifChain" : "va:Me2.i2;op:×;va:Me2.i2;op:>;va:Me2.i1",
-//                  "x" : 1400,
-//                  "iden" : "055C990D-5E5E-4E8C-9846-B5788BCF74CC"
-//                }
-//              ],
-//              "iden" : "9C29BBEE-7040-49BC-A04C-96F6F5F57EE9"
-//            }
-//        """
-//
-//        let aether = Aether()
-//        aether.load(attributes: json.toAttributes())
-//        aether.state.evaluate()
-//
-//        let object: Object = aether.aexel(no: 5)!
-//        XCTAssertEqual(aether.state.tower(key: TokenKey(code: .va, tag: object.key))?.value, 19)
-//    }
-//    func test_AetherJSONCatSkinRSF() {
-//        let json = """
-//            {
-//              "xOffset" : 1014.5,
-//              "type" : "aether",
-//              "modified" : "2022-08-31T12:36:05+0900",
-//              "name" : "aether20",
-//              "width" : 1194,
-//              "aexels" : [
-//                {
-//                  "iden" : "E999D193-691D-4DB1-B4F3-BAEE80BB01F3",
-//                  "name" : "RSF",
-//                  "y" : 881,
-//                  "type" : "mech",
-//                  "no" : 1,
-//                  "resultChain" : "ml:Me2;va:Me1.i1;sp:,;dg:2;sp:)",
-//                  "modified" : "2022-08-31T12:23:15+0900",
-//                  "x" : 1762.75,
-//                  "inputs" : [
-//                    {
-//                      "type" : "input",
-//                      "no" : 1,
-//                      "iden" : "A0EB0707-6561-4044-A4A0-E7C13EFDE4D3",
-//                      "modified" : "2022-08-31T12:23:15+0900",
-//                      "name" : "n"
-//                    }
-//                  ]
-//                },
-//                {
-//                  "type" : "mech",
-//                  "iden" : "B09E5F9E-F97A-47C9-BDE2-6A8B4500EB5D",
-//                  "no" : 2,
-//                  "x" : 1360,
-//                  "name" : "iRSF",
-//                  "resultChain" : "va:Ob10",
-//                  "inputs" : [
-//                    {
-//                      "type" : "input",
-//                      "modified" : "2022-08-31T12:23:42+0900",
-//                      "iden" : "5C163365-CC14-4309-9A3D-416ADAADF044",
-//                      "no" : 1,
-//                      "name" : "n"
-//                    },
-//                    {
-//                      "name" : "p",
-//                      "no" : 2,
-//                      "modified" : "2022-08-31T12:23:48+0900",
-//                      "type" : "input",
-//                      "iden" : "DBDDEA1F-2E06-4E15-ABFF-2F08B9DAC05E"
-//                    }
-//                  ],
-//                  "modified" : "2022-08-31T12:23:48+0900",
-//                  "y" : 878
-//                },
-//                {
-//                  "y" : 799,
-//                  "chain" : "dg:8;dg:9;dg:3",
-//                  "type" : "object",
-//                  "name" : "Ob_1",
-//                  "label" : "",
-//                  "no" : 1,
-//                  "iden" : "37BE8EC8-9A2F-4D3E-9ED1-F19951FDBA9D",
-//                  "x" : 2066
-//                },
-//                {
-//                  "name" : "Ob_2",
-//                  "no" : 2,
-//                  "y" : 879.5,
-//                  "type" : "object",
-//                  "label" : "",
-//                  "x" : 1972,
-//                  "chain" : "ml:Me1;va:Ob1;sp:)",
-//                  "iden" : "475600DF-5730-4B73-899F-F817C396AADC"
-//                },
-//                {
-//                  "no" : 4,
-//                  "type" : "object",
-//                  "y" : 949,
-//                  "chain" : "va:Me2.i1;op:÷;va:Me2.i2",
-//                  "iden" : "38FC6BFB-808A-4BF4-B98B-2E289864C95A",
-//                  "name" : "Ob_4",
-//                  "label" : "",
-//                  "x" : 1282.5
-//                },
-//                {
-//                  "iden" : "0E2D9022-C1E4-4972-BFA0-6D6A7B2637FF",
-//                  "type" : "object",
-//                  "name" : "Ob_5",
-//                  "x" : 1094,
-//                  "y" : 1000,
-//                  "no" : 5,
-//                  "chain" : "fn:floor;va:Ob4;sp:)",
-//                  "label" : ""
-//                },
-//                {
-//                  "name" : "Ob_6",
-//                  "y" : 1077,
-//                  "no" : 6,
-//                  "x" : 1145.75,
-//                  "iden" : "655D064D-6FBE-4B26-8580-3C86EB22C388",
-//                  "label" : "isFactor",
-//                  "chain" : "va:Ob5;op:=;va:Ob4",
-//                  "type" : "object"
-//                },
-//                {
-//                  "iden" : "1706384C-2E88-4D23-B6B4-635DFFD4FC40",
-//                  "chain" : "sp:[;ml:Me2;va:Me2.i1;sp:,;va:Me2.i2;op:+;dg:1;sp:);sp:]",
-//                  "no" : 7,
-//                  "type" : "object",
-//                  "label" : "",
-//                  "name" : "Ob_7",
-//                  "x" : 1532,
-//                  "y" : 948.5
-//                },
-//                {
-//                  "chain" : "sp:[;va:Me2.i1;sp:]",
-//                  "iden" : "099C5651-A594-44CF-9D17-83B52992058C",
-//                  "y" : 873,
-//                  "no" : 8,
-//                  "x" : 1518.25,
-//                  "label" : "",
-//                  "type" : "object",
-//                  "name" : "Ob_8"
-//                },
-//                {
-//                  "type" : "object",
-//                  "label" : "increment",
-//                  "chain" : "fn:if;va:Me2.i2;op:×;va:Me2.i2;op:>;va:Me2.i1;sp:,;va:Ob8;sp:,;va:Ob7;sp:)",
-//                  "no" : 9,
-//                  "x" : 1429.75,
-//                  "y" : 1058,
-//                  "iden" : "CB327906-E7DE-43C3-89F3-CA036A977FD2",
-//                  "name" : "Ob_9"
-//                },
-//                {
-//                  "chain" : "fn:if;va:Ob6;sp:,;va:Me2.i2;sp:,;va:Ob9;sp:)",
-//                  "no" : 10,
-//                  "iden" : "ACA1A70B-CA6E-4925-8897-E04F52A7A20A",
-//                  "y" : 1159,
-//                  "label" : "result",
-//                  "x" : 1255.25,
-//                  "type" : "object",
-//                  "name" : "Ob_10"
-//                }
-//              ],
-//              "yOffset" : 666,
-//              "version" : "3.0",
-//              "readOnly" : false,
-//              "iden" : "E3BB4A35-F906-44BD-B7ED-89AAB42D3AB2",
-//              "height" : 834
-//            }
-//        """
-//
-//        let aether = Aether()
-//        aether.load(attributes: json.toAttributes())
-//
-//        let object: Object = aether.aexel(no: 2)!
-//        XCTAssertEqual(aether.state.tower(key: TokenKey(code: .va, tag: object.key))?.value, 19)
-//    }
-//    func test_AetherJSONSUM() {
-//        let json = """
-//            {
-//              "height" : 1554,
-//              "xOffset" : 3254,
-//              "version" : "3.0",
-//              "type" : "aether",
-//              "width" : 2365,
-//              "readOnly" : false,
-//              "aexels" : [
-//                {
-//                  "x" : 3476.28125,
-//                  "y" : 2041.30859375,
-//                  "iden" : "1ACDBCFF-D24E-4659-A27C-DB94D30BE152",
-//                  "no" : 2,
-//                  "name" : "Ob_2",
-//                  "label" : "",
-//                  "type" : "object",
-//                  "chain" : "dg:1"
-//                },
-//                {
-//                  "iden" : "C2EFF853-FF8F-4AD1-A31B-CE99DD46ABF2",
-//                  "name" : "Ob_3",
-//                  "x" : 3611.0859375,
-//                  "type" : "object",
-//                  "y" : 2021.39453125,
-//                  "chain" : "dg:9",
-//                  "label" : "",
-//                  "no" : 3
-//                },
-//                {
-//                  "type" : "object",
-//                  "label" : "",
-//                  "chain" : "sp:[;va:k;sp:]",
-//                  "y" : 2102.7734375,
-//                  "x" : 3699.59375,
-//                  "iden" : "B2783579-B39E-43E9-8B28-2732A74FB2F5",
-//                  "no" : 4,
-//                  "name" : "Ob_4"
-//                },
-//                {
-//                  "iden" : "9DABA2E8-4797-48DB-928F-3826EFA4F482",
-//                  "type" : "object",
-//                  "chain" : "fn:∑;va:Ob2;sp:,;va:Ob3;sp:,;va:Ob4;sp:)",
-//                  "name" : "Ob_5",
-//                  "x" : 3545.046875,
-//                  "no" : 5,
-//                  "label" : "",
-//                  "y" : 2157.28125
-//                }
-//              ],
-//              "iden" : "0CE1804D-CB3E-475B-827C-C7524505E6B4",
-//              "yOffset" : 2077.5,
-//              "modified" : "2022-08-30T19:44:55+0900",
-//              "name" : "aether05"
-//            }
-//        """
-//        
-//        let aether = Aether()
-//        aether.load(attributes: json.toAttributes())
-//
-//        let object: Object = aether.aexel(no: 5)!
-//        XCTAssertEqual(aether.state.tower(key: TokenKey(code: .va, tag: object.key))?.value, 45)
-//    }
+    func test_AetherJSONCatSkinISF() {
+        let json = """
+            {
+              "type" : "aether",
+              "xOffset" : 1000,
+              "readOnly" : false,
+              "width" : 1194,
+              "name" : "aether41",
+              "version" : "3.0",
+              "modified" : "2022-08-30T05:19:54+0900",
+              "height" : 834,
+              "yOffset" : 706,
+              "aexels" : [
+                {
+                  "resultChain" : "Me1.result::ml:Me2;va:Me1.i1;sp:,;dg:2;sp:)",
+                  "type" : "mech",
+                  "modified" : "2022-08-29T16:58:02+0900",
+                  "x" : 1689.5,
+                  "name" : "ISF",
+                  "y" : 901,
+                  "inputs" : [
+                    {
+                      "modified" : "2022-08-29T16:58:02+0900",
+                      "type" : "input",
+                      "name" : "n",
+                      "no" : 1,
+                      "iden" : "CE64A376-5305-4C0A-B1CA-15A19449050D"
+                    }
+                  ],
+                  "iden" : "8B6ECADC-CE92-435B-AA21-C11EA448E5FA",
+                  "no" : 1
+                },
+                {
+                  "y" : 799,
+                  "label" : "",
+                  "iden" : "7D02A9FA-43BF-44F5-9AE4-64646FCF2FAB",
+                  "no" : 4,
+                  "type" : "object",
+                  "name" : "Ob_4",
+                  "x" : 1996,
+                  "chain" : "Ob4::dg:8;dg:9;dg:3"
+                },
+                {
+                  "iden" : "51083427-34B2-45E0-9999-23B590DE2586",
+                  "label" : "",
+                  "chain" : "Ob5::ml:Me1;va:Ob4;sp:)",
+                  "type" : "object",
+                  "y" : 884,
+                  "no" : 5,
+                  "name" : "Ob_5",
+                  "x" : 1938
+                },
+                {
+                  "no" : 2,
+                  "type" : "mech",
+                  "iden" : "A6C099FD-DFBD-483E-AD4E-35750917DE53",
+                  "name" : "iISF",
+                  "modified" : "2022-08-29T16:58:50+0900",
+                  "y" : 976.5,
+                  "resultChain" : "Me2.result::va:Gt1",
+                  "x" : 1446,
+                  "inputs" : [
+                    {
+                      "name" : "n",
+                      "no" : 1,
+                      "modified" : "2022-08-29T16:58:40+0900",
+                      "type" : "input",
+                      "iden" : "0F60515D-64B7-4CD9-9C54-927701E2EC27"
+                    },
+                    {
+                      "iden" : "A75067BE-ACD9-42A7-B6ED-56EFFF23093A",
+                      "name" : "p",
+                      "no" : 2,
+                      "modified" : "2022-08-29T16:58:50+0900",
+                      "type" : "input"
+                    }
+                  ]
+                },
+                {
+                  "iden" : "BC02BEEA-B491-450D-84E9-DD3AC2FE7438",
+                  "x" : 1315.5,
+                  "name" : "Ob_6",
+                  "y" : 990,
+                  "chain" : "Ob6::va:Me2.i1;op:÷;va:Me2.i2",
+                  "no" : 6,
+                  "label" : "",
+                  "type" : "object"
+                },
+                {
+                  "label" : "",
+                  "x" : 1178.5,
+                  "no" : 7,
+                  "y" : 1043.5,
+                  "chain" : "Ob7::fn:floor;va:Ob6;sp:)",
+                  "iden" : "2A9115BA-3320-49A4-B7B5-9FC8953E89B1",
+                  "name" : "Ob_7",
+                  "type" : "object"
+                },
+                {
+                  "y" : 1136,
+                  "thenChain" : "Gt1.then::va:Me2.i2",
+                  "name" : "",
+                  "elseChain" : "Gt1.else::va:Gt2",
+                  "no" : 1,
+                  "ifChain" : "Gt1.if::va:Ob6;op:=;va:Ob7",
+                  "type" : "gate",
+                  "iden" : "E84E558B-7EEE-411F-93F4-395FA77D4858",
+                  "x" : 1094
+                },
+                {
+                  "type" : "gate",
+                  "y" : 1219,
+                  "elseChain" : "Gt2.else::ml:Me2;va:Me2.i1;sp:,;va:Me2.i2;op:+;dg:1;sp:)",
+                  "thenChain" : "Gt2.then::va:Me2.i1",
+                  "name" : "",
+                  "no" : 2,
+                  "ifChain" : "Gt2.if::va:Me2.i2;op:×;va:Me2.i2;op:>;va:Me2.i1",
+                  "x" : 1400,
+                  "iden" : "055C990D-5E5E-4E8C-9846-B5788BCF74CC"
+                }
+              ],
+              "iden" : "9C29BBEE-7040-49BC-A04C-96F6F5F57EE9"
+            }
+        """
+
+        let aether = Aether(json: json)
+        let aetherExe: AetherExe = aether.compile()
+        let key: TokenKey = TokenKey(code: .va, tag: "Ob5")
+        XCTAssertEqual(aetherExe.tower(key: key)?.value, 19)
+    }
+    func test_AetherJSONCatSkinRSF() {
+        let json = """
+            {
+              "xOffset" : 1014.5,
+              "type" : "aether",
+              "modified" : "2022-08-31T12:36:05+0900",
+              "name" : "aether20",
+              "width" : 1194,
+              "aexels" : [
+                {
+                  "iden" : "E999D193-691D-4DB1-B4F3-BAEE80BB01F3",
+                  "name" : "RSF",
+                  "y" : 881,
+                  "type" : "mech",
+                  "no" : 1,
+                  "resultChain" : "Me1.result::ml:Me2;va:Me1.i1;sp:,;dg:2;sp:)",
+                  "modified" : "2022-08-31T12:23:15+0900",
+                  "x" : 1762.75,
+                  "inputs" : [
+                    {
+                      "type" : "input",
+                      "no" : 1,
+                      "iden" : "A0EB0707-6561-4044-A4A0-E7C13EFDE4D3",
+                      "modified" : "2022-08-31T12:23:15+0900",
+                      "name" : "n"
+                    }
+                  ]
+                },
+                {
+                  "type" : "mech",
+                  "iden" : "B09E5F9E-F97A-47C9-BDE2-6A8B4500EB5D",
+                  "no" : 2,
+                  "x" : 1360,
+                  "name" : "iRSF",
+                  "resultChain" : "Me2.result::va:Ob10",
+                  "inputs" : [
+                    {
+                      "type" : "input",
+                      "modified" : "2022-08-31T12:23:42+0900",
+                      "iden" : "5C163365-CC14-4309-9A3D-416ADAADF044",
+                      "no" : 1,
+                      "name" : "n"
+                    },
+                    {
+                      "name" : "p",
+                      "no" : 2,
+                      "modified" : "2022-08-31T12:23:48+0900",
+                      "type" : "input",
+                      "iden" : "DBDDEA1F-2E06-4E15-ABFF-2F08B9DAC05E"
+                    }
+                  ],
+                  "modified" : "2022-08-31T12:23:48+0900",
+                  "y" : 878
+                },
+                {
+                  "y" : 799,
+                  "chain" : "Ob1::dg:8;dg:9;dg:3",
+                  "type" : "object",
+                  "name" : "Ob_1",
+                  "label" : "",
+                  "no" : 1,
+                  "iden" : "37BE8EC8-9A2F-4D3E-9ED1-F19951FDBA9D",
+                  "x" : 2066
+                },
+                {
+                  "name" : "Ob_2",
+                  "no" : 2,
+                  "y" : 879.5,
+                  "type" : "object",
+                  "label" : "",
+                  "x" : 1972,
+                  "chain" : "Ob2::ml:Me1;va:Ob1;sp:)",
+                  "iden" : "475600DF-5730-4B73-899F-F817C396AADC"
+                },
+                {
+                  "no" : 4,
+                  "type" : "object",
+                  "y" : 949,
+                  "chain" : "Ob4::va:Me2.i1;op:÷;va:Me2.i2",
+                  "iden" : "38FC6BFB-808A-4BF4-B98B-2E289864C95A",
+                  "name" : "Ob_4",
+                  "label" : "",
+                  "x" : 1282.5
+                },
+                {
+                  "iden" : "0E2D9022-C1E4-4972-BFA0-6D6A7B2637FF",
+                  "type" : "object",
+                  "name" : "Ob_5",
+                  "x" : 1094,
+                  "y" : 1000,
+                  "no" : 5,
+                  "chain" : "Ob5::fn:floor;va:Ob4;sp:)",
+                  "label" : ""
+                },
+                {
+                  "name" : "Ob_6",
+                  "y" : 1077,
+                  "no" : 6,
+                  "x" : 1145.75,
+                  "iden" : "655D064D-6FBE-4B26-8580-3C86EB22C388",
+                  "label" : "isFactor",
+                  "chain" : "Ob6::va:Ob5;op:=;va:Ob4",
+                  "type" : "object"
+                },
+                {
+                  "iden" : "1706384C-2E88-4D23-B6B4-635DFFD4FC40",
+                  "chain" : "Ob7::sp:[;ml:Me2;va:Me2.i1;sp:,;va:Me2.i2;op:+;dg:1;sp:);sp:]",
+                  "no" : 7,
+                  "type" : "object",
+                  "label" : "",
+                  "name" : "Ob_7",
+                  "x" : 1532,
+                  "y" : 948.5
+                },
+                {
+                  "chain" : "Ob8::sp:[;va:Me2.i1;sp:]",
+                  "iden" : "099C5651-A594-44CF-9D17-83B52992058C",
+                  "y" : 873,
+                  "no" : 8,
+                  "x" : 1518.25,
+                  "label" : "",
+                  "type" : "object",
+                  "name" : "Ob_8"
+                },
+                {
+                  "type" : "object",
+                  "label" : "increment",
+                  "chain" : "Ob9::fn:if;va:Me2.i2;op:×;va:Me2.i2;op:>;va:Me2.i1;sp:,;va:Ob8;sp:,;va:Ob7;sp:)",
+                  "no" : 9,
+                  "x" : 1429.75,
+                  "y" : 1058,
+                  "iden" : "CB327906-E7DE-43C3-89F3-CA036A977FD2",
+                  "name" : "Ob_9"
+                },
+                {
+                  "chain" : "Ob10::fn:if;va:Ob6;sp:,;va:Me2.i2;sp:,;va:Ob9;sp:)",
+                  "no" : 10,
+                  "iden" : "ACA1A70B-CA6E-4925-8897-E04F52A7A20A",
+                  "y" : 1159,
+                  "label" : "result",
+                  "x" : 1255.25,
+                  "type" : "object",
+                  "name" : "Ob_10"
+                }
+              ],
+              "yOffset" : 666,
+              "version" : "3.0",
+              "readOnly" : false,
+              "iden" : "E3BB4A35-F906-44BD-B7ED-89AAB42D3AB2",
+              "height" : 834
+            }
+        """
+
+        let aether = Aether(json: json)
+        let aetherExe: AetherExe = aether.compile()
+        let key: TokenKey = TokenKey(code: .va, tag: "Ob2")
+        XCTAssertEqual(aetherExe.tower(key: key)?.value, 19)
+    }
+    func test_AetherJSONSUM() {
+        let json = """
+            {
+              "height" : 1554,
+              "xOffset" : 3254,
+              "version" : "3.0",
+              "type" : "aether",
+              "width" : 2365,
+              "readOnly" : false,
+              "aexels" : [
+                {
+                  "x" : 3476.28125,
+                  "y" : 2041.30859375,
+                  "iden" : "1ACDBCFF-D24E-4659-A27C-DB94D30BE152",
+                  "no" : 2,
+                  "name" : "Ob_2",
+                  "label" : "",
+                  "type" : "object",
+                  "chain" : "Ob2::dg:1"
+                },
+                {
+                  "iden" : "C2EFF853-FF8F-4AD1-A31B-CE99DD46ABF2",
+                  "name" : "Ob_3",
+                  "x" : 3611.0859375,
+                  "type" : "object",
+                  "y" : 2021.39453125,
+                  "chain" : "Ob3::dg:9",
+                  "label" : "",
+                  "no" : 3
+                },
+                {
+                  "type" : "object",
+                  "label" : "",
+                  "chain" : "Ob4::sp:[;va:k;sp:]",
+                  "y" : 2102.7734375,
+                  "x" : 3699.59375,
+                  "iden" : "B2783579-B39E-43E9-8B28-2732A74FB2F5",
+                  "no" : 4,
+                  "name" : "Ob_4"
+                },
+                {
+                  "iden" : "9DABA2E8-4797-48DB-928F-3826EFA4F482",
+                  "type" : "object",
+                  "chain" : "Ob5::fn:∑;va:Ob2;sp:,;va:Ob3;sp:,;va:Ob4;sp:)",
+                  "name" : "Ob_5",
+                  "x" : 3545.046875,
+                  "no" : 5,
+                  "label" : "",
+                  "y" : 2157.28125
+                }
+              ],
+              "iden" : "0CE1804D-CB3E-475B-827C-C7524505E6B4",
+              "yOffset" : 2077.5,
+              "modified" : "2022-08-30T19:44:55+0900",
+              "name" : "aether05"
+            }
+        """
+        
+        let aether = Aether(json: json)
+        let aetherExe: AetherExe = aether.compile()
+        let key: TokenKey = TokenKey(code: .va, tag: "Ob5")
+        XCTAssertEqual(aetherExe.tower(key: key)?.value, 45)
+    }
 }

@@ -215,6 +215,8 @@ class ColumnCore: Core {
     }
     
 // Core ===================================================================================
+    override func createTower(_ aetherExe: AetherExe) -> Tower { aetherExe.createColumnTower(tag: key.tag, core: self) }
+    
     override func buildUpstream(tower: Tower) {
 //        guard aggregate != .none && aggregate != .running && aggregate != .match else { return }
 //        tower.abstractUp()

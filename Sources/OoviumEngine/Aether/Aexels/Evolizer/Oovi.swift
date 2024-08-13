@@ -10,7 +10,7 @@ import Aegean
 import Acheron
 import Foundation
 
-public class Oovi: Aexel, Web {
+public class Oovi: Aexel {
 	@objc public override var name: String {
 		didSet{nameChanged()}
 	}
@@ -18,8 +18,6 @@ public class Oovi: Aexel, Web {
 	@objc public var stepChain: Chain!
 	@objc public var amorousChain: Chain!
 	
-	var web: Web { self }
-
 	var parameterTowers: Set<Tower> = Set<Tower>()
 	
 	public var amorousRecipe: UnsafeMutablePointer<Recipe>? = nil
@@ -131,9 +129,9 @@ public class Oovi: Aexel, Web {
 //		parameterTowers.insert(Tower(aether: aether, token: aether.variableToken(tag: "flee", label: "flee"), delegate: self))
 //		parameterTowers.insert(Tower(aether: aether, token: aether.variableToken(tag: "wander", label: "wander"), delegate: self))
 
-		for tower in parameterTowers {
-			tower.web = web
-		}
+//		for tower in parameterTowers {
+//			tower.web = web
+//		}
 	}
 	
 // Events ==========================================================================================

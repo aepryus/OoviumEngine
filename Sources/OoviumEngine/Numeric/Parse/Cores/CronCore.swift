@@ -55,7 +55,7 @@ class CronCore: Core {
                     return false
                 }
             case .bounce:
-                if t+dt > stopTower.value || t+dt < startTower.value {dt = -dt}
+                if t+dt > stopTower.value || t+dt < startTower.value { dt = -dt }
             case .endless: break;
             case .while:
                 if whileTower.value == 0 {return true}
@@ -64,6 +64,16 @@ class CronCore: Core {
     }
     
 // Core ===================================================================================
+    
+    override func aetherExeCompleted(_ aetherExe: AetherExe) {
+        startTower = aetherExe.tower(key: cron.startChain.key!)
+        stopTower = aetherExe.tower(key: cron.stopChain.key!)
+        stepsTower = aetherExe.tower(key: cron.stepsChain.key!)
+        rateTower = aetherExe.tower(key: cron.rateChain.key!)
+        deltaTower = aetherExe.tower(key: cron.deltaChain.key!)
+        whileTower = aetherExe.tower(key: cron.whileChain.key!)
+    }
+    
     override var aetherExe: AetherExe! {
         didSet {}
     }

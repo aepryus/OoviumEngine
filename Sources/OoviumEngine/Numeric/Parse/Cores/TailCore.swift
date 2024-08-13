@@ -9,22 +9,17 @@
 import Aegean
 import Foundation
 
-class TailCore: Core, Web {
+class TailCore: Core {
     let tail: Tail
     
-    public var web: Web { self }
     public var recipe: UnsafeMutablePointer<Recipe>? = nil
     public var morphIndex: Int? = nil
     
     var whileTower: Tower!
     var resultTower: Tower!
 
-    init(tail: Tail) {
-        self.tail = tail
-    }
-    deinit {
-        AERecipeRelease(recipe)
-    }
+    init(tail: Tail) { self.tail = tail }
+    deinit { AERecipeRelease(recipe) }
     
     private func compile(memory: UnsafeMutablePointer<Memory>) -> UnsafeMutablePointer<Recipe> {
         var tasks: [UnsafeMutablePointer<Task>] = []
@@ -39,32 +34,55 @@ class TailCore: Core, Web {
         tasks.append(AETaskCreateIfGoto(0, 0))
         n += 1
         
+//        for vertebra in tail.vertebras {
+//            additional = vertebra.chain.tower.stronglyLinked()
+//            n = program(tasks: &tasks, tail: vertebra.chain.tower, memory: memory, additional: additional, completed: completed, n: n)
+//            completed.formUnion(additional)
+//        }
+//        
+//        for vertebra in tail.vertebras {
+//            tasks.append(AETaskCreateAssign(
+//                AEMemoryIndexForName(memory, vertebra.chain.tower.name.toInt8()),
+//                AEMemoryIndexForName(memory, vertebra.tower.name.toInt8())
+//            ));
+//            AETaskSetLabels(tasks[n], "".toInt8(), "\(vertebra.tower.name) = \(vertebra.chain.tower.name)".toInt8())
+//            n += 1
+//        }
         for vertebra in tail.vertebras {
-            additional = aetherExe.tower(key: vertebra.tokenKey)!.stronglyLinked()
-            n = MechCore.program(tasks: &tasks, tail: aetherExe.tower(key: vertebra.tokenKey)!, memory: memory, additional: additional, completed: completed, n: n)
+            let vertebraTower: Tower = aetherExe.tower(key: vertebra.chain.key!)!
+            additional = vertebraTower.stronglyLinked()
+            n = MechCore.program(tasks: &tasks, tail: vertebraTower, memory: memory, additional: additional, completed: completed, n: n)
             completed.formUnion(additional)
         }
         
+//        for vertebra in tail.vertebras {
+//            tasks.append(AETaskCreateAssign(
+//                AEMemoryIndexForName(memory, vertebra.chain.tower.name.toInt8()),
+//                AEMemoryIndexForName(memory, vertebra.tower.name.toInt8())
+//            ));
+//            AETaskSetLabels(tasks[n], "".toInt8(), "\(vertebra.tower.name) = \(vertebra.chain.tower.name)".toInt8())
+//            n += 1
+//        }
         for vertebra in tail.vertebras {
             tasks.append(AETaskCreateAssign(
-                AEMemoryIndexForName(memory, aetherExe.tower(key: vertebra.tokenKey)!.name.toInt8()),
+                AEMemoryIndexForName(memory, aetherExe.tower(key: vertebra.chain.key!)!.name.toInt8()),
                 AEMemoryIndexForName(memory, aetherExe.tower(key: vertebra.tokenKey)!.name.toInt8())
             ));
-            AETaskSetLabels(tasks[n], "".toInt8(), "\(aetherExe.tower(key: vertebra.tokenKey)!.name) = \(aetherExe.tower(key: vertebra.tokenKey)!.name)".toInt8())
+            AETaskSetLabels(tasks[n], "".toInt8(), "\(aetherExe.tower(key: vertebra.tokenKey)!.name) = \(aetherExe.tower(key: vertebra.chain.key!)!.name)".toInt8())
             n += 1
         }
         
         tasks.append(AETaskCreateGoto(UInt8(0)))
         AETaskSetLabels(tasks[n], "".toInt8(), "GOTO \(0)".toInt8())
         n += 1
-        
+
         AETaskRelease(tasks[ifGotoIndex])
         tasks[ifGotoIndex] = AETaskCreateIfGoto(AEMemoryIndexForName(memory, whileTower.name.toInt8()), UInt8(n))
         AETaskSetLabels(tasks[ifGotoIndex], "".toInt8(), "IF \(whileTower.name) == FALSE GOTO \(n)".toInt8())
-        
+
         additional = resultTower.stronglyLinked()
         _ = MechCore.program(tasks: &tasks, tail: resultTower, memory: memory, additional: additional, completed: completed, n: n)
-        
+
         let recipe = AERecipeCreate(tasks.count)!
         var i = 0
         for task in tasks {
@@ -94,11 +112,11 @@ class TailCore: Core, Web {
 
 // Core ===================================================================================
     override var key: TokenKey { tail.variableTokenKey }
-    override var aetherExe: AetherExe! {
-        didSet {
-            whileTower = aetherExe.tower(key: tail.whileChain.key!)
-            resultTower = aetherExe.tower(key: tail.resultChain.key!)
-        }
+    
+    override func createTower(_ aetherExe: AetherExe) -> Tower { aetherExe.createMechlikeTower(tag: key.tag, core: self) }
+    override func aetherExeCompleted(_ aetherExe: AetherExe) {
+        whileTower = aetherExe.tower(key: tail.whileChain.key!)
+        resultTower = aetherExe.tower(key: tail.resultChain.key!)
     }
     
     override func buildUpstream(tower: Tower) {
@@ -114,7 +132,7 @@ class TailCore: Core, Web {
     }
     override func taskCompleted(tower: Tower, askedBy: Tower) -> Bool {
         return AEMemoryLoaded(tower.memory, AEMemoryIndexForName(tower.memory, tail.variableTokenKey.tag.toInt8())) != 0
-            || (askedBy !== tower && askedBy.web === self)
+            || (askedBy !== tower && askedBy.fog == key)
     }
     override func taskBlocked(tower: Tower) -> Bool {
         resultTower.variableToken.status != .ok

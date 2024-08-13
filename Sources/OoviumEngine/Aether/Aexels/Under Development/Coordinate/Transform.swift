@@ -10,7 +10,7 @@ import Acheron
 import Aegean
 import Foundation
 
-public class Transform: Aexon, Web {
+public class Transform: Aexon {
     @objc public var name: String = ""
     @objc public var dimensions: [Dimension] = []
     

@@ -79,6 +79,7 @@ enum ParseError: Error { case general }
 
 class Parser {
     let tokens: [Token]
+    let memory: UnsafeMutablePointer<Memory>
     
     var morphs: [UInt32] = []
     var variables: [String] = []
@@ -86,7 +87,10 @@ class Parser {
     var stack: [String] = [String](repeating: "", count: 10)
     var sp: Int = 0
     
-    init(tokens: [Token]) { self.tokens = tokens }
+    init(tokens: [Token], memory: UnsafeMutablePointer<Memory>) {
+        self.tokens = tokens
+        self.memory = memory
+    }
 
     // Stack
     func push(_ key: String) {
@@ -240,11 +244,8 @@ class Parser {
         } else if token == .bra {
             i += 1
             let tokens: [Token] = try parseChain(i: i)
-//            let chain: Chain = Chain(tokens: tokens)
-//            chain.tower = tower
-            // The name sent to compile is used to set the lambda index vi, but since vi won't be used in this case I'm sending 'k' in just to ensure the name is found.
-            // This needs to be cleaned up. 5/11/20
-//            try addConstant(Obje(AEObjLambda(chain.compile(name: "k", tower: tower))))
+            let lambda: UnsafeMutablePointer<Lambda> = Parser.compile(tokens: tokens, memory: memory).0!
+            try addConstant(Obje(AEObjLambda(lambda)))
             return tokens.count + 2
         } else if let token = token as? VariableToken {
             let name = token.tag
@@ -300,12 +301,12 @@ class Parser {
         try ops.end()
     }
 
-    private func compile(tokenKey: TokenKey?, memory: UnsafeMutablePointer<Memory>) -> (UnsafeMutablePointer<Lambda>?, UInt32?) {
+    private func compile(tokenKey: TokenKey? = nil) -> (UnsafeMutablePointer<Lambda>?, UInt32?) {
         do { try parseTokens(start:0, stop:tokens.count) }
         catch { return (nil, nil) }
 
         let vi: mnimi
-        if let key: TokenKey = tokenKey { vi = AEMemoryIndexForName(memory, key.tag.toInt8()) }
+        if let tokenKey { vi = AEMemoryIndexForName(memory, tokenKey.tag.toInt8()) }
         else { vi = 0 }
         
         let vn: Int = variables.count
@@ -326,5 +327,5 @@ class Parser {
         return (AELambdaCreate(vi, c, UInt8(cn), v, UInt8(vn), m, UInt8(mn), Token.display(tokens: tokens).toInt8()), morphs.last)
     }
     
-    static func compile(tokenKey: TokenKey?, tokens: [Token], memory: UnsafeMutablePointer<Memory>) -> (UnsafeMutablePointer<Lambda>?, UInt32?) { Parser(tokens: tokens).compile(tokenKey: tokenKey, memory: memory) }
+    static func compile(tokens: [Token], tokenKey: TokenKey? = nil, memory: UnsafeMutablePointer<Memory>) -> (UnsafeMutablePointer<Lambda>?, UInt32?) { Parser(tokens: tokens, memory: memory).compile(tokenKey: tokenKey) }
 }

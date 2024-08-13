@@ -11,10 +11,21 @@ import Foundation
 
 public class ChainCore: Core, CustomStringConvertible {
     let chain: Chain
+    let _fog: TokenKey?
     
     public var tokens: [Token] = []
 
-    init(chain: Chain) { self.chain = chain }
+    init(chain: Chain, fog: TokenKey? = nil) {
+        self.chain = chain
+        self._fog = fog
+    }
+    
+    override var fog: TokenKey? {
+        if let _fog { return _fog }
+        let upstreamTowers: [Tower] = tokens.compactMap({ aetherExe.tower(key: $0.key) })
+        return upstreamTowers.first(where: { $0.fog != nil })?.fog
+    }
+    override var isFogFirewall: Bool { _fog != nil }
     
 // Private =========================================================================================
     private var currentParam: Int {
@@ -116,8 +127,8 @@ public class ChainCore: Core, CustomStringConvertible {
         if let this = tower, let towerToken = token as? TowerToken {
             let that: Tower = towerToken.tower
             if this.downstream(contains: that) { return false }
-            if let thisWeb = this.web ?? this.tailForWeb, let thatWeb = that.web {
-                if thisWeb !== thatWeb { return false }
+            if let thisFog = this.fog, let thatFog = that.fog {
+                if thisFog != thatFog { return false }
             }
             that.attach(this)
         }
@@ -212,14 +223,14 @@ public class ChainCore: Core, CustomStringConvertible {
         }
         self.aetherExe = aetherExe
         
-        if let lambda: UnsafeMutablePointer<Lambda> = Parser.compile(tokenKey: chain.key, tokens: tokens, memory: memory).0 {
+        if let lambda: UnsafeMutablePointer<Lambda> = Parser.compile(tokens: tokens, tokenKey: chain.key, memory: memory).0 {
             return AELambdaExecute(lambda, memory)
         } else { return nil }
     }
 
 // Compiling =======================================================================================
     public func compile(name: String, tower: Tower) -> UnsafeMutablePointer<Lambda>? {
-        let (lambda, lastMorphNo) = Parser.compile(tokenKey: chain.key, tokens: tokens, memory: tower.memory)
+        let (lambda, lastMorphNo) = Parser.compile(tokens: tokens, tokenKey: chain.key, memory: tower.memory)
         if let lambda {
             if tower.variableToken.status == .invalid { tower.variableToken.status = .ok }
             if let lastMorphNo {
@@ -236,14 +247,15 @@ public class ChainCore: Core, CustomStringConvertible {
 
 // Core ===================================================================================
     override var key: TokenKey { chain.key! }
-    override var aetherExe: AetherExe! {
-        didSet {
-            tokens = chain.tokenKeys.map({ (key: TokenKey) in
-                aetherExe?.token(key: key) ?? Token.token(key: key) ?? .zero
-            })
-        }
-    }
     
+    override func aetherExeCompleted(_ aetherExe: AetherExe) {
+        tokens = chain.tokenKeys.map({ (key: TokenKey) in
+            aetherExe.token(key: key)
+            ?? Token.token(key: key)
+            ?? .zero
+        })
+    }
+
     override func buildUpstream(tower: Tower) { tokens.compactMap { $0 as? TowerToken }.forEach { $0.tower.attach(tower) } }
     override func renderDisplay(tower: Tower) -> String {
         if tower.variableToken.status == .deleted { fatalError() }
@@ -275,7 +287,7 @@ public class ChainCore: Core, CustomStringConvertible {
     }
     
 // CustomStringConvertible =========================================================================
-    private var shouldDisplayTokens: Bool { /*editing ||*/ tower?.web != nil || tower?.variableToken.status != .ok /*|| alwaysShow*/ }
+    private var shouldDisplayTokens: Bool { /*editing ||*/ tower?.fog != nil || tower?.variableToken.status != .ok /*|| alwaysShow*/ }
     public var description: String {
         guard tokens.count > 0 else { return "" }
         guard shouldDisplayTokens else { return tower?.obje.display ?? "" }

@@ -48,7 +48,7 @@ public class Vertebra: Aexon, VariableTokenDelegate {
 // Aexon ===========================================================================================
     public override var code: String { "i" }
     public override func createCores() -> [Core] { [
-        ChainCore(chain: chain),
+        ChainCore(chain: chain, fog: tail.mechlikeTokenKey),
         VertebraCore(vertebra: self)
     ] }
 

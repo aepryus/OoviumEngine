@@ -15,7 +15,6 @@ class GateCore: Core {
     var ifTower: Tower!
     var thenTower: Tower!
     var elseTower: Tower!
-    var resultTower: Tower!
     
     init(gate: Gate) {
         self.gate = gate
@@ -23,13 +22,22 @@ class GateCore: Core {
     
 // Core ============================================================================================
     override var key: TokenKey { gate.resultKey }
-    override var aetherExe: AetherExe! {
-        didSet {
-            ifTower = aetherExe.tower(key: gate.ifChain.key!)
-            thenTower = aetherExe.tower(key: gate.thenChain.key!)
-            elseTower = aetherExe.tower(key: gate.elseChain.key!)
-            resultTower = aetherExe.tower(key: gate.resultKey)
-        }
+    override var fog: TokenKey? { ifTower.fog ?? thenTower.fog ?? elseTower.fog }
+
+    override func aetherExeCompleted(_ aetherExe: AetherExe) {
+        ifTower = aetherExe.tower(key: gate.ifChain.key!)
+        thenTower = aetherExe.tower(key: gate.thenChain.key!)
+        elseTower = aetherExe.tower(key: gate.elseChain.key!)
+        
+        ifTower.gateTo = tower
+        ifTower.thenTo = thenTower
+        ifTower.elseTo = elseTower
+        thenTower.gate = ifTower
+        elseTower.gate = ifTower
+        
+        let funnel = Funnel(options: [thenTower, elseTower], spout: tower)
+        thenTower.funnel = funnel
+        elseTower.funnel = funnel
     }
     
     override func buildUpstream(tower: Tower) {
@@ -39,8 +47,8 @@ class GateCore: Core {
     }
     override func renderDisplay(tower: Tower) -> String { "if" }
     override func renderTask(tower: Tower) -> UnsafeMutablePointer<Task>? {
-        let resultName = resultTower.variableToken.tag
-        let task: UnsafeMutablePointer<Task> = AETaskCreateFork(ifTower.index, thenTower.index, elseTower.index, resultTower.index)
+        let resultName = tower.variableToken.tag
+        let task: UnsafeMutablePointer<Task> = AETaskCreateFork(ifTower.index, thenTower.index, elseTower.index, tower.index)
         AETaskSetLabels(task, resultName.toInt8(), "\(resultName) = ~".toInt8())
         return task
     }

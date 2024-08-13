@@ -13,7 +13,10 @@ import Foundation
 public protocol TowerListener: AnyObject {
 	func onTriggered()
 }
-public protocol Web: AnyObject {}
+public class Fog {
+    let key: TokenKey
+    init(_ key: TokenKey) { self.key = key }
+}
 
 class Funnel {
 	let options: [Tower]
@@ -41,16 +44,18 @@ public class Tower: Hashable, CustomStringConvertible {
 
 	public weak var listener: TowerListener? = nil
 
-	weak var tailForWeb: Web? = nil
-	weak var _web: Web? = nil
-	public var web: Web? {
-		set { _web = newValue }
-		get {
-            guard mechlikeToken == nil else { return nil }
-			if let web = _web { return web }
-            return upstream.first(where: { $0.web != nil })?.web
-		}
-	}
+//	weak var tailForWeb: Fog? = nil
+//	weak var _web: Fog? = nil
+//	public var web: Fog? {
+//		set { _web = newValue }
+//		get {
+//            guard mechlikeToken == nil else { return nil }
+//			if let web = _web { return web }
+//            return upstream.first(where: { $0.web != nil })?.web
+//		}
+//	}
+    public var fog: TokenKey? { core?.fog }
+    public var isFogFirewall: Bool { core?.fog != nil }
 
 	public weak var gateTo: Tower?
 	public weak var thenTo: Tower?
@@ -108,8 +113,8 @@ public class Tower: Hashable, CustomStringConvertible {
 		return towers
 	}
 	public func downstream(contains: Tower) -> Bool {
-		if self === contains {return true}
-		guard tailForWeb == nil else {return false}
+		if self === contains { return true }
+        guard !isFogFirewall else { return false }
 		for tower in downstream {
 			if tower.downstream(contains: contains) {
 				return true
@@ -120,7 +125,7 @@ public class Tower: Hashable, CustomStringConvertible {
 	
 	public func towersDestinedFor() -> Set<Tower> {
 		var result = Set<Tower>()
-		guard web != nil else {return result}
+		guard fog != nil else {return result}
 		result.insert(self)
 		upstream.forEach {result.formUnion($0.towersDestinedFor())}
 		return result
@@ -185,7 +190,7 @@ public class Tower: Hashable, CustomStringConvertible {
 		buildTask()
 		// =========================================================
 
-		if (web != nil && variableToken.def !== LambdaDef.def) || variableToken.status != .ok {
+		if (fog != nil && variableToken.def !== LambdaDef.def) || variableToken.status != .ok {
 			variableToken.details = core.renderDisplay(tower: self)
             AEMemorySetValue(aetherExe.memory, index, 0)
 			return true

@@ -22,10 +22,16 @@ import Foundation
 //}
 
 public class Core: Hashable {
-    var aetherExe: AetherExe!
-    var tower: Tower!
-    
     var key: TokenKey { fatalError() }
+
+    var aetherExe: AetherExe! { didSet { aetherExeCompleted(aetherExe) } }
+    var tower: Tower!
+    var fog: TokenKey? { nil }
+    var isFogFirewall: Bool { false }
+
+    func createTower(_ aetherExe: AetherExe) -> Tower { aetherExe.createTower(key: key, core: self) }
+    func aetherExeCompleted(_ aetherExe: AetherExe) {}
+    
     func buildUpstream(tower: Tower) {}
     func renderDisplay(tower: Tower) -> String { "---" }
     func renderTask(tower: Tower) -> UnsafeMutablePointer<Task>? { nil }

@@ -16,12 +16,8 @@ class MechCore: Core {
 
     var resultTower: Tower!
 
-    init(mech: Mech) {
-        self.mech = mech
-    }
-    deinit {
-        AERecipeRelease(recipe)
-    }
+    init(mech: Mech) { self.mech = mech }
+    deinit { AERecipeRelease(recipe) }
 
 // Recipe ==========================================================================================
     static func program(tasks: inout [UnsafeMutablePointer<Task>], tail: Tower, memory: UnsafeMutablePointer<Memory>, additional: Set<Tower>, completed: Set<Tower>, n: Int) -> Int {
@@ -101,25 +97,10 @@ class MechCore: Core {
             recipe.pointee.tasks[i] = task
             i += 1
         }
+        AERecipeSetName(recipe, mech.name.toInt8())
         
         return recipe
     }
-
-//    private func compileRecipe() {
-//        let memory: UnsafeMutablePointer<Memory> = AEMemoryCreateClone(aetherExe.memory)
-//        AEMemoryClear(memory)
-//        tail.vertebras.forEach { AEMemorySetValue(memory, aetherExe.tower(key: $0.tokenKey)!.index, 0) }
-//        AERecipeRelease(recipe)
-//        recipe = compile(memory: memory)
-//        AERecipeSignature(recipe, AEMemoryIndexForName(memory, "\(tail.key).result".toInt8()), UInt8(tail.vertebras.count))
-//
-//        for (i, input) in tail.vertebras.enumerated() {
-//            let index = AEMemoryIndexForName(memory, "\(input.fullKey)".toInt8())
-//            recipe!.pointee.params[i] = index
-//        }
-//
-//        AERecipeSetMemory(recipe, memory)
-//    }
 
     private func compileRecipe() {
         let memory: UnsafeMutablePointer<Memory> = AEMemoryCreateClone(aetherExe.memory)
@@ -134,22 +115,39 @@ class MechCore: Core {
             recipe!.pointee.params[i] = index
         }
 
-//        let towers: Set<Tower> = resultTower.towersDestinedFor()
-//        towers.forEach { AEMemoryMarkLoaded(memory, $0.index) }
-//
-//        let index: mnimi = AEMemoryIndexForName(memory, variableToken.tag.toInt8())
-//        AEMemorySet(memory, index, AEObjRecipe(recipe))
-//        AEMemoryFix(memory, index)
+        /*
+         
+         The following code does not appear in the corresponding area for TailCore.  I was unsure why and
+         commented it out, but it broke recursion and have put it back in.
+         
+         I'm still trying to work out what this is doing, but the setting of the Recipe in the Recipe's own
+         memory is done for recursion, giving access to itself.  Since Tail never calls itself recursively
+         it is unnecessary there.  (Although perhaps there is nothing preventing this from happening, yet)
+         
+         The first part setting all the "destined for" towers to load I think is unnecessary; the Recipes do
+         not pay attention to the flag; it is only used to determine the order of the lines when building
+         the recipe itself or during calculation of fixed bubbles.
+         
+             -jjc 8/14/24
+        
+         */
+        let towers: Set<Tower> = resultTower.towersDestinedFor()
+        towers.forEach { AEMemoryMarkLoaded(memory, $0.index) }
 
+        let index: mnimi = AEMemoryIndexForName(memory, mech.key.toInt8())
+        AEMemorySet(memory, index, AEObjRecipe(recipe))
+        AEMemoryFix(memory, index)
+        // =========================================================================================
+        
         AERecipeSetMemory(recipe, memory)
     }
 
 // Core ===================================================================================
     override var key: TokenKey { mech.mechlikeTokenKey }
-    override var aetherExe: AetherExe! {
-        didSet {
-            resultTower = aetherExe.tower(key: mech.resultChain.key!)
-        }
+    
+    override func createTower(_ aetherExe: AetherExe) -> Tower { aetherExe.createMechlikeTower(tag: key.tag, core: self) }
+    override func aetherExeCompleted(_ aetherExe: AetherExe) {
+        resultTower = aetherExe.tower(key: mech.resultChain.key!)
     }
 
     override func buildUpstream(tower: Tower) {
@@ -163,7 +161,7 @@ class MechCore: Core {
     }
 //    func renderTask(tower: Tower) -> UnsafeMutablePointer<Task>? { nil }
     override func taskCompleted(tower: Tower, askedBy: Tower) -> Bool {
-        AEMemoryLoaded(tower.memory, AEMemoryIndexForName(tower.memory, mech.variableTokenKey.tag.toInt8())) != 0 || (askedBy !== tower && askedBy.web === self)
+        AEMemoryLoaded(tower.memory, AEMemoryIndexForName(tower.memory, mech.variableTokenKey.tag.toInt8())) != 0 || (askedBy !== tower && askedBy.fog == key)
     }
     func workerBlocked(tower: Tower) -> Bool { tower.variableToken.status != .ok }
     override func resetTask(tower: Tower) {

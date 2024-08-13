@@ -10,7 +10,7 @@ import Aegean
 import Acheron
 import Foundation
 
-public class Automata: Aexel, Web {
+public class Automata: Aexel {
 	@objc public var statesChain: Chain!
 	@objc public var resultChain: Chain!
 	
@@ -20,8 +20,6 @@ public class Automata: Aexel, Web {
 //	public var resultTower: Tower { resultChain.tower }
 	public var spaceTowers: [Tower] = []
 	
-	var web: Web { self }
-    
     private let tokenDelegates: [StaticVariableTokenDelegate] = {[
         StaticVariableTokenDelegate("A"),
         StaticVariableTokenDelegate("B"),

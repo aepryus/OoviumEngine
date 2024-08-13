@@ -767,7 +767,7 @@ public class Anain: NSObject, Packable {
     }
 
 // CustomStringConvertible =========================================================================
-    private var shouldDisplayTokens: Bool { editing || tower?.web != nil || tower?.variableToken.status != .ok || alwaysShow }
+    private var shouldDisplayTokens: Bool { editing || tower?.fog != nil || tower?.variableToken.status != .ok || alwaysShow }
     public override var description: String {
         if let expression: Expression = calculate()?.reduce() { return "\(expression)" }
         else { return "ERROR" }

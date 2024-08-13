@@ -15,12 +15,12 @@ public protocol Mechlike: Aexel {
 	var variableTokenKey: TokenKey { get }
 }
 
-public class Mech: Aexel, Mechlike, VariableTokenDelegate, Web {
+public class Mech: Aexel, Mechlike, VariableTokenDelegate {
 	@objc public var resultChain: Chain!
 	@objc public var inputs: [Input] = []
 
-    public var mechlikeTokenKey: TokenKey { TokenKey(code: .ml, tag: name) }
-    public var variableTokenKey: TokenKey { TokenKey(code: .va, tag: name) }
+    public var mechlikeTokenKey: TokenKey { TokenKey(code: .ml, tag: key) }
+    public var variableTokenKey: TokenKey { TokenKey(code: .va, tag: key) }
 
 // Inits ===========================================================================================
 	public required init(at: V2, aether: Aether) {
@@ -87,7 +87,7 @@ public class Mech: Aexel, Mechlike, VariableTokenDelegate, Web {
 	}
     override public func createCores() -> [Core] {
         inputs.flatMap({ $0.createCores() }) + [
-            ChainCore(chain: resultChain),
+            ChainCore(chain: resultChain, fog: mechlikeTokenKey),
             MechCore(mech: self)
         ]
     }

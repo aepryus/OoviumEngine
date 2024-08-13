@@ -10,7 +10,7 @@ import Aegean
 import Acheron
 import Foundation
 
-public class Tail: Aexel, Mechlike, VariableTokenDelegate, Web {
+public class Tail: Aexel, Mechlike, VariableTokenDelegate {
 	@objc public var whileChain: Chain!
 	@objc public var resultChain: Chain!
 	@objc public var vertebras: [Vertebra] = []	
@@ -23,8 +23,8 @@ public class Tail: Aexel, Mechlike, VariableTokenDelegate, Web {
 //    public var whileToken: Token { whileTower.variableToken }
 //	public var resultToken: Token { resultTower.variableToken }
 	
-    public var mechlikeTokenKey: TokenKey { TokenKey(code: .ml, tag: name) }
-    public var variableTokenKey: TokenKey { TokenKey(code: .va, tag: name) }
+    public var mechlikeTokenKey: TokenKey { TokenKey(code: .ml, tag: key) }
+    public var variableTokenKey: TokenKey { TokenKey(code: .va, tag: key) }
 
 // Inits ===========================================================================================
 	public required init(at: V2, aether: Aether) {
@@ -109,8 +109,8 @@ public class Tail: Aexel, Mechlike, VariableTokenDelegate, Web {
 	}
     override public func createCores() -> [Core] {
         vertebras.flatMap({ $0.createCores() }) + [
-            ChainCore(chain: whileChain),
-            ChainCore(chain: resultChain),
+            ChainCore(chain: whileChain, fog: mechlikeTokenKey),
+            ChainCore(chain: resultChain, fog: mechlikeTokenKey),
             TailCore(tail: self)
         ]
     }

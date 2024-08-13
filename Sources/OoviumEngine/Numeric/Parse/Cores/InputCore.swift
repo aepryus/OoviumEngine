@@ -15,8 +15,9 @@ class InputCore: Core, VariableTokenDelegate {
         self.input = input
     }
     
-// Core ===================================================================================
+// Core ============================================================================================
     override var key: TokenKey { input.tokenKey }
+    override var fog: TokenKey? { input.mech.mechlikeTokenKey }
 
     override func renderDisplay(tower: Tower) -> String { input.name }
     

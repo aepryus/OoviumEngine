@@ -10,13 +10,12 @@ import Foundation
 class VertebraCore: Core, VariableTokenDelegate {
     let vertebra: Vertebra
     
-    init(vertebra: Vertebra) {
-        self.vertebra = vertebra
-    }
+    init(vertebra: Vertebra) { self.vertebra = vertebra }
 
 // Core ============================================================================================
     override var key: TokenKey { vertebra.tokenKey }
-    
+    override var fog: TokenKey? { vertebra.tail.mechlikeTokenKey }
+
     override func renderDisplay(tower: Tower) -> String { vertebra.name }
     
 // VariableTokenDelegate ===========================================================================
