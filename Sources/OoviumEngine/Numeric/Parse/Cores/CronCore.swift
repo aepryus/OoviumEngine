@@ -9,7 +9,7 @@
 import Aegean
 import Foundation
 
-class CronCore: Core {
+public class CronCore: Core {
     let cron: Cron
     
     public var t: Double = 0

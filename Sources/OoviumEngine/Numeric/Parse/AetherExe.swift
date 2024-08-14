@@ -33,7 +33,6 @@ public class AetherExe {
         towers.forEach { $0.buildStream() }
         // =================================
         
-        Tower.printTowers(Array(towers))
         buildMemory()
         Tower.evaluate(towers: Set(towers))
     }

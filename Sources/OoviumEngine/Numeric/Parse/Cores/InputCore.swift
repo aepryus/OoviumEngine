@@ -11,11 +11,11 @@ import Foundation
 class InputCore: Core, VariableTokenDelegate {
     let input: Input
     
-    init(input: Input) {
-        self.input = input
-    }
+    init(input: Input) { self.input = input }
     
 // Core ============================================================================================
+    override func createTower(_ aetherExe: AetherExe) -> Tower { aetherExe.createTower(key: key, core: self, tokenDelegate: self) }
+
     override var key: TokenKey { input.tokenKey }
     override var fog: TokenKey? { input.mech.mechlikeTokenKey }
 

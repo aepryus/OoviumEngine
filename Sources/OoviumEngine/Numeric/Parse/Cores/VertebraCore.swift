@@ -13,6 +13,8 @@ class VertebraCore: Core, VariableTokenDelegate {
     init(vertebra: Vertebra) { self.vertebra = vertebra }
 
 // Core ============================================================================================
+    override func createTower(_ aetherExe: AetherExe) -> Tower { aetherExe.createTower(key: key, core: self, tokenDelegate: self) }
+
     override var key: TokenKey { vertebra.tokenKey }
     override var fog: TokenKey? { vertebra.tail.mechlikeTokenKey }
 
