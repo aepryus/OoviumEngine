@@ -10,6 +10,11 @@ import Aegean
 import Acheron
 import Foundation
 
+public class WeakListener {
+    weak var value: TowerListener?
+    public init(_ value: TowerListener) { self.value = value }
+}
+
 public protocol TowerListener: AnyObject {
 	func onTriggered()
 }
@@ -224,13 +229,11 @@ public class Tower: Hashable, CustomStringConvertible {
             towers.forEach { if $0.attemptToCalculate() { progress = true } }
         } while progress
     }
-    public static func notifyListeners(towers: [Tower]) {
-        towers.compactMap({ listeners[$0.variableToken.key] }).forEach { $0.onTriggered() }
-    }
     
-    private static var listeners: [TokenKey:TowerListener] = [:]
-    public static func startListening(to key: TokenKey, listener: TowerListener) { listeners[key] = listener }
-    public static func stopListeneing(to key: TokenKey) { listeners[key] = nil }
+    private static var listeners: [TokenKey:WeakListener] = [:]
+    public static func startListening(to key: TokenKey, listener: TowerListener) { listeners[key] = WeakListener(listener) }
+    public static func stopListening(to key: TokenKey) { listeners[key] = nil }
+    public static func notifyListeners(towers: [Tower]) { towers.compactMap({ listeners[$0.variableToken.key]?.value }).forEach { $0.onTriggered() } }
 
 	public static func printTowers(_ towers: WeakSet<Tower>) {
 		print("[ Towers =================================== ]\n")
