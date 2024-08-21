@@ -29,7 +29,6 @@ class Funnel {
 }
 
 public class Tower: Hashable, CustomStringConvertible {
-//	private unowned let aether: Aether
     private unowned let aetherExe: AetherExe
     let core: Core?
 
@@ -224,8 +223,14 @@ public class Tower: Hashable, CustomStringConvertible {
             progress = false
             towers.forEach { if $0.attemptToCalculate() { progress = true } }
         } while progress
-        towers.forEach { $0.listener?.onTriggered() }
     }
+    public static func notifyListeners(towers: [Tower]) {
+        towers.compactMap({ listeners[$0.variableToken.key] }).forEach { $0.onTriggered() }
+    }
+    
+    private static var listeners: [TokenKey:TowerListener] = [:]
+    public static func startListening(to key: TokenKey, listener: TowerListener) { listeners[key] = listener }
+    public static func stopListeneing(to key: TokenKey) { listeners[key] = nil }
 
 	public static func printTowers(_ towers: WeakSet<Tower>) {
 		print("[ Towers =================================== ]\n")

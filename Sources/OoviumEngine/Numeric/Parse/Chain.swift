@@ -145,6 +145,29 @@ public class Chain: NSObject, Packable {
         return removeKey(at: cursor)
     }
     
+    public func isInString(at cursor: Int) -> Bool {
+        var q: Int = 0
+        for (i, key) in tokenKeys.enumerated() {
+            if i == cursor { break }
+            if key == Token.quote.key { q += 1 }
+        }
+        return q % 2 == 1
+    }
+    public var unmatchedQuote: Bool {
+        var q: Int = 0
+        for key in tokenKeys {
+            if key == Token.quote.key { q += 1 }
+        }
+        return q % 2 == 1
+    }
+    public func contains(key: TokenKey) -> Bool {
+        for k in tokenKeys {
+            if k == key { return true }
+        }
+        return false
+    }
+    public func clear() { tokenKeys.removeAll() }
+    
     public func compile() -> ChainCore { ChainCore(chain: self) }
 
 // ChainCore ======================================================================================

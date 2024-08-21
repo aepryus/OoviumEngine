@@ -61,7 +61,6 @@ import Foundation
     
     public func create<T: Aexel>(at: V2) -> T {
         let aexel: T = T(at: at, aether: self)
-//        aexel.chains.forEach { self.state.add(chain: $0) }
         addAexel(aexel)
         return aexel
     }
