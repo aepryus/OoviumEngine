@@ -52,9 +52,99 @@ public class Chain: NSObject, Packable {
 // Computed ========================================================================================
     public var isEmpty: Bool { tokenKeys.isEmpty }
     
+// Private =========================================================================================
+    private var currentParam: Int {
+        var params: [Int] = []
+        tokenKeys.forEach { (key: TokenKey) in
+            if key.code == .fn || key.code == .ml { params.append(1) }
+            else if key.code == .sp {
+                if key.tag == "(" { params.append(1) }
+                else if key.tag == "," { params[params.count - 1] += 1 }
+                else if key.tag == ")" { params.removeLast() }
+            }
+        }
+        return params.last ?? 0
+    }
+    private var noOfParams: Int {
+        var lefts: [TokenKey] = []
+        tokenKeys.forEach { (key: TokenKey) in
+            if key.code == .fn || key.code == .ml { lefts.append(key) }
+            else if key.code == .sp {
+                if key.tag == "(" { lefts.append(key) }
+                else if key.tag == ")" { lefts.removeLast() }
+            }
+        }
+        guard let last: TokenKey = lefts.last else { return 0 }
+        if last.code == .fn { return (Token.token(key: last) as! FunctionToken).params }
+        if last.code == .ml { return (Token.token(key: last) as! MechlikeToken).params }
+        return 1
+    }
+    private var lastIsOperator: Bool {
+        guard let last: TokenKey = tokenKeys.last else { return true }
+        return last.code == .op
+    }
+    private var isNewSection: Bool {
+        guard let last: TokenKey = tokenKeys.last else { return true }
+        return last.tag == "(" || last.tag == "[" || last.tag == "," || last.code == .fn || last.code == .ml || last.code == .op
+    }
+    private var isComplete: Bool {
+        guard noOfParams > 0 else { return false }
+        return currentParam == noOfParams
+    }
+    private func parenKey() -> TokenKey? {
+        if lastIsOperator || isNewSection { return Token.leftParen.key }
+        else if isComplete { return Token.rightParen.key }
+        else if noOfParams > 0 { return Token.comma.key }
+        return nil
+    }
+    private func minusKey() -> TokenKey { isNewSection ? Token.neg.key : Token.subtract.key }
+    private func isWithinBracket() -> Bool {
+        var p: Int = 0
+        tokenKeys.forEach { (key: TokenKey) in
+            if key == Token.bra.key { p += 1 }
+            else if key == Token.ket.key { p -= 1 }
+        }
+        return p != 0
+    }
+    private func braketKey() -> TokenKey? {
+        if lastIsOperator || isNewSection { return Token.bra.key }
+        else if isWithinBracket() { return Token.ket.key }
+        else { return nil }
+    }
+    
 // Methods =========================================================================================
-    func post(key: TokenKey) { tokenKeys.append(key) }
-    func removeKey() { tokenKeys.removeLast() }
+    public func post(key: TokenKey) { tokenKeys.append(key) }
+    public func post(key: TokenKey, at cursor: Int? = nil) {
+        let cursor: Int = cursor ?? tokenKeys.count
+        tokenKeys.insert(key, at: cursor)
+    }
+    public func removeKey() { tokenKeys.removeLast() }
+    
+    public func minusSign(at cursor: Int) { post(key: minusKey(), at: cursor) }
+    public func parenthesis(at cursor: Int) {
+        guard let parenKey = parenKey() else { return }
+        post(key: parenKey, at: cursor)
+    }
+    public func braket(at cursor: Int) {
+        guard let braketKey = braketKey() else { return }
+        post(key: braketKey, at: cursor)
+    }
+    private func removeKey(at cursor: Int) -> TokenKey? {
+        let key: TokenKey = tokenKeys.remove(at: cursor)
+//        if let this: Tower = tower, let that: Tower = (token as? TowerToken)?.tower, !tokens.contains(token) {
+//            that.detach(this)
+//        }
+        return key
+    }
+    public func backspace(at cursor: Int) -> TokenKey? {             // delete left
+        guard cursor > 0 else { return nil }
+        return removeKey(at: cursor-1)
+    }
+    public func delete(at cursor: Int) -> TokenKey? {                // delete right
+        guard cursor < tokenKeys.count else { return nil }
+        return removeKey(at: cursor)
+    }
+    
     public func compile() -> ChainCore { ChainCore(chain: self) }
 
 // ChainCore ======================================================================================

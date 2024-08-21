@@ -36,7 +36,7 @@ import Foundation
 //    func variableToken(tag: String) -> Token { state.variableToken(tag: tag) }
     func newNo(type: String) -> Int { (aexels.filter({ $0.type == type }).map({ $0.no }).max() ?? 0) + 1 }
     
-    func compile() -> AetherExe { AetherExe(aether: self) }
+    public func compile() -> AetherExe { AetherExe(aether: self) }
 
 // Aexels ==========================================================================================
 	public func addAexel(_ aexel: Aexel) {

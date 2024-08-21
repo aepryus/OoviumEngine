@@ -29,7 +29,18 @@ user defined name or else it's formatted value.
 import Acheron
 import Foundation
 
-public enum TokenCode: CaseIterable { case dg, ch, sp, cn, un, op, fn, va, cl, ml, pr }
+public enum TokenCode: CaseIterable {
+    case dg, ch, sp, cn, un, op, fn, va, cl, ml, pr
+    
+    var hasTower: Bool {
+        switch self {
+            case .va, .cl, .ml, .pr:
+                return true
+            case .dg, .ch, .sp, .cn, .un, .op, .fn:
+                return false
+        }
+    }
+}
 
 public struct TokenKey: Hashable, CustomStringConvertible {
     let code: TokenCode
@@ -44,12 +55,8 @@ public struct TokenKey: Hashable, CustomStringConvertible {
         self.tag = tag
     }
 
-    private static let staticCodes: [TokenCode] = [.dg, .ch, .sp, .cn, .un, .op, .fn]
-    private static let towerCodes: [TokenCode] = [.va, .cl, .ml, .pr]
+    var hasTower: Bool { code.hasTower }
 
-    var isStatic: Bool { TokenKey.staticCodes.contains(code) }
-    var isTower: Bool { TokenKey.towerCodes.contains(code) }
-    
 // Hashable ========================================================================================
     public static func == (left: TokenKey, right: TokenKey) -> Bool { left.code == right.code && left.tag == right.tag }
     public func hash(into hasher: inout Hasher) { hasher.combine(description) }
@@ -173,7 +180,7 @@ public class Token: Hashable {
     public static let flee: ConstantToken           = ConstantToken(tag: "flee")
     public static let wander: ConstantToken         = ConstantToken(tag: "wander")
     
-    static func token(key: TokenKey) -> Token? {
+    public static func token(key: TokenKey) -> Token? {
         if let token: Token = tokens[key] { return token }
         guard key.code == .ch else { return nil }
         return Token.characterToken(tag: key.tag)

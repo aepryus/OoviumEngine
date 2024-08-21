@@ -43,13 +43,21 @@ public class AetherExe {
 //    private var webTowers: [Tower] { aether.aexels.flatMap({ $0.towers }).filter({ $0.web != nil }) }
     
 // TokenKeys =======================================================================================
-    public func token(key: TokenKey) -> Token { tokens[key]! }
     public func chainCore(key: TokenKey) -> ChainCore { (cores[key] as! ChainCore) }
     public func tokenDisplay(key: TokenKey) -> String { (cores[key] as! ChainCore).tokensDisplay }
     public func valueDisplay(key: TokenKey) -> String { (cores[key] as! ChainCore).valueDisplay }
     public func naturalDisplay(key: TokenKey) -> String { (cores[key] as! ChainCore).naturalDisplay }
 
 // Methods =========================================================================================
+    public func canBeAdded(thisKey: TokenKey, to thatKey: TokenKey) -> Bool {
+        let that: Tower = towerLookup[tokens[thatKey]!]!
+        guard let thisToken: TowerToken = tokens[thisKey] else { return true }
+        let this: Tower = towerLookup[thisToken]!
+        if this.downstream(contains: that) { return false }
+        guard let thisFog: TokenKey = this.fog, let thatFog: TokenKey = that.fog else { return true }
+        return thisFog == thatFog
+    }
+    
     func add(chain: Chain) {
 //        let state: ChainCore = ChainCore(chain: chain)
 //        if let key: TokenKey = chain.key { state.tower = createTower(key: key, towerDelegate: state) }
@@ -60,7 +68,7 @@ public class AetherExe {
     }
     func remove(chain: Chain) {}
     
-    func token(key: TokenKey) -> Token? { tokens[key] }
+    public func token(key: TokenKey) -> Token { tokens[key] ?? Token.token(key: key) ?? .zero }
     func variableToken(tag: String) -> VariableToken {
         let key: TokenKey = TokenKey(code: .va, tag: tag)
         if let token: VariableToken = tokens[key] as? VariableToken { return token }
@@ -75,7 +83,7 @@ public class AetherExe {
         tokens[key] = token
         return token
     }
-    func tower(key: TokenKey) -> Tower? {
+    public func tower(key: TokenKey) -> Tower? {
         guard let token: TowerToken = tokens[key] else { return nil }
         return towerLookup[token]
     }
