@@ -49,7 +49,7 @@ public class AetherExe {
     public func naturalDisplay(key: TokenKey) -> String { (cores[key] as! ChainCore).naturalDisplay }
 
 // Methods =========================================================================================
-    public func notifyListeners() { Tower.notifyListeners(towers: towers) }
+    public func notifyListeners() { Tower.notifyListeners(towers: Set<Tower>(towers)) }
     
     public func canBeAdded(thisKey: TokenKey, to thatKey: TokenKey) -> Bool {
         let that: Tower = towerLookup[tokens[thatKey]!]!

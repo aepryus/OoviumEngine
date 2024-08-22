@@ -16,9 +16,7 @@ class GateCore: Core {
     var thenTower: Tower!
     var elseTower: Tower!
     
-    init(gate: Gate) {
-        self.gate = gate
-    }
+    init(gate: Gate) { self.gate = gate }
     
 // Core ============================================================================================
     override var key: TokenKey { gate.resultKey }

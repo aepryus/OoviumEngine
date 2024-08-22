@@ -19,31 +19,26 @@ public class CronCore: Core {
     var startTower: Tower!
     var stopTower: Tower!
     var stepsTower: Tower!
-    var rateTower: Tower!
+    public var rateTower: Tower!
     var deltaTower: Tower!
     var whileTower: Tower!
     
-    init(cron: Cron) {
-        self.cron = cron
-    }
+    init(cron: Cron) { self.cron = cron }
     
     public func reset() {
-        if cron.endMode == .stop || cron.endMode == .repeat || cron.endMode == .bounce {
-            dt = (stopTower.value - startTower.value)/(stepsTower.value-1)
-        } else {
-            dt = deltaTower.value
+        switch cron.endMode {
+            case .stop, .repeat, .bounce:
+                dt = (stopTower.value - startTower.value)/(stepsTower.value-1)
+            default:
+                dt = deltaTower.value
         }
         t = startTower.value
         sealed = true
     }
     public func increment() -> Bool {
-        if sealed {
-            sealed = false
-        } else if (cron.endMode == .stop && t+dt > stopTower.value) || (cron.endMode == .while && whileTower.value == 0) {
-            t = startTower.value
-        } else {
-            t += dt
-        }
+        if sealed { sealed = false }
+        else if (cron.endMode == .stop && t+dt > stopTower.value) || (cron.endMode == .while && whileTower.value == 0) { t = startTower.value }
+        else { t += dt }
         tower.trigger()
         switch cron.endMode {
             case .stop:
@@ -64,6 +59,8 @@ public class CronCore: Core {
     }
     
 // Core ===================================================================================
+    override var key: TokenKey { cron.tokenKey }
+
     override func aetherExeCompleted(_ aetherExe: AetherExe) {
         startTower = aetherExe.tower(key: cron.startChain.key!)
         stopTower = aetherExe.tower(key: cron.stopChain.key!)
@@ -73,9 +70,6 @@ public class CronCore: Core {
         whileTower = aetherExe.tower(key: cron.whileChain.key!)
     }
     
-    override var aetherExe: AetherExe! {
-        didSet {}
-    }
     override func renderDisplay(tower: Tower) -> String {
         tower.obje.display
     }

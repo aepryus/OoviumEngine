@@ -35,7 +35,7 @@ class Funnel {
 
 public class Tower: Hashable, CustomStringConvertible {
     private unowned let aetherExe: AetherExe
-    let core: Core?
+    public let core: Core?
 
     private let _variableToken: VariableToken
     public lazy var variableToken: VariableToken = { _variableToken.tower = self; return _variableToken }()
@@ -194,7 +194,9 @@ public class Tower: Hashable, CustomStringConvertible {
 
 		return true
 	}
-    public func trigger() { Tower.evaluate(towers: allDownstream()) }
+    public func trigger() {
+        Tower.evaluate(towers: allDownstream())
+    }
 	
 // Hashable ========================================================================================
 	public static func == (left: Tower, right: Tower) -> Bool { left === right }
@@ -228,12 +230,15 @@ public class Tower: Hashable, CustomStringConvertible {
             progress = false
             towers.forEach { if $0.attemptToCalculate() { progress = true } }
         } while progress
+        notifyListeners(towers: towers)
     }
     
     private static var listeners: [TokenKey:WeakListener] = [:]
-    public static func startListening(to key: TokenKey, listener: TowerListener) { listeners[key] = WeakListener(listener) }
+    public static func startListening(to key: TokenKey, listener: TowerListener) {
+        listeners[key] = WeakListener(listener)
+    }
     public static func stopListening(to key: TokenKey) { listeners[key] = nil }
-    public static func notifyListeners(towers: [Tower]) { towers.compactMap({ listeners[$0.variableToken.key]?.value }).forEach { $0.onTriggered() } }
+    public static func notifyListeners(towers: Set<Tower>) { towers.compactMap({ listeners[$0.variableToken.key]?.value }).forEach { $0.onTriggered() } }
 
 	public static func printTowers(_ towers: WeakSet<Tower>) {
 		print("[ Towers =================================== ]\n")

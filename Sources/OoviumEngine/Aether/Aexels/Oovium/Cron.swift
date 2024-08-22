@@ -24,21 +24,18 @@ public class Cron: Aexel {
 	@objc public var endMode: OOEndMode = .stop
 	@objc public var exposed: Bool = true
 
-//    public lazy var tower: Tower = aether.state.createTower(tag: key, towerDelegate: self)
-//    public var token: VariableToken { tower.variableToken }
     public lazy var tokenKey: TokenKey = TokenKey(code: .va, tag: fullKey)
 
-//	public var startTower: Tower { startChain.tower }
-//	public var stopTower: Tower { stopChain.tower }
-//	public var stepsTower: Tower { stepsChain.tower }
-//	public var rateTower: Tower { rateChain.tower }
-//	public var deltaTower: Tower { deltaChain.tower }
-//	public var whileTower: Tower { whileChain.tower }
-	
 // Inits ===========================================================================================
 	public required init(at: V2, aether: Aether) {
 		super.init(at: at, aether: aether)
-		onLoad()
+
+        startChain = Chain(key: TokenKey(code: .va, tag: "\(key).start"))
+        stopChain = Chain(key: TokenKey(code: .va, tag: "\(key).stop"))
+        stepsChain = Chain(key: TokenKey(code: .va, tag: "\(key).steps"))
+        rateChain = Chain(key: TokenKey(code: .va, tag: "\(key).rate"))
+        deltaChain = Chain(key: TokenKey(code: .va, tag: "\(key).delta"))
+        whileChain = Chain(key: TokenKey(code: .va, tag: "\(key).while"))
 	}
 	public required init(attributes: [String:Any], parent: Domain?) {
 		super.init(attributes: attributes, parent: parent)

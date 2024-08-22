@@ -12,14 +12,8 @@ import Foundation
 public class Vertebra: Aexon, VariableTokenDelegate {
     @objc public dynamic var name: String = "" {
         didSet {
-            guard name != "" else { name = oldValue; return }
-            var newName: String = name
-            var i: Int = 2
-            while tail.vertebras.first(where: { $0 !== self && $0.name == newName }) != nil {
-                newName = "\(name)\(i)"
-                i += 1
-            }
-            name = newName
+            if name == "" { name = oldValue }
+            else { name = Aether.ensureUniquiness(name: name, names: tail.vertebras.filter({ $0 !== self }).map({ $0.name })) }
         }
     }
 	@objc public dynamic var chain: Chain!
@@ -38,9 +32,11 @@ public class Vertebra: Aexon, VariableTokenDelegate {
     init(tail: Tail, name: String) {
 		self.name = name
         super.init(parent: tail)
+        chain = Chain(key: TokenKey(code: .va, tag: key))
 	}
 	required init(attributes: [String : Any], parent: Domain?) {
 		super.init(attributes: attributes, parent: parent)
+        chain = Chain(key: TokenKey(code: .va, tag: key))
 	}
 
 	var tail: Tail { parent as! Tail }

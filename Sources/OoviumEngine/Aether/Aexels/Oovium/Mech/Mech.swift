@@ -34,7 +34,6 @@ public class Mech: Aexel, Mechlike, VariableTokenDelegate {
 	public required init(attributes: [String:Any], parent: Domain?) {
 		super.init(attributes: attributes, parent: parent)
 	}
-//	deinit { AERecipeRelease(recipe) }
 	
 	public func add(input: Input) {
 		add(input)

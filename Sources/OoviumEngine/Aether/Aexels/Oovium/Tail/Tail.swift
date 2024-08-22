@@ -51,26 +51,33 @@ public class Tail: Aexel, Mechlike, VariableTokenDelegate {
 //		vertebra.tower.web = web
 		vertebras.append(vertebra)
 	}
+    
+//    public func addInput() {
+//        var name: String = ""
+//        if inputs.count < 4 { name = ["x", "y", "z", "w"][inputs.count] }
+//        else { name = "p\(inputs.count+1)" }
+//        let input = Input(mech: self, name: name)
+//        add(input: input)
+////        mechlikeToken.params = inputs.count
+//    }
+
 	public func addVertebra() -> Vertebra {
-//		var name: String = ""
-//		if vertebras.count < 4 {
-//			name = ["x", "y", "z", "w"][vertebras.count]
-//		} else {
-//			name = "p\(vertebras.count+1)"
-//		}
-//
+		var name: String = ""
+        if vertebras.count < 4 { name = ["x", "y", "z", "w"][vertebras.count] }
+        else { name = "p\(vertebras.count+1)" }
+
         let vertebra = Vertebra(tail: self, name: name)
 //        vertebra.tower.web = web
 //        vertebra.chain.tower.tailForWeb = web
-//        add(vertebra: vertebra)
+        add(vertebra: vertebra)
 //        mechlikeToken.params = vertebras.count
 //        vertebra.chain.tower.attach(tower)
 		return vertebra
 	}
 	public func removeVertebra() {
-//		let vertebra = vertebras.removeLast()
+		let vertebra = vertebras.removeLast()
 //        vertebra.chain.tower.detach(tower)
-//		remove(vertebra)
+		remove(vertebra)
 //        mechlikeToken.params = vertebras.count
 	}
 		

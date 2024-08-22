@@ -145,7 +145,7 @@ class MechCore: Core {
 // Core ===================================================================================
     override var key: TokenKey { mech.mechlikeTokenKey }
     
-    override func createTower(_ aetherExe: AetherExe) -> Tower { aetherExe.createMechlikeTower(tag: key.tag, core: self) }
+    override func createTower(_ aetherExe: AetherExe) -> Tower { aetherExe.createMechlikeTower(tag: key.tag, core: self, tokenDelegate: mech) }
     override func aetherExeCompleted(_ aetherExe: AetherExe) {
         resultTower = aetherExe.tower(key: mech.resultChain.key!)
     }

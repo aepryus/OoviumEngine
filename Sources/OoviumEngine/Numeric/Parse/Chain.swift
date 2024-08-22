@@ -40,7 +40,8 @@ public class Chain: NSObject, Packable {
             key = TokenKey(code: .va, tag: chainString[..<index])
             chainString.removeFirst(index+2)
         } else { key = nil }
-        tokenKeys = chainString.components(separatedBy: ";").map({ TokenKey($0) })
+        if !chainString.isEmpty { tokenKeys = chainString.components(separatedBy: ";").map({ TokenKey($0) }) }
+        else { tokenKeys = [] }
 	}
 	public func pack() -> String {
         var chainString: String = ""

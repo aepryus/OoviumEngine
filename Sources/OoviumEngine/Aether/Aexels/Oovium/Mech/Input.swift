@@ -13,7 +13,7 @@ public class Input: Aexon {
     @objc public dynamic var name: String = "" {
         didSet {
             if name == "" { name = oldValue }
-            else { name = Aether.ensureUniquiness(name: name, names: mech.inputs.map({ $0.name })) }
+            else { name = Aether.ensureUniquiness(name: name, names: mech.inputs.filter({ $0 !== self }).map({ $0.name })) }
         }
     }
     
