@@ -12,9 +12,7 @@ import Foundation
 class ColumnCore: Core {
     let column: Column
     
-    init(column: Column) {
-        self.column = column
-    }
+    init(column: Column) { self.column = column }
     
     public func disseminate() {
         guard !column.chain.isEmpty else { return }
@@ -65,156 +63,129 @@ class ColumnCore: Core {
 //            }
 //        }
     }
-    public func calculate() {
-//        var towers: Set<Tower> = Set<Tower>()
-//        for i in 0..<grid.rows {
-//            let cell = grid.cell(colNo: colNo, rowNo: i)
-//            towers.formUnion(cell.tower.allDownstream())
-//        }
-//        Tower.evaluate(towers: towers)
-    }
 
 // Compiling =======================================================================================
     private func compileNON() -> UnsafeMutablePointer<Lambda>? {
-//        let memory = aether.state.memory
-//        let vi: mnimi = AEMemoryIndexForName(memory, footerChain.tower.variableToken.tag.toInt8())
-//
-//        let c: UnsafeMutablePointer<Obj> = UnsafeMutablePointer<Obj>.allocate(capacity: 0)
-//        let v: UnsafeMutablePointer<mnimi> = UnsafeMutablePointer<mnimi>.allocate(capacity: 0)
-//        let m: UnsafeMutablePointer<UInt8> = UnsafeMutablePointer<UInt8>.allocate(capacity: 0)
-//
-//        let lambda: UnsafeMutablePointer<Lambda> = AELambdaCreate(mnimi(vi), c, UInt8(0), v, UInt8(0), m, UInt8(0), nil)
-//
-//        c.deallocate()
-//        v.deallocate()
-//        m.deallocate()
-//
-//        return lambda
-        nil
+        let memory: UnsafeMutablePointer<Memory> = aetherExe.memory
+        let vi: mnimi = AEMemoryIndexForName(memory, column.footerChain.key!.tag.toInt8())
+        return AELambdaCreate(vi, nil, 0, nil, 0, nil, 0, nil)
     }
     private func compileSUM() -> UnsafeMutablePointer<Lambda>? {
-//        let memory = aether.state.memory
-//        let vi: mnimi = AEMemoryIndexForName(memory, footerChain.tower.variableToken.tag.toInt8())
-//        let c: UnsafeMutablePointer<Obj> = UnsafeMutablePointer<Obj>.allocate(capacity: 0)
-//
-//        let vn = grid.rows
-//        let v: UnsafeMutablePointer<mnimi> = UnsafeMutablePointer<mnimi>.allocate(capacity: vn)
-//        for i in 0..<vn {
-//            let cell: Cell = grid.cell(colNo: colNo, rowNo: i)
-//            v[i] = AEMemoryIndexForName(memory, cell.tower.variableToken.tag.toInt8())
-//        }
-//
-//        let mn = 2*vn - 1
-//        let m: UnsafeMutablePointer<UInt8> = UnsafeMutablePointer<UInt8>.allocate(capacity: mn)
-//
-//        m[0] = UInt8(AEMorphNumVarForce.rawValue)
-//        for i in 1..<vn {
-//            m[2*i-1] = UInt8(AEMorphNumVarForce.rawValue)
-//            m[2*i] = UInt8(AEMorphAdd.rawValue)
-//        }
-//
-//        let lambda: UnsafeMutablePointer<Lambda> = AELambdaCreate(mnimi(vi), c, UInt8(0), v, UInt8(vn), m, UInt8(mn), nil)
-//
-//        c.deallocate()
-//        v.deallocate()
-//        m.deallocate()
-//
-//        return lambda
-        nil
+        let memory: UnsafeMutablePointer<Memory> = aetherExe.memory
+        let vi: mnimi = AEMemoryIndexForName(memory, column.footerChain.key!.tag.toInt8())
+        
+        let vn: Int = column.grid.rows
+        let v: UnsafeMutablePointer<mnimi> = UnsafeMutablePointer<mnimi>.allocate(capacity: vn)
+        defer { v.deallocate() }
+        for i: Int in 0..<vn {
+            let cell: Cell = column.grid.cell(colNo: column.colNo, rowNo: i)
+            v[i] = AEMemoryIndexForName(memory, cell.chain.key!.tag.toInt8())
+        }
+
+        let mn: Int = 2*vn - 1
+        let m: UnsafeMutablePointer<UInt8> = UnsafeMutablePointer<UInt8>.allocate(capacity: mn)
+        defer { m.deallocate() }
+
+        m[0] = UInt8(MorphNumVarForce.rawValue)
+        for i: Int in 1..<vn {
+            m[2*i-1] = UInt8(MorphNumVarForce.rawValue)
+            m[2*i] = UInt8(MorphAdd.rawValue)
+        }
+
+        return AELambdaCreate(mnimi(vi), nil, 0, v, UInt8(vn), m, UInt8(mn), nil)
     }
     private func compileAVG() -> UnsafeMutablePointer<Lambda>? {
-//        let memory = aether.state.memory
-//        let vi: mnimi = AEMemoryIndexForName(memory, footerChain.tower.variableToken.tag.toInt8())
-//
-//        let cn: Int = 1
-//        let c: UnsafeMutablePointer<Obj> = UnsafeMutablePointer<Obj>.allocate(capacity: cn)
-//        c[0] = AEObjReal(Double(grid.rows))
-//
-//        let vn = grid.rows
-//        let v: UnsafeMutablePointer<mnimi> = UnsafeMutablePointer<mnimi>.allocate(capacity: vn)
-//        for i in 0..<vn {
-//            let cell: Cell = grid.cell(colNo: colNo, rowNo: i)
-//            v[i] = AEMemoryIndexForName(memory, cell.tower.variableToken.tag.toInt8())
-//        }
-//
-//        let mn = 2*vn - 1 + 2
-//        let m: UnsafeMutablePointer<UInt8> = UnsafeMutablePointer<UInt8>.allocate(capacity: mn)
-//
-//        m[0] = UInt8(AEMorphNumVar.rawValue)
-//        for i in 1..<vn {
-//            m[2*i-1] = UInt8(AEMorphNumVar.rawValue)
-//            m[2*i] = UInt8(AEMorphAdd.rawValue)
-//        }
-//        m[2*vn-1] = UInt8(AEMorphNumCns.rawValue)
-//        m[2*vn] = UInt8(AEMorphDiv.rawValue)
-//
-//        let lambda: UnsafeMutablePointer<Lambda> = AELambdaCreate(mnimi(vi), c, UInt8(cn), v, UInt8(vn), m, UInt8(mn), nil)
-//
-//        c.deallocate()
-//        v.deallocate()
-//        m.deallocate()
-//
-//        return lambda
-        nil
+        let memory: UnsafeMutablePointer<Memory> = aetherExe.memory
+        let vi: mnimi = AEMemoryIndexForName(memory, column.footerChain.key!.tag.toInt8())
+        
+        let cn: Int = 1
+        let c: UnsafeMutablePointer<Obj> = UnsafeMutablePointer<Obj>.allocate(capacity: cn)
+        defer { c.deallocate() }
+        c[0] = AEObjReal(Double(column.grid.rows))
+
+        let vn: Int = column.grid.rows
+        let v: UnsafeMutablePointer<mnimi> = UnsafeMutablePointer<mnimi>.allocate(capacity: vn)
+        defer { v.deallocate() }
+        for i: Int in 0..<vn {
+            let cell: Cell = column.grid.cell(colNo: column.colNo, rowNo: i)
+            v[i] = AEMemoryIndexForName(memory, cell.chain.key!.tag.toInt8())
+        }
+
+        let mn: Int = 2*vn - 1 + 2
+        let m: UnsafeMutablePointer<UInt8> = UnsafeMutablePointer<UInt8>.allocate(capacity: mn)
+        defer { m.deallocate() }
+
+        m[0] = UInt8(MorphNumVarForce.rawValue)
+        for i: Int in 1..<vn {
+            m[2*i-1] = UInt8(MorphNumVarForce.rawValue)
+            m[2*i] = UInt8(MorphAdd.rawValue)
+        }
+        m[2*vn-1] = UInt8(MorphNumCns.rawValue)
+        m[2*vn] = UInt8(MorphDiv.rawValue)
+
+        return AELambdaCreate(mnimi(vi), c, UInt8(cn), v, UInt8(vn), m, UInt8(mn), nil)
     }
     private func compileRUN() -> UnsafeMutablePointer<Lambda>? {
-//        let memory = aether.state.memory
-//        let vi: mnimi = AEMemoryIndexForName(memory, footerChain.tower.variableToken.tag.toInt8())
-//
-//        let c: UnsafeMutablePointer<Obj> = UnsafeMutablePointer<Obj>.allocate(capacity: 0)
-//        let v: UnsafeMutablePointer<mnimi> = UnsafeMutablePointer<mnimi>.allocate(capacity: 0)
-//        let m: UnsafeMutablePointer<UInt8> = UnsafeMutablePointer<UInt8>.allocate(capacity: 0)
-//
-//        let lambda: UnsafeMutablePointer<Lambda> = AELambdaCreate(mnimi(vi), c, UInt8(0), v, UInt8(0), m, UInt8(0), nil)
-//
-//        c.deallocate()
-//        v.deallocate()
-//        m.deallocate()
-//
-//        return lambda
-        nil
+        let memory: UnsafeMutablePointer<Memory> = aetherExe.memory
+        let vi: mnimi = AEMemoryIndexForName(memory, column.footerChain.key!.tag.toInt8())
+        
+        let vn: Int = column.grid.rows
+        let v: UnsafeMutablePointer<mnimi> = UnsafeMutablePointer<mnimi>.allocate(capacity: vn)
+        defer { v.deallocate() }
+        for i: Int in 0..<vn {
+            let cell: Cell = column.grid.cell(colNo: column.colNo, rowNo: i)
+            v[i] = AEMemoryIndexForName(memory, cell.chain.key!.tag.toInt8())
+        }
+
+        let mn: Int = vn
+        let m: UnsafeMutablePointer<UInt8> = UnsafeMutablePointer<UInt8>.allocate(capacity: mn)
+        defer { m.deallocate() }
+
+        for i: Int in 0..<vn {
+            m[i] = UInt8(MorphNumVarForce.rawValue)
+        }
+
+        return AELambdaCreate(mnimi(vi), nil, 0, v, UInt8(vn), m, UInt8(mn), nil)
     }
-    private func compileMTC() -> UnsafeMutablePointer<Lambda>? { nil
-//        return footerChain.compile(name: footerTower.variableToken.tag)
-    }
-    private func compuleCNT() -> UnsafeMutablePointer<Lambda>? {
-//        let memory = aether.state.memory
-//        let vi: mnimi = AEMemoryIndexForName(memory, footerChain.tower.variableToken.tag.toInt8())
-//
-//        let cn: Int = 1
-//        let c: UnsafeMutablePointer<Obj> = UnsafeMutablePointer<Obj>.allocate(capacity: cn)
-//        c[0] = AEObjReal(Double(grid.rows))
-//
-//        let vn = 0
-//        let v: UnsafeMutablePointer<mnimi> = UnsafeMutablePointer<mnimi>.allocate(capacity: vn)
-//
-//        let mn = 1
-//        let m: UnsafeMutablePointer<UInt8> = UnsafeMutablePointer<UInt8>.allocate(capacity: mn)
-//
-//        m[0] = UInt8(AEMorphNumCns.rawValue)
-//
-//        let lambda: UnsafeMutablePointer<Lambda> = AELambdaCreate(mnimi(vi), c, UInt8(cn), v, UInt8(vn), m, UInt8(mn), nil)
-//
-//        c.deallocate()
-//        v.deallocate()
-//        m.deallocate()
-//
-//        return lambda
+    private func compileMTC() -> UnsafeMutablePointer<Lambda>? {
         nil
+//        column.footerChain.compile().compile(name: <#T##String#>, tower: <#T##Tower#>)
+    }
+    private func compileCNT() -> UnsafeMutablePointer<Lambda>? {
+        let memory: UnsafeMutablePointer<Memory> = aetherExe.memory
+        let vi: mnimi = AEMemoryIndexForName(memory, column.footerChain.key!.tag.toInt8())
+        
+        let cn: Int = 1
+        let c: UnsafeMutablePointer<Obj> = UnsafeMutablePointer<Obj>.allocate(capacity: cn)
+        defer { c.deallocate() }
+        c[0] = AEObjReal(Double(column.grid.rows))
+
+        let vn: Int = 0
+        let v: UnsafeMutablePointer<mnimi> = UnsafeMutablePointer<mnimi>.allocate(capacity: vn)
+        defer { v.deallocate() }
+
+        let mn: Int = 1
+        let m: UnsafeMutablePointer<UInt8> = UnsafeMutablePointer<UInt8>.allocate(capacity: mn)
+        defer { m.deallocate() }
+
+        m[0] = UInt8(MorphNumCns.rawValue)
+
+        return AELambdaCreate(mnimi(vi), c, UInt8(cn), v, UInt8(vn), m, UInt8(mn), nil)
     }
     
     public func compile(name: String) -> UnsafeMutablePointer<Lambda>? {
         switch column.aggregate {
             case .none:     return compileNON()
-            case .sum:         return compileSUM()
-            case .average:     return compileAVG()
-            case .running:     return compileRUN()
-            case .match:     return compileMTC()
-            case .count:     return compuleCNT()
+            case .sum:      return compileSUM()
+            case .average:  return compileAVG()
+            case .running:  return compileRUN()
+            case .match:    return compileMTC()
+            case .count:    return compileCNT()
         }
     }
     
 // Core ===================================================================================
+    override var key: TokenKey { column.chain.key! }
     override func createTower(_ aetherExe: AetherExe) -> Tower { aetherExe.createColumnTower(tag: key.tag, core: self) }
     
     override func buildUpstream(tower: Tower) {

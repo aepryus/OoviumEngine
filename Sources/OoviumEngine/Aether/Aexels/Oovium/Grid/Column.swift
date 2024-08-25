@@ -31,6 +31,8 @@ public class Column: Aexon {
 	public var _footerWidth: Double? = nil
 
 	public var footerChain: Chain!
+    
+//    public lazy var tokenKey: TokenKey = TokenKey(code: .cl, tag: fullKey)
 	
 	fileprivate lazy var header: Header = Header()
     
@@ -55,8 +57,8 @@ public class Column: Aexon {
 //		no = grid.maxColumnNo + 1
         super.init(parent: grid)
 		parent = grid
-        chain = Chain(key: TokenKey(code: .cl, tag: key))
-        footerChain = Chain(key: TokenKey(code: .va, tag: "\(grid.key).Ft\(no)"))
+        chain = Chain(key: TokenKey(code: .cl, tag: fullKey))
+        footerChain = Chain(key: TokenKey(code: .va, tag: fullKey))
 //		chain.tower = tower
 //		chain.alwaysShow = true
 //		footerChain.tower = footerTower

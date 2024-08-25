@@ -17,7 +17,7 @@ public class Cell: Aexon {
 // Inits ===========================================================================================
 	public required init(grid: Grid) {
         super.init(parent: grid)
-        chain = Chain(key: TokenKey(code: .va, tag: key))
+        chain = Chain(key: TokenKey(code: .va, tag: fullKey))
 	}
 	public required init(attributes: [String:Any], parent: Domain?) {
 		super.init(attributes: attributes, parent: parent)
