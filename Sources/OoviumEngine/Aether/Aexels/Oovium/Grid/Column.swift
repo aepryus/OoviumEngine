@@ -70,7 +70,6 @@ public class Column: Aexon {
 // Aexon ===========================================================================================
     override var code: String { "Co" }
     override func createCores() -> [Core] { [
-        ChainCore(chain: chain),
         ColumnCore(column: self)
     ] }
     
