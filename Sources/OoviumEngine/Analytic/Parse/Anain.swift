@@ -1,9 +1,11 @@
 //
-//  File.swift
-//  
+//  Anian.swift
+//
 //
 //  Created by Joe Charlier on 1/12/23.
 //
+
+// Anain = Analytical Chain
 
 import Aegean
 import Acheron
@@ -92,7 +94,7 @@ fileprivate class Ops {
     }
 }
 
-public final class Anain: NSObject, Packable, TowerDelegate {
+public class Anain: NSObject, Packable {
     public var tokens: [Token] = []
     public var tower: Tower!
     
@@ -116,7 +118,7 @@ public final class Anain: NSObject, Packable, TowerDelegate {
     }
 
 // Packable ========================================================================================
-    public init(_ tokensString: String) {
+    public required init(_ tokensString: String) {
         guard !tokensString.isEmpty else { return }
         loadedKeys = tokensString.components(separatedBy: ";")
         cursor = loadedKeys!.count
@@ -130,7 +132,7 @@ public final class Anain: NSObject, Packable, TowerDelegate {
     
 // Private =========================================================================================
     private func buildTokens() {
-        tokens = loadedKeys?.map({ Token.token(key: $0)! }) ?? []
+        tokens = loadedKeys?.map({ Token.token(key: TokenKey($0))! }) ?? []
         loadedKeys = nil
     }
     
@@ -217,7 +219,7 @@ public final class Anain: NSObject, Packable, TowerDelegate {
         var i: Int = 0
         while i < natural.count {
             var tag: String = Token.aliases["\(natural[i])"] ?? "\(natural[i])"
-            let code: Token.Code
+            let code: TokenCode
             if natural[i].isNumber || natural[i] == "." { code = .dg }
             else if natural[i] == "!" { code = .un }
             else if natural[i] == "-" && isStart { code = .un }
@@ -225,11 +227,11 @@ public final class Anain: NSObject, Packable, TowerDelegate {
             else if ["(", ",", ")"].contains(natural[i]) { code = .sp }
             else if ["e", "i", "π"].contains(natural[i]) { code = .cn }
             else if natural[i] == "\"" {
-                keys.append("\(Token.Code.sp):\"")
+                keys.append("\(TokenCode.sp):\"")
                 i += 1
                 let end: Int = natural.loc(of: "\"", after: i)!
                 while i < end {
-                    keys.append("\(Token.Code.ch):\(natural[i])")
+                    keys.append("\(TokenCode.ch):\(natural[i])")
                     i += 1
                 }
                 code = .sp
@@ -272,25 +274,25 @@ public final class Anain: NSObject, Packable, TowerDelegate {
         tower.trigger()
     }
     
-    public func attemptToPost(token: Token) -> Bool {
+    public func attemptToPost(key: TokenKey) -> Bool {
         
-        if let this = tower, let towerToken = token as? TowerToken {
-            let that: Tower = towerToken.tower
-            if this.downstream(contains: that) { return false }
-            if let thisWeb = this.web ?? this.tailForWeb, let thatWeb = that.web {
-                if thisWeb !== thatWeb { return false }
-            }
-            that.attach(this)
-        }
-        
-        tokens.insert(token, at: cursor)
-        
-        cursor += 1
+//        if let this = tower, let towerToken = token as? TowerToken {
+//            let that: Tower = towerToken.tower
+//            if this.downstream(contains: that) { return false }
+//            if let thisWeb = this.web ?? this.tailForWeb, let thatWeb = that.web {
+//                if thisWeb !== thatWeb { return false }
+//            }
+//            that.attach(this)
+//        }
+//        
+//        tokens.insert(token, at: cursor)
+//        
+//        cursor += 1
 
         return true
     }
     public func post(token: Token) {
-        _ = attemptToPost(token: token)
+        _ = attemptToPost(key: token.key)
     }
     public func minusSign() {
         post(token: minusToken())
@@ -375,7 +377,7 @@ public final class Anain: NSObject, Packable, TowerDelegate {
     }
     
 // Parsing =========================================================================================
-    private var morphs: [Int] = []
+    private var morphs: [UInt32] = []
     var variables: [Variable] = []
     private var constants: [Value] = []
     private var stack: [String] = [String](repeating: "", count: 10)
@@ -396,13 +398,10 @@ public final class Anain: NSObject, Packable, TowerDelegate {
         return stack[sp-1]
     }
     
-    private func addMorph(_ morph: Int) {
+    private func addMorph(_ morph: UInt32) {
         morphs.append(morph)
-        if let morph = Morph(rawValue: morph) {
-            push(morph.def.key)
-        } else {
-            push("num")
-        }
+        let morph = Morph(rawValue: morph)
+        push(morph.def.key)
     }
     private func addConstant(_ value: Value) throws {
         constants.append(value)
@@ -643,32 +642,32 @@ public final class Anain: NSObject, Packable, TowerDelegate {
         
         for morph in morphs {
             switch morph {
-                case Morph.numCns.rawValue:
+                case MorphNumCns.rawValue:
                     stack[si] = ValueExpression(value: constants[ci])
                     ci += 1
                     si += 1
-                case Morph.add.rawValue:
+                case MorphAdd.rawValue:
                     si -= 1
                     let b: Expression = stack[si]!
                     si -= 1
                     let a: Expression = stack[si]!
                     stack[si] = AdditionExpression(expressions: [a, b])
                     si += 1
-                case Morph.sub.rawValue:
+                case MorphSub.rawValue:
                     si -= 1
                     let b: Expression = stack[si]!.negate()
                     si -= 1
                     let a: Expression = stack[si]!
                     stack[si] = AdditionExpression(expressions: [a, b])
                     si += 1
-                case Morph.mul.rawValue:
+                case MorphMul.rawValue:
                     si -= 1
                     let b: Expression = stack[si]!
                     si -= 1
                     let a: Expression = stack[si]!
                     stack[si] = MultiplicationExpression(expressions: [a, b])
                     si += 1
-                case Morph.div.rawValue:
+                case MorphDiv.rawValue:
                     si -= 1
                     let denomenator: Expression = stack[si]!.invert()
                     si -= 1
@@ -733,7 +732,7 @@ public final class Anain: NSObject, Packable, TowerDelegate {
 //        return lambda
     }
     
-// TowerDelegate ===================================================================================
+// Core ===================================================================================
     func buildUpstream(tower: Tower) {
 //        tokens.compactMap { $0 as? TowerToken }.forEach {
 //            let upstream: Tower = $0.tower
@@ -749,31 +748,27 @@ public final class Anain: NSObject, Packable, TowerDelegate {
 //        if let label = tower.variableToken.alias { return label }
 //        return description
     }
-    func buildWorker(tower: Tower) {
-//        let lambda: UnsafeMutablePointer<Lambda>? = compile(name: tower.name)
-//        tower.task = lambda != nil ? AETaskCreateLambda(lambda) : AETaskCreateNull()
-//        AETaskSetLabels(tower.task, tower.variableToken.tag.toInt8(), "\(tower.variableToken.alias ?? tower.variableToken.tag) = \(tokensDisplay)".toInt8())
-    }
-    func workerCompleted(tower: Tower, askedBy: Tower) -> Bool {
+//    func renderTask(tower: Tower) -> UnsafeMutablePointer<Task>? { nil }
+    func taskCompleted(tower: Tower, askedBy: Tower) -> Bool {
         true
 //        AEMemoryLoaded(tower.memory, tower.index) != 0
     }
-    func workerBlocked(tower: Tower) -> Bool {
+    func taskBlocked(tower: Tower) -> Bool {
         false
 //        tokens.compactMap({ $0 as? TowerToken }).contains { $0.status != .ok }
     }
-    func resetWorker(tower: Tower) {
+    func resetTask(tower: Tower) {
 //        AEMemoryUnfix(tower.memory, tower.index)
     }
-    func executeWorker(tower: Tower) {
+    func executeTask(tower: Tower) {
 //        AETaskExecute(tower.task, tower.memory)
 //        AEMemoryFix(tower.memory, tower.index)
 //        tower.variableToken.def = tower.obje.def
     }
 
 // CustomStringConvertible =========================================================================
-    private var shouldDisplayTokens: Bool { editing || tower?.web != nil || tower?.variableToken.status != .ok || alwaysShow }
-    override public var description: String {
+    private var shouldDisplayTokens: Bool { editing || tower?.fog != nil || tower?.variableToken.status != .ok || alwaysShow }
+    public override var description: String {
         if let expression: Expression = calculate()?.reduce() { return "\(expression)" }
         else { return "ERROR" }
 //        guard tokens.count > 0 else { return "" }

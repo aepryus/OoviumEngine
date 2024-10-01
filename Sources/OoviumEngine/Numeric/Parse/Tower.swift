@@ -10,27 +10,17 @@ import Aegean
 import Acheron
 import Foundation
 
-protocol TowerDelegate: AnyObject {
-	func buildUpstream(tower: Tower)
-	func renderDisplay(tower: Tower) -> String
-	func buildWorker(tower: Tower)
-	func workerCompleted(tower: Tower, askedBy: Tower) -> Bool
-	func workerBlocked(tower: Tower) -> Bool
-	func resetWorker(tower: Tower)
-	func executeWorker(tower: Tower)
-}
-extension TowerDelegate {
-	func buildUpstream(tower: Tower) {}
-	func renderDisplay(tower: Tower) -> String { "---" }
-    func buildWorker(tower: Tower) { tower.task = nil }
-	func workerCompleted(tower: Tower, askedBy: Tower) -> Bool { true }
-	func workerBlocked(tower: Tower) -> Bool { false }
-	func resetWorker(tower: Tower) {}
-	func executeWorker(tower: Tower) {}
+public class WeakListener {
+    weak var value: TowerListener?
+    public init(_ value: TowerListener) { self.value = value }
 }
 
 public protocol TowerListener: AnyObject {
 	func onTriggered()
+}
+public class Fog {
+    let key: TokenKey
+    init(_ key: TokenKey) { self.key = key }
 }
 
 class Funnel {
@@ -43,9 +33,9 @@ class Funnel {
 	}
 }
 
-public final class Tower: Hashable, CustomStringConvertible {
-	private unowned let aether: Aether
-    weak var delegate: TowerDelegate?
+public class Tower: Hashable, CustomStringConvertible {
+    private unowned let aetherExe: AetherExe
+    public let core: Core?
 
     private let _variableToken: VariableToken
     public lazy var variableToken: VariableToken = { _variableToken.tower = self; return _variableToken }()
@@ -58,16 +48,8 @@ public final class Tower: Hashable, CustomStringConvertible {
 
 	public weak var listener: TowerListener? = nil
 
-	weak var tailForWeb: AnyObject? = nil
-	weak var _web: AnyObject? = nil
-	public var web: AnyObject? {
-		set { _web = newValue }
-		get {
-            guard mechlikeToken == nil else { return nil }
-			if let web = _web { return web }
-            return upstream.first(where: { $0.web != nil })?.web
-		}
-	}
+    public var fog: TokenKey? { core?.fog }
+    public var isFogFirewall: Bool { core?.fog != nil }
 
 	public weak var gateTo: Tower?
 	public weak var thenTo: Tower?
@@ -78,22 +60,22 @@ public final class Tower: Hashable, CustomStringConvertible {
 	var task: UnsafeMutablePointer<Task>? = nil
 	
 	var name: String { variableToken.tag }
-    var memory: UnsafeMutablePointer<Memory> { aether.memory }
+    var memory: UnsafeMutablePointer<Memory> { aetherExe.memory }
     
-    init(aether: Aether, token: VariableToken, delegate: TowerDelegate) {
-		self.aether = aether
+    init(aetherExe: AetherExe, token: VariableToken, core: Core) {
+		self.aetherExe = aetherExe
         self._variableToken = token
-		self.delegate = delegate
+		self.core = core
 	}
 	deinit { AETaskRelease(task) }
 
 	public var index: mnimi {
-        AEMemoryIndexForName(aether.memory, variableToken.tag.toInt8())
+        AEMemoryIndexForName(aetherExe.memory, variableToken.tag.toInt8())
     }
-	public var value: Double { AEMemoryValue(aether.memory, index) }
-	public var obje: Obje { Obje(memory: aether.memory, index: index) }
+    public var value: Double { AEMemoryValue(aetherExe.memory, index) }
+    public var obje: Obje { Obje(memory: aetherExe.memory, index: index) }
 	
-	func workerCompleted(askedBy: Tower) -> Bool { delegate?.workerCompleted(tower: self, askedBy: askedBy) ?? true }
+	func taskCompleted(askedBy: Tower) -> Bool { core?.taskCompleted(tower: self, askedBy: askedBy) ?? true }
 
 // Stream ==========================================================================================
 	public func attach(_ tower: Tower) {
@@ -125,8 +107,8 @@ public final class Tower: Hashable, CustomStringConvertible {
 		return towers
 	}
 	public func downstream(contains: Tower) -> Bool {
-		if self === contains {return true}
-		guard tailForWeb == nil else {return false}
+		if self === contains { return true }
+        guard !isFogFirewall else { return false }
 		for tower in downstream {
 			if tower.downstream(contains: contains) {
 				return true
@@ -137,7 +119,7 @@ public final class Tower: Hashable, CustomStringConvertible {
 	
 	public func towersDestinedFor() -> Set<Tower> {
 		var result = Set<Tower>()
-		guard web != nil else {return result}
+		guard fog != nil else {return result}
 		result.insert(self)
 		upstream.forEach {result.formUnion($0.towersDestinedFor())}
 		return result
@@ -179,21 +161,21 @@ public final class Tower: Hashable, CustomStringConvertible {
 	}
 	
 // Calculate =======================================================================================
-	public func buildStream() { delegate?.buildUpstream(tower: self) }
+	public func buildStream() { core?.buildUpstream(tower: self) }
 	public func buildTask() {
-        guard let delegate, variableToken.status != .deleted else { return }
+        guard let core, variableToken.status != .deleted else { return }
 		AETaskRelease(task)
-		delegate.buildWorker(tower: self)
+        task = core.renderTask(tower: self)
 	}
-	var calced: Bool { variableToken.code != .va || AEMemoryLoaded(aether.memory, index) != 0 }
+    var calced: Bool { variableToken.code != .va || AEMemoryLoaded(aetherExe.memory, index) != 0 }
 	func attemptToCalculate() -> Bool {
-        guard let delegate else { return false }
-		guard !workerCompleted(askedBy: self),
-			  !upstream.contains(where: { !$0.workerCompleted(askedBy: self) })
+        guard let core else { return false }
+		guard !taskCompleted(askedBy: self),
+			  !upstream.contains(where: { !$0.taskCompleted(askedBy: self) })
 			else { return false }
 
 		if variableToken.status == .ok || variableToken.status == .blocked {
-			variableToken.status = delegate.workerBlocked(tower: self) ? .blocked : .ok
+			variableToken.status = core.taskBlocked(tower: self) ? .blocked : .ok
             mechlikeToken?.status = variableToken.status
 		}
 
@@ -202,17 +184,19 @@ public final class Tower: Hashable, CustomStringConvertible {
 		buildTask()
 		// =========================================================
 
-		if (web != nil && variableToken.def !== LambdaDef.def) || variableToken.status != .ok {
-			variableToken.details = delegate.renderDisplay(tower: self)
-			AEMemorySetValue(aether.memory, index, 0)
+		if (fog != nil && variableToken.def !== LambdaDef.def) || variableToken.status != .ok {
+			variableToken.details = core.renderDisplay(tower: self)
+            AEMemorySetValue(aetherExe.memory, index, 0)
 			return true
         } else { variableToken.details = nil }
 		
-		delegate.executeWorker(tower: self)
+        core.executeTask(tower: self)
 
 		return true
 	}
-    public func trigger() { Tower.evaluate(towers: allDownstream()) }
+    public func trigger() {
+        Tower.evaluate(towers: allDownstream())
+    }
 	
 // Hashable ========================================================================================
 	public static func == (left: Tower, right: Tower) -> Bool { left === right }
@@ -240,14 +224,21 @@ public final class Tower: Hashable, CustomStringConvertible {
         return result
     }
     public static func evaluate(towers: Set<Tower>) {
-        towers.forEach { $0.delegate?.resetWorker(tower: $0) }
+        towers.forEach { $0.core?.resetTask(tower: $0) }
         var progress: Bool
         repeat {
             progress = false
             towers.forEach { if $0.attemptToCalculate() { progress = true } }
         } while progress
-        towers.forEach { $0.listener?.onTriggered() }
+        notifyListeners(towers: towers)
     }
+    
+    private static var listeners: [TokenKey:WeakListener] = [:]
+    public static func startListening(to key: TokenKey, listener: TowerListener) {
+        listeners[key] = WeakListener(listener)
+    }
+    public static func stopListening(to key: TokenKey) { listeners[key] = nil }
+    public static func notifyListeners(towers: Set<Tower>) { towers.compactMap({ listeners[$0.variableToken.key]?.value }).forEach { $0.onTriggered() } }
 
 	public static func printTowers(_ towers: WeakSet<Tower>) {
 		print("[ Towers =================================== ]\n")

@@ -29,15 +29,49 @@ user defined name or else it's formatted value.
 import Acheron
 import Foundation
 
-public class Token: Hashable {
-    public enum Code: CaseIterable { case dg, ch, sp, cn, un, op, fn, ml, va, pr, cl }
+public enum TokenCode: CaseIterable {
+    case dg, ch, sp, cn, un, op, fn, va, cl, ml, pr
+    
+    var hasTower: Bool {
+        switch self {
+            case .va, .cl, .ml, .pr:
+                return true
+            case .dg, .ch, .sp, .cn, .un, .op, .fn:
+                return false
+        }
+    }
+}
 
+public struct TokenKey: Hashable, CustomStringConvertible {
+    let code: TokenCode
+    let tag: String
+
+    init(_ string: String) {
+        self.code = TokenCode.from(string: string[0...1])!
+        self.tag = string[3...]
+    }
+    init(code: TokenCode, tag: String) {
+        self.code = code
+        self.tag = tag
+    }
+
+    var hasTower: Bool { code.hasTower }
+
+// Hashable ========================================================================================
+    public static func == (left: TokenKey, right: TokenKey) -> Bool { left.code == right.code && left.tag == right.tag }
+    public func hash(into hasher: inout Hasher) { hasher.combine(description) }
+    
+// CustomStringConvertible =========================================================================
+    public var description: String { "\(code):\(tag)" }
+}
+
+public class Token: Hashable {
     public var tag: String
 
     fileprivate init(tag: String) { self.tag = tag }
 
-    public var code: Code { fatalError() }
-    public var key: String { "\(code):\(tag)" }
+    public var code: TokenCode { fatalError() }
+    public var key: TokenKey { TokenKey(code: code, tag: tag) }
     public var display: String { tag }
 
 // Hashable ========================================================================================
@@ -45,25 +79,20 @@ public class Token: Hashable {
     public func hash(into hasher: inout Hasher) { hasher.combine(key) }
 
 // Static ==========================================================================================
-    static var tokens: [String:Token] = [:]
-    static let aliases: [String:String] = ["-":"−", "*":"×", "/":"÷" ]
+    static var tokens: [TokenKey:Token] = [:]
+    static let aliases: [String:String] = ["-":"−", "*":"×", "/":"÷"]
+    
+    public static func display(tokens: [Token]) -> String { tokens.map({ $0.display }).joined() }
 
     // These are used by ChainResponder for handling external keyboards - jjc 10/27/22
-    public static func digitToken(tag: String) -> DigitToken { tokens["\(Code.dg):\(tag)"]! as! DigitToken }
-    public static func separatorToken(tag: String) -> SeparatorToken { tokens["\(Code.sp):\(tag)"]! as! SeparatorToken }
-    public static func operatorToken(tag: String) -> OperatorToken { tokens["\(Code.op):\(aliases[tag] ?? tag)"]! as! OperatorToken }
-    public static func characterToken(tag: String) -> CharacterToken { tokens["\(Code.ch):\(tag)"] as? CharacterToken ?? {
+    public static func digitToken(tag: String) -> DigitToken { tokens[TokenKey(code: .dg, tag: tag)]! as! DigitToken }
+    public static func separatorToken(tag: String) -> SeparatorToken { tokens[TokenKey(code: .sp, tag: tag)]! as! SeparatorToken }
+    public static func operatorToken(tag: String) -> OperatorToken { tokens[TokenKey(code: .op, tag: aliases[tag] ?? tag)]! as! OperatorToken }
+    public static func characterToken(tag: String) -> CharacterToken { tokens[TokenKey(code: .ch, tag: tag)] as? CharacterToken ?? {
         let token = CharacterToken(tag: tag)
         tokens[token.key] = token
         return token
     }() }
-
-    // This is used by Aether.onLoad to initialize all the chains - jjc 10/27/22
-    static func token(key: String) -> Token? {
-        if let token: Token = tokens[key] { return token }
-        guard key.count > 3 && key[0...1] == "\(Code.ch)" else { return nil }
-        return characterToken(tag: key[3...])
-    }
 
     public static let period: DigitToken            = DigitToken(tag: ".")
     public static let zero: DigitToken              = DigitToken(tag: "0")
@@ -151,6 +180,11 @@ public class Token: Hashable {
     public static let flee: ConstantToken           = ConstantToken(tag: "flee")
     public static let wander: ConstantToken         = ConstantToken(tag: "wander")
     
+    public static func token(key: TokenKey) -> Token? {
+        if let token: Token = tokens[key] { return token }
+        guard key.code == .ch else { return nil }
+        return Token.characterToken(tag: key.tag)
+    }
     static func start() {
         [   period, zero, one, two, three, four, five, six, seven, eight, nine, e, i, pi, yes, no,
             k, add, subtract, multiply, divide, dot, mod, power, equal, less, greater, notEqual,
@@ -166,24 +200,24 @@ public protocol Paramsable: Token { var params: Int { get set } }
 public protocol Defable: Token { var def: Def? { get set } }
 
 public class DigitToken: Token {
-    override public var code: Code { .dg }
+    public override var code: TokenCode { .dg }
 }
 public class CharacterToken: Token {
-    override public var code: Code { .ch }
+    public override var code: TokenCode { .ch }
 }
 public class SeparatorToken: Token {
-    override public var code: Code { .sp }
+    public override var code: TokenCode { .sp }
 }
 public class UnaryToken: Token {
-    override public var code: Code { .un }
+    public override var code: TokenCode { .un }
 }
 public class ConstantToken: Token, Defable {
 	public var def: Def? = nil
-    override public var code: Code { .cn }
+    public override var code: TokenCode { .cn }
 }
 public class KToken: Token {
     public init() { super.init(tag: "k") }
-    override public var code: Code { .va }
+    public override var code: TokenCode { .va }
 }
 public class OperatorToken: Token {
     public enum Level: Int { case add, multiply, power, compare, gate }
@@ -194,7 +228,7 @@ public class OperatorToken: Token {
 		self.level = level
 		super.init(tag: tag)
 	}
-    override public var code: Code { .op }
+    public override var code: TokenCode { .op }
 	public override var display: String { alias ?? tag }
 }
 public class FunctionToken: Token, Defable, Paramsable {
@@ -204,7 +238,7 @@ public class FunctionToken: Token, Defable, Paramsable {
         self.params = params
         super.init(tag: tag)
     }
-    override public var code: Code { .fn }
+    public override var code: TokenCode { .fn }
     public override var display: String { "\(tag)(" }
 }
 
@@ -238,13 +272,13 @@ public class VariableToken: TowerToken {
     
     public var value: String? { tower?.obje.display ?? "DELETED" }
     
-// Tower ===========================================================================================
-    override public var code: Code { .va }
+// Token ===========================================================================================
+    public override var code: TokenCode { .va }
     public override var display: String { details ?? alias ?? value ?? tag }
 }
 public class ColumnToken: VariableToken {
-// Tower ===========================================================================================
-    override public var code: Code { .cl }
+// Token ===========================================================================================
+    public override var code: TokenCode { .cl }
 }
 //public class PropertyToken: TowerToken {
 //    public var label: String?
@@ -252,7 +286,7 @@ public class ColumnToken: VariableToken {
 //        self.label = label
 //        super.init(tower: tower, tag: tag)
 //    }
-//    override public var code: Code { .pr }
+//    public override var code: Code { .pr }
 //    public override var display: String { label ?? tag }
 //}
 public class MechlikeToken: TowerToken, Paramsable {
@@ -263,6 +297,8 @@ public class MechlikeToken: TowerToken, Paramsable {
         self.delegate = delegate
         super.init(tower: tower, tag: tag)
 	}
-    override public var code: Code { .ml }
+    
+// Token ===========================================================================================
+    public override var code: TokenCode { .ml }
 	public override var display: String { "\(alias ?? tag)(" }
 }

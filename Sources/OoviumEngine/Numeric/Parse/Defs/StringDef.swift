@@ -9,7 +9,7 @@
 import Aegean
 import Foundation
 
-public final class StringDef: Def {
+public class StringDef: Def {
 	public static let def = StringDef()
 	
 	init() {

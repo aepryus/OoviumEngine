@@ -8,6 +8,6 @@
 
 import Foundation
 
-public final class DateDef: Def {
+public class DateDef: Def {
 	public static let def = DateDef(name:"date", key:"dte", properties:["_"])
 }

@@ -9,7 +9,7 @@
 import Aegean
 import Foundation
 
-public final class VectorDef: Def {
+public class VectorDef: Def {
 	public static let def = VectorDef(name:"vector", key:"vct", properties:["x","y","z"], order:3)
 
 // Def =============================================================================================
