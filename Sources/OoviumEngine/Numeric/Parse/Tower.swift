@@ -132,14 +132,14 @@ public class Tower: Hashable, CustomStringConvertible {
 				return true
 			} else if let funnel = tower.funnel, funnel.spout.isStronglyLinked(to: to, override: override) {
 				var inAll: Bool = true
-				funnel.options.forEach {if !downstream(contains: $0) {inAll = false}}
-				if inAll {return true}
+				funnel.options.forEach { if !downstream(contains: $0) {inAll = false} }
+				if inAll { return true }
 			}
 		}
 		return false
 	}
 	public func stronglyLinked(override: Tower? = nil) -> Set<Tower> {
-		towersDestinedFor().filter {$0.isStronglyLinked(to: self, override: override)}
+		towersDestinedFor().filter { $0.isStronglyLinked(to: self, override: override) }
 	}
 
 // Program =========================================================================================
