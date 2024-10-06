@@ -41,8 +41,18 @@ public class Cron: Aexel {
 		super.init(attributes: attributes, parent: parent)
 	}
 	
-// Aexel ===========================================================================================
-    override public func createCores() -> [Core] { [
+// Aexon ===========================================================================================
+    public override var code: String { "Cr" }
+    public override var tokenKeys: [TokenKey] { [
+        startChain.key!,
+        stopChain.key!,
+        stepsChain.key!,
+        rateChain.key!,
+        deltaChain.key!,
+        whileChain.key!,
+        tokenKey
+    ] }
+    public override func createCores() -> [Core] { [
         ChainCore(chain: startChain),
         ChainCore(chain: stopChain),
         ChainCore(chain: stepsChain),
@@ -51,9 +61,6 @@ public class Cron: Aexel {
         ChainCore(chain: whileChain),
         CronCore(cron: self)
     ] }
-
-// Aexon ===========================================================================================
-    public override var code: String { "Cr" }
 
 // Domain ==========================================================================================
 	public override var properties: [String] { super.properties + ["startChain", "stopChain", "stepsChain", "rateChain", "deltaChain", "whileChain", "endMode", "exposed"] }	

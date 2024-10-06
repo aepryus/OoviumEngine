@@ -32,17 +32,20 @@ public class Vertebra: Aexon, VariableTokenDelegate {
     init(tail: Tail, name: String) {
 		self.name = name
         super.init(parent: tail)
-        chain = Chain(key: TokenKey(code: .va, tag: key))
+        chain = Chain(key: TokenKey(code: .va, tag: "\(fullKey).result"))
 	}
 	required init(attributes: [String : Any], parent: Domain?) {
 		super.init(attributes: attributes, parent: parent)
-        chain = Chain(key: TokenKey(code: .va, tag: key))
 	}
 
 	var tail: Tail { parent as! Tail }
 
 // Aexon ===========================================================================================
-    public override var code: String { "i" }
+    public override var code: String { "v" }
+    public override var tokenKeys: [TokenKey] { [
+        chain.key!,
+        tokenKey
+    ] }
     public override func createCores() -> [Core] { [
         ChainCore(chain: chain, fog: tail.mechlikeTokenKey),
         VertebraCore(vertebra: self)

@@ -23,10 +23,7 @@ public class AetherExe {
     init(aether: Aether) {
         self.aether = aether
         
-        aether.aexels.flatMap({ $0.createCores() }).forEach { (core: Core) in
-            core.tower = core.createTower(self)
-            cores[core.key] = core
-        }
+        aether.aexels.forEach({ add(aexon: $0) })
 
         // Combined ? ======================
         cores.values.forEach { $0.aetherExe = self }
@@ -42,9 +39,13 @@ public class AetherExe {
 //    private var mechlikeTowers: [Tower] { aether.aexels.filter({ $0 is Mechlike }).flatMap({ $0.towers }) }
 //    private var webTowers: [Tower] { aether.aexels.flatMap({ $0.towers }).filter({ $0.web != nil }) }
     
+    private func tower(for token: TowerToken) -> Tower { towerLookup[token]! }
+    private func token(for key: TokenKey) -> TowerToken { tokens[key]! }
+    private func tower(for key: TokenKey) -> Tower { tower(for: token(for: key)) }
+
 // TokenKeys =======================================================================================
     public func chainCore(key: TokenKey) -> ChainCore { (cores[key] as! ChainCore) }
-    public func tokenDisplay(key: TokenKey) -> String { (cores[key] as! ChainCore).tokensDisplay }
+    public func tokenDisplay(key: TokenKey) -> String { (cores[key] as? ChainCore)?.tokensDisplay ?? "" }
     public func valueDisplay(key: TokenKey) -> String { (cores[key] as! ChainCore).valueDisplay }
     public func naturalDisplay(key: TokenKey) -> String { (cores[key] as! ChainCore).naturalDisplay }
 
@@ -59,6 +60,24 @@ public class AetherExe {
         guard let thisFog: TokenKey = this.fog, let thatFog: TokenKey = that.fog else { return true }
         return thisFog == thatFog
     }
+    public func increment(key: TokenKey, dependenceOn: TokenKey) {
+        let keyTower: Tower = tower(for: key)
+        let dependsOnTower: Tower = tower(for: dependenceOn)
+        keyTower.upstream.increment(tower: dependsOnTower)
+        dependsOnTower.downstream.increment(tower: keyTower)
+    }
+    public func decrement(key: TokenKey, dependenceOn: TokenKey) {
+        let keyTower: Tower = tower(for: key)
+        let dependsOnTower: Tower = tower(for: dependenceOn)
+        keyTower.upstream.decrement(tower: dependsOnTower)
+        dependsOnTower.downstream.decrement(tower: keyTower)
+    }
+    public func nuke(key: TokenKey) {
+        let tower: Tower = tower(for: key)
+        tower.upstream.forEach { $0.downstream.nuke(tower: tower) }
+        tower.downstream.forEach { $0.upstream.nuke(tower: tower) }
+    }
+    public func nuke(keys: [TokenKey]) { keys.forEach { nuke(key: $0) } }
     
     func add(chain: Chain) {
 //        let state: ChainCore = ChainCore(chain: chain)
@@ -88,6 +107,17 @@ public class AetherExe {
     public func tower(key: TokenKey) -> Tower? {
         guard let token: TowerToken = tokens[key] else { return nil }
         return towerLookup[token]
+    }
+    
+    public func add(aexon: Aexon) {
+        var newTowers: [Tower] = []
+        aexon.createCores().forEach { (core: Core) in
+            core.tower = core.createTower(self)
+            newTowers.append(core.tower)
+            core.aetherExe = self
+            cores[core.key] = core
+        }
+        newTowers.forEach { $0.buildStream() }
     }
     
 //    public func paste(array: [[String:Any]]) -> [Aexel] {
@@ -198,4 +228,6 @@ public class AetherExe {
         towerLookup[token] = tower
         return tower
     }
+    
+    func printTowers() { Tower.printTowers(towers) }
 }

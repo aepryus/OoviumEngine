@@ -31,6 +31,7 @@ public class Input: Aexon {
     
 // Aexon ===========================================================================================
     public override var code: String { "i" }
+    public override var tokenKeys: [TokenKey] { [tokenKey] }
     public override func createCores() -> [Core] { [
         InputCore(input: self)
     ] }

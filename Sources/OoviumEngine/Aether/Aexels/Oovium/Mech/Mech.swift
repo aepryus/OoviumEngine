@@ -84,17 +84,23 @@ public class Mech: Aexel, Mechlike, VariableTokenDelegate {
 		}
 		get { super.name }
 	}
-    override public func createCores() -> [Core] {
+    
+// Aexon ===========================================================================================
+    public override var code: String { "Me" }
+    public override var tokenKeys: [TokenKey] {
+        inputs.flatMap({ $0.tokenKeys }) + [
+            resultChain.key!,
+            variableTokenKey
+        ]
+    }
+    public override func newNo(type: String) -> Int { inputs.count + 1 }
+    public override func createCores() -> [Core] {
         inputs.flatMap({ $0.createCores() }) + [
             ChainCore(chain: resultChain, fog: mechlikeTokenKey),
             MechCore(mech: self)
         ]
     }
-    
-// Aexon ===========================================================================================
-    public override var code: String { "Me" }
-    public override func newNo(type: String) -> Int { inputs.count + 1 }
-	
+
 // Domain ==========================================================================================
 	public override var properties: [String] { super.properties + ["resultChain"] }
 	public override var children: [String] { super.children + ["inputs"] }

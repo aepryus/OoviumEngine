@@ -114,17 +114,24 @@ public class Tail: Aexel, Mechlike, VariableTokenDelegate {
 		}
 		get { return super.name }
 	}
-    override public func createCores() -> [Core] {
+
+// Aexon ===========================================================================================
+    public override var code: String { "Ta" }
+    public override var tokenKeys: [TokenKey] {
+        vertebras.flatMap({ $0.tokenKeys }) + [
+            whileChain.key!,
+            resultChain.key!,
+            variableTokenKey
+        ]
+    }
+    public override func newNo(type: String) -> Int { vertebras.count + 1 }
+    public override func createCores() -> [Core] {
         vertebras.flatMap({ $0.createCores() }) + [
             ChainCore(chain: whileChain, fog: mechlikeTokenKey),
             ChainCore(chain: resultChain, fog: mechlikeTokenKey),
             TailCore(tail: self)
         ]
     }
-
-// Aexon ===========================================================================================
-    public override var code: String { "Ta" }
-    public override func newNo(type: String) -> Int { vertebras.count + 1 }
 
 // Domain ==========================================================================================
 	public override var properties: [String] { super.properties + ["whileChain", "resultChain"] }

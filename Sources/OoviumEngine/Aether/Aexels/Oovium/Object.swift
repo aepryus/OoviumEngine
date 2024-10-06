@@ -22,13 +22,12 @@ public class Object: Aexel, VariableTokenDelegate {
         super.init(attributes: attributes, parent: parent)
     }
 
-// Aexel ===========================================================================================
-    override public func createCores() -> [Core] { [
-        ChainCore(chain: chain)
-    ] }
-    
 // Aexon ===========================================================================================
     public override var code: String { "Ob" }
+    public override var tokenKeys: [TokenKey] { [chain.key!] }
+    public override func createCores() -> [Core] { [
+        ChainCore(chain: chain)
+    ] }
 
 // Domain ==========================================================================================
 	public override var properties: [String] { super.properties + ["chain", "label"] }

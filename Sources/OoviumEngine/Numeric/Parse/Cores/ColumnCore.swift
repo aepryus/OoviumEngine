@@ -67,12 +67,12 @@ class ColumnCore: Core {
 // Compiling =======================================================================================
     private func compileNON() -> UnsafeMutablePointer<Lambda>? {
         let memory: UnsafeMutablePointer<Memory> = aetherExe.memory
-        let vi: mnimi = AEMemoryIndexForName(memory, column.footerChain.key!.tag.toInt8())
+        let vi: mnimi = AEMemoryIndexForName(memory, column.footerTokenKey.tag.toInt8())
         return AELambdaCreate(vi, nil, 0, nil, 0, nil, 0, nil)
     }
     private func compileSUM() -> UnsafeMutablePointer<Lambda>? {
         let memory: UnsafeMutablePointer<Memory> = aetherExe.memory
-        let vi: mnimi = AEMemoryIndexForName(memory, column.footerChain.key!.tag.toInt8())
+        let vi: mnimi = AEMemoryIndexForName(memory, column.footerTokenKey.tag.toInt8())
         
         let vn: Int = column.grid.rows
         let v: UnsafeMutablePointer<mnimi> = UnsafeMutablePointer<mnimi>.allocate(capacity: vn)
@@ -96,7 +96,7 @@ class ColumnCore: Core {
     }
     private func compileAVG() -> UnsafeMutablePointer<Lambda>? {
         let memory: UnsafeMutablePointer<Memory> = aetherExe.memory
-        let vi: mnimi = AEMemoryIndexForName(memory, column.footerChain.key!.tag.toInt8())
+        let vi: mnimi = AEMemoryIndexForName(memory, column.footerTokenKey.tag.toInt8())
         
         let cn: Int = 1
         let c: UnsafeMutablePointer<Obj> = UnsafeMutablePointer<Obj>.allocate(capacity: cn)
@@ -127,7 +127,7 @@ class ColumnCore: Core {
     }
     private func compileRUN() -> UnsafeMutablePointer<Lambda>? {
         let memory: UnsafeMutablePointer<Memory> = aetherExe.memory
-        let vi: mnimi = AEMemoryIndexForName(memory, column.footerChain.key!.tag.toInt8())
+        let vi: mnimi = AEMemoryIndexForName(memory, column.footerTokenKey.tag.toInt8())
         
         let vn: Int = column.grid.rows
         let v: UnsafeMutablePointer<mnimi> = UnsafeMutablePointer<mnimi>.allocate(capacity: vn)
@@ -153,7 +153,7 @@ class ColumnCore: Core {
     }
     private func compileCNT() -> UnsafeMutablePointer<Lambda>? {
         let memory: UnsafeMutablePointer<Memory> = aetherExe.memory
-        let vi: mnimi = AEMemoryIndexForName(memory, column.footerChain.key!.tag.toInt8())
+        let vi: mnimi = AEMemoryIndexForName(memory, column.footerTokenKey.tag.toInt8())
         
         let cn: Int = 1
         let c: UnsafeMutablePointer<Obj> = UnsafeMutablePointer<Obj>.allocate(capacity: cn)
@@ -185,8 +185,9 @@ class ColumnCore: Core {
     }
     
 // Core ===================================================================================
-    override var key: TokenKey { column.footerChain.key! }
+    override var key: TokenKey { column.footerTokenKey }
     
+    override func createTower(_ aetherExe: AetherExe) -> Tower { aetherExe.createColumnTower(tag: column.fullKey, core: self) }
     override func buildUpstream(tower: Tower) {
 //        guard aggregate != .none && aggregate != .running && aggregate != .match else { return }
 //        tower.abstractUp()
@@ -205,9 +206,7 @@ class ColumnCore: Core {
     override func taskCompleted(tower: Tower, askedBy: Tower) -> Bool {
         AEMemoryLoaded(tower.memory, tower.index) != 0
     }
-    override func resetTask(tower: Tower) {
-        AEMemoryUnfix(tower.memory, tower.index)
-    }
+    override func resetTask(tower: Tower) {}
     override func executeTask(tower: Tower) {
         AETaskExecute(tower.task, tower.memory)
         AEMemoryFix(tower.memory, tower.index)

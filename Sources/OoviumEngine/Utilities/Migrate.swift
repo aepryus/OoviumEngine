@@ -514,7 +514,7 @@ public class Migrate {
                             if var subArray: [[String:Any]] = aexelAtts["vertebras"] as? [[String:Any]] {
                                 for (subIndex, var subAtts): (Int, [String:Any]) in subArray.enumerated() {
                                     guard let subNo: Int = subAtts["no"] as? Int else { continue }
-                                    if let tokens: String = subAtts["chain"] as? String { subAtts["chain"] = "Ta\(no).Ve\(subNo).result::\(tokens)" }
+                                    if let tokens: String = subAtts["chain"] as? String { subAtts["chain"] = "Ta\(no).v\(subNo).result::\(tokens)" }
                                     subArray[subIndex] = subAtts
                                 }
                                 aexelAtts["vertebras"] = subArray

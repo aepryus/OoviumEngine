@@ -60,6 +60,10 @@ public class ChainCore: Core, CustomStringConvertible {
     }
 
 // Calculate =======================================================================================
+    func loadTokens() {
+        guard let aetherExe else { return }
+        tokens = chain.tokenKeys.map({ (key: TokenKey) in aetherExe.token(key: key) })
+    }
     public func calculate(vars: [String:Obje] = [:]) -> Obj? {
         let aether: Aether = Aether()
         let aetherExe: AetherExe = aether.compile()
@@ -100,9 +104,7 @@ public class ChainCore: Core, CustomStringConvertible {
 // Core ===================================================================================
     override var key: TokenKey { chain.key! }
     
-    override func aetherExeCompleted(_ aetherExe: AetherExe) {
-        tokens = chain.tokenKeys.map({ (key: TokenKey) in aetherExe.token(key: key) })
-    }
+    override func aetherExeCompleted(_ aetherExe: AetherExe) { loadTokens() }
 
     override func buildUpstream(tower: Tower) { tokens.compactMap { $0 as? TowerToken }.forEach { $0.tower.attach(tower) } }
     override func renderDisplay(tower: Tower) -> String {
@@ -126,6 +128,7 @@ public class ChainCore: Core, CustomStringConvertible {
         tokens.compactMap({ $0 as? TowerToken }).contains { $0.status != .ok }
     }
     override func resetTask(tower: Tower) {
+        loadTokens()
         AEMemoryUnfix(tower.memory, tower.index)
     }
     override func executeTask(tower: Tower) {

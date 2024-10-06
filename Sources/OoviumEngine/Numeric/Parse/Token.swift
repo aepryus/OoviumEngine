@@ -55,7 +55,7 @@ public struct TokenKey: Hashable, CustomStringConvertible {
         self.tag = tag
     }
 
-    var hasTower: Bool { code.hasTower }
+    public var hasTower: Bool { code.hasTower }
 
 // Hashable ========================================================================================
     public static func == (left: TokenKey, right: TokenKey) -> Bool { left.code == right.code && left.tag == right.tag }

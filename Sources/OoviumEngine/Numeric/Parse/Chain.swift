@@ -131,11 +131,7 @@ public class Chain: NSObject, Packable {
         post(key: braketKey, at: cursor)
     }
     private func removeKey(at cursor: Int) -> TokenKey? {
-        let key: TokenKey = tokenKeys.remove(at: cursor)
-//        if let this: Tower = tower, let that: Tower = (token as? TowerToken)?.tower, !tokens.contains(token) {
-//            that.detach(this)
-//        }
-        return key
+        tokenKeys.remove(at: cursor)
     }
     public func backspace(at cursor: Int) -> TokenKey? {             // delete left
         guard cursor > 0 else { return nil }

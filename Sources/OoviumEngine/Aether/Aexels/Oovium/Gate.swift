@@ -58,16 +58,15 @@ public class Gate: Aexel {
 //		resultTower.buildStream()
 	}
 	
-// Aexel ===========================================================================================
+// Aexon ===========================================================================================
+    public override var code: String { "Gt" }
+    public override var tokenKeys: [TokenKey] { [ifChain.key!, elseChain.key!, thenChain.key!, resultKey] }
     public override func createCores() -> [Core] { [
         ChainCore(chain: ifChain),
         ChainCore(chain: elseChain),
         ChainCore(chain: thenChain),
         GateCore(gate: self)
     ] }
-
-// Aexon ===========================================================================================
-    public override var code: String { "Gt" }
 
 // Domain ==========================================================================================
     public override var properties: [String] { super.properties + ["ifChain", "thenChain", "elseChain"] }

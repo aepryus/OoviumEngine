@@ -30,7 +30,7 @@ public class Column: Aexon {
 	public var _headerWidth: Double? = nil
 	public var _footerWidth: Double? = nil
 
-	public var footerChain: Chain!
+//	public var footerChain: Chain!
     
 //    public lazy var tokenKey: TokenKey = TokenKey(code: .cl, tag: fullKey)
 	
@@ -38,6 +38,8 @@ public class Column: Aexon {
     
 //    public lazy var tower: Tower = grid.aether.state.createColumnTower(tag: "\(grid.key).Co\(no)", towerDelegate: header, tokenDelegate: self)
 //    public lazy var footerTower: Tower = grid.aether.state.createTower(tag: "\(grid.key).Ft\(no)", towerDelegate: self)
+    
+    public lazy var footerTokenKey: TokenKey = TokenKey(code: .va, tag: fullKey)
 	
 	public var grid: Grid { parent as! Grid }
     public var calculated: Bool { !chain.isEmpty }
@@ -58,7 +60,7 @@ public class Column: Aexon {
         super.init(parent: grid)
 		parent = grid
         chain = Chain(key: TokenKey(code: .cl, tag: fullKey))
-        footerChain = Chain(key: TokenKey(code: .va, tag: fullKey))
+//        footerChain = Chain(key: TokenKey(code: .va, tag: fullKey))
 //		chain.tower = tower
 //		chain.alwaysShow = true
 //		footerChain.tower = footerTower
@@ -69,7 +71,12 @@ public class Column: Aexon {
 	
 // Aexon ===========================================================================================
     override var code: String { "Co" }
+    public override var tokenKeys: [TokenKey] { [
+        chain.key!,
+        footerTokenKey
+    ] }
     override func createCores() -> [Core] { [
+        ChainCore(chain: chain),
         ColumnCore(column: self)
     ] }
     

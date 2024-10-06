@@ -190,11 +190,15 @@ public class Grid: Aexel {
     
 // Aexon ===========================================================================================
     public override var code: String { "Gr" }
+    public override var tokenKeys: [TokenKey] {
+        columns.flatMap({ $0.tokenKeys })
+        + cells.flatMap({ $0.tokenKeys })
+    }
     public override func newNo(type: String) -> Int {
         if type == "column" { return columns.count + 1 }
         else /*if key == "cell"*/ { return aether.newNo(type: type) }
     }
-    override public func createCores() -> [Core] {
+    public override func createCores() -> [Core] {
         columns.flatMap({ $0.createCores() })
         + cells.flatMap({ $0.createCores() })
     }

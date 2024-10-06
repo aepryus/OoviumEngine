@@ -33,6 +33,34 @@ class Funnel {
 	}
 }
 
+class Dendrite: Sequence {
+    private var towers: [Tower:Int] = [:]
+    
+    func increment(tower: Tower) {
+        towers[tower] = (towers[tower] ?? 0) + 1
+    }
+    @discardableResult
+    func decrement(tower: Tower) -> Bool {
+        towers[tower] = (towers[tower] ?? 0) - 1
+        switch towers[tower] {
+            case 0:
+                towers[tower] = nil
+                return true
+            case -1:
+                fatalError()
+            default:
+                return false
+        }
+    }
+    func nuke(tower: Tower) { towers[tower] = nil }
+    func nukeAll() { towers.removeAll() }
+    
+    func forEach(_ body: (Tower)->()) { towers.keys.forEach(body) }
+    
+// Sequence ========================================================================================
+    func makeIterator() -> Dictionary<Tower, Int>.Keys.Iterator { towers.keys.makeIterator() }
+}
+
 public class Tower: Hashable, CustomStringConvertible {
     private unowned let aetherExe: AetherExe
     public let core: Core?
@@ -43,8 +71,8 @@ public class Tower: Hashable, CustomStringConvertible {
     private let _mechlikeToken: MechlikeToken? = nil
     public lazy var mechlikeToken: MechlikeToken? = { _mechlikeToken?.tower = self; return _mechlikeToken }()
 
-	var upstream: WeakSet<Tower> = WeakSet<Tower>()
-	var downstream: WeakSet<Tower> = WeakSet<Tower>()
+	var upstream: Dendrite = Dendrite()
+	var downstream: Dendrite = Dendrite()
 
 	public weak var listener: TowerListener? = nil
 
@@ -79,21 +107,21 @@ public class Tower: Hashable, CustomStringConvertible {
 
 // Stream ==========================================================================================
 	public func attach(_ tower: Tower) {
-		downstream.insert(tower)
-		tower.upstream.insert(self)
+        downstream.increment(tower: tower)
+        tower.upstream.increment(tower: self)
 	}
 	public func detach(_ tower: Tower) {
-		downstream.remove(tower)
-		tower.upstream.remove(self)
+        downstream.decrement(tower: tower)
+        tower.upstream.decrement(tower: self)
 	}
 	public func abstract() {
 		abstractUp()
-		downstream.forEach {$0.upstream.remove(self)}
-		downstream.removeAll()
+        downstream.forEach { $0.upstream.decrement(tower: self) }
+        downstream.nukeAll()
 	}
 	public func abstractUp() {
-		upstream.forEach {$0.downstream.remove(self)}
-		upstream.removeAll()
+        upstream.forEach { $0.downstream.decrement(tower: self) }
+        upstream.nukeAll()
 	}
 	
 	private func loadDownstream(into towers: inout Set<Tower>) {
