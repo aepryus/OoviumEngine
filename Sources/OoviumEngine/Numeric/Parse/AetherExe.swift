@@ -220,7 +220,8 @@ public class AetherExe {
         return tower
     }
     public func mechlikeToken(tag: String) -> MechlikeToken? { tokens[TokenKey(code: .ml, tag: tag)] as? MechlikeToken }
-    func createColumnTower(tag: String, core: Core, tokenDelegate: VariableTokenDelegate? = nil) -> Tower {
+    
+    func createHeaderTower(tag: String, core: Core, tokenDelegate: VariableTokenDelegate? = nil) -> Tower {
         let token = ColumnToken(tag: tag, delegate: tokenDelegate)
         tokens[token.key] = token
         let tower = Tower(aetherExe: self, token: token, core: core)

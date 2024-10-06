@@ -1,69 +1,18 @@
 //
-//  ColumnCore.swift
+//  FooterCore.swift
 //  OoviumEngine
 //
-//  Created by Joe Charlier on 8/5/24.
+//  Created by Joe Charlier on 10/6/24.
 //  Copyright © 2024 Aepryus Software. All rights reserved.
 //
 
 import Aegean
-import Foundation
 
-class ColumnCore: Core {
+class FooterCore: Core {
     let column: Column
     
     init(column: Column) { self.column = column }
     
-    public func disseminate() {
-        guard !column.chain.isEmpty else { return }
-        
-//        if aggregate != .running {
-//            for i in 0..<grid.rows {
-//                let cell = grid.cell(colNo: colNo, rowNo: i)
-//                cell.chain.clear()
-//
-//                for token in chain.tokens {
-//                    if let column = grid.column(tag: token.tag) {
-//                        let other: Cell = grid.cell(colNo: column.colNo, rowNo: i)
-//                        cell.chain.post(token: other.tower.variableToken)
-//                    } else {
-//                        cell.chain.post(token: token)
-//                    }
-//                }
-//            }
-//            if aggregate == .match {
-//                footerChain.clear()
-//                for token in chain.tokens {
-//                    if let column = grid.column(tag: token.tag) {
-//                        footerChain.post(token: column.footerChain.tower.variableToken)
-//                    } else {
-//                        footerChain.post(token: token)
-//                    }
-//                }
-//            }
-//
-//        } else {
-//            for i in 0..<grid.rows {
-//                let cell = grid.cell(colNo: colNo, rowNo: i)
-//                cell.chain.clear()
-//
-//                for token in chain.tokens {
-//                    if let column = grid.column(tag: token.tag) {
-//                        let other: Cell = grid.cell(colNo: column.colNo, rowNo: i)
-//                        cell.chain.post(token: other.tower.variableToken)
-//                    } else {
-//                        cell.chain.post(token: token)
-//                    }
-//                }
-//                if i != 0 {
-//                    cell.chain.post(token: Token.add)
-//                    let above: Cell = grid.cell(colNo: colNo, rowNo: i-1)
-//                    cell.chain.post(token: above.tower.variableToken)
-//                }
-//            }
-//        }
-    }
-
 // Compiling =======================================================================================
     private func compileNON() -> UnsafeMutablePointer<Lambda>? {
         let memory: UnsafeMutablePointer<Memory> = aetherExe.memory
@@ -187,7 +136,7 @@ class ColumnCore: Core {
 // Core ===================================================================================
     override var key: TokenKey { column.footerTokenKey }
     
-    override func createTower(_ aetherExe: AetherExe) -> Tower { aetherExe.createColumnTower(tag: column.fullKey, core: self) }
+    override func createTower(_ aetherExe: AetherExe) -> Tower { aetherExe.createTower(key: key, core: self) }
     override func buildUpstream(tower: Tower) {
 //        guard aggregate != .none && aggregate != .running && aggregate != .match else { return }
 //        tower.abstractUp()
@@ -211,8 +160,5 @@ class ColumnCore: Core {
         AETaskExecute(tower.task, tower.memory)
         AEMemoryFix(tower.memory, tower.index)
         tower.variableToken.def = tower.obje.def
-    }
-    
-// VariableTokenDelegate ===========================================================================
-    public var alias: String? { column.name }
+    }    
 }

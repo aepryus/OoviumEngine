@@ -1,8 +1,9 @@
 //
-//  File.swift
-//  
+//  VertebraCore.swift
+//  OoviumEngine
 //
 //  Created by Joe Charlier on 8/6/24.
+//  Copyright © 2024 Aepryus Software. All rights reserved.
 //
 
 import Foundation

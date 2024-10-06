@@ -29,17 +29,11 @@ public class Column: Aexon {
 	public var _width: Double? = nil
 	public var _headerWidth: Double? = nil
 	public var _footerWidth: Double? = nil
-
-//	public var footerChain: Chain!
     
-//    public lazy var tokenKey: TokenKey = TokenKey(code: .cl, tag: fullKey)
-	
-	fileprivate lazy var header: Header = Header()
-    
-//    public lazy var tower: Tower = grid.aether.state.createColumnTower(tag: "\(grid.key).Co\(no)", towerDelegate: header, tokenDelegate: self)
-//    public lazy var footerTower: Tower = grid.aether.state.createTower(tag: "\(grid.key).Ft\(no)", towerDelegate: self)
-    
+    public lazy var headerTokenKey: TokenKey = TokenKey(code: .cl, tag: fullKey)
     public lazy var footerTokenKey: TokenKey = TokenKey(code: .va, tag: fullKey)
+    
+    public lazy var footerChain: Chain = Chain(key: footerTokenKey)
 	
 	public var grid: Grid { parent as! Grid }
     public var calculated: Bool { !chain.isEmpty }
@@ -53,13 +47,63 @@ public class Column: Aexon {
 //            grid.aether.state.evaluate()
 //		}
 	}
+    
+    public func disseminate() {
+        guard !chain.isEmpty else { return }
+        
+        if aggregate != .running {
+            for i in 0..<grid.rows {
+                let cell = grid.cell(colNo: colNo, rowNo: i)
+                cell.chain.clear()
+
+                for tokenKey: TokenKey in chain.tokenKeys {
+                    if let column = grid.column(tag: tokenKey.tag) {
+                        let other: Cell = grid.cell(colNo: column.colNo, rowNo: i)
+                        cell.chain.post(key: other.chain.key!)
+                    } else {
+                        cell.chain.post(key: tokenKey)
+                    }
+                }
+            }
+            if aggregate == .match {
+                footerChain.clear()
+                for token in chain.tokenKeys {
+                    if let column = grid.column(tag: token.tag) {
+                        column.footerChain.post(key: column.footerChain.key!)
+                    } else {
+                        footerChain.post(key: token)
+                    }
+                }
+            }
+
+        } else {
+            for i in 0..<grid.rows {
+                let cell = grid.cell(colNo: colNo, rowNo: i)
+                cell.chain.clear()
+
+                for tokenKey: TokenKey in chain.tokenKeys {
+                    if let column = grid.column(tag: tokenKey.tag) {
+                        let other: Cell = grid.cell(colNo: column.colNo, rowNo: i)
+                        cell.chain.post(key: other.chain.key!)
+                    } else {
+                        cell.chain.post(key: tokenKey)
+                    }
+                }
+                if i != 0 {
+                    cell.chain.post(key: Token.add.key)
+                    let above: Cell = grid.cell(colNo: colNo, rowNo: i-1)
+                    cell.chain.post(key: above.chain.key!)
+                }
+            }
+        }
+    }
 
 // Inits ===========================================================================================
 	public init(grid: Grid) {
 //		no = grid.maxColumnNo + 1
         super.init(parent: grid)
 		parent = grid
-        chain = Chain(key: TokenKey(code: .cl, tag: fullKey))
+        chain = Chain(key: headerTokenKey)
 //        footerChain = Chain(key: TokenKey(code: .va, tag: fullKey))
 //		chain.tower = tower
 //		chain.alwaysShow = true
@@ -72,23 +116,14 @@ public class Column: Aexon {
 // Aexon ===========================================================================================
     override var code: String { "Co" }
     public override var tokenKeys: [TokenKey] { [
-        chain.key!,
-        footerTokenKey
+        headerTokenKey
+//        , footerTokenKey
     ] }
     override func createCores() -> [Core] { [
-        ChainCore(chain: chain),
-        ColumnCore(column: self)
+        HeaderCore(column: self)
+//        , FooterCore(column: self)
     ] }
     
 // Domain ==========================================================================================
     public override var properties: [String] { super.properties + ["name", "chain", "aggregate", "justify", "format"] }
-}
-
-fileprivate class Header: Core {
-    override func buildUpstream(tower: Tower) {}
-    override func renderDisplay(tower: Tower) -> String { "---" }
-    override func renderTask(tower: Tower) -> UnsafeMutablePointer<Task>? { nil }
-    override func taskCompleted(tower: Tower, askedBy: Tower) -> Bool { true }
-    override func resetTask(tower: Tower) {}
-    override func executeTask(tower: Tower) {}
 }
