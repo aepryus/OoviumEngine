@@ -160,6 +160,15 @@ public class AetherExe {
 //
 //        return aexels
 //    }
+    
+    public func trigger(keys: [TokenKey]) {
+        let towersArray: [Tower] = keys.map({ tower(key: $0)! })
+        var towersSet: Set<Tower> = Set()
+        towersArray.forEach { towersSet.formUnion($0.allDownstream()) }
+        buildMemory()
+        Tower.evaluate(towers: towersSet)
+    }
+    public func trigger(key: TokenKey) { trigger(keys: [key]) }
 
     
 // Evaluate ========================================================================================

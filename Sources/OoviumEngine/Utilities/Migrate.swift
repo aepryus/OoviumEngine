@@ -9,6 +9,10 @@
 import Acheron
 import Foundation
 
+enum AetherLoadingError: Error {
+    case fromNewerVersion(currentVersion: String, fileVersion: String)
+}
+
 fileprivate struct Subs {
     let from: String
     let to: String
@@ -408,26 +412,31 @@ public class Migrate {
     public static func migrateChainTo31(_ tokensString: String, tag: String) -> String {
         "\(tag)::\(tokensString)"
     }
-	public static func migrateAether(json: String) -> String {
+	public static func migrateAether(json: String) throws -> String {
 		var attributes: [String:Any] = json.toAttributes()
-		let version: String = attributes["version"] as? String ?? "2.0.2"
-
-		guard version != Aether.engineVersion else { return json }
+		let fileVersion: String = attributes["version"] as? String ?? "2.0.2"
         
+        let result: ComparisonResult =  fileVersion.compare(Aether.engineVersion, options: .numeric)
+        
+        print("QQ:\(result)")
+        
+        guard result != .orderedDescending else { throw AetherLoadingError.fromNewerVersion(currentVersion: Aether.engineVersion, fileVersion: fileVersion) }
+        guard result != .orderedSame else { return json }
+
         let chainNames: [String] = ["chain", "ifChain", "thenChain", "elseChain", "resultChain", "whileChain", "startChain", "stopChain", "stepChain", "rateChain", "deltaChain", "statesChain", "amorousChain"]
 
-		print("migrate file from [\(version)] to [\(Aether.engineVersion)]")
+		print("migrate file from [\(fileVersion)] to [\(Aether.engineVersion)]")
         
         var migrate: Bool = false
         
-        if version == "2.0.2" { migrate = true }
+        if fileVersion == "2.0.2" { migrate = true }
         if migrate {
             attributes = attributes.modify(query: chainNames, convert: { (value: Any) in
                 Migrate.migrateChainTo21(value as! String)
             })
         }
         
-        if version == "2.1" { migrate = true }
+        if fileVersion == "2.1" { migrate = true }
         if migrate {
             attributes["version"] = "3.0"
             attributes = attributes.modify(condition: { (attributes: [String:Any]) in
@@ -483,7 +492,7 @@ public class Migrate {
             })
         }
         
-        if version == "3.0" { migrate = true }
+        if fileVersion == "3.0" { migrate = true }
         if migrate {
             attributes["version"] = "3.1"
             if var aexelArray: [[String:Any]] = attributes["aexels"] as? [[String:Any]] {

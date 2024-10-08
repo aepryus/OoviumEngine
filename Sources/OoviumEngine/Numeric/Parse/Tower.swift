@@ -189,6 +189,7 @@ public class Tower: Hashable, CustomStringConvertible {
 	}
 	
 // Calculate =======================================================================================
+    public func resetTask() { core?.resetTask(tower: self) }
 	public func buildStream() { core?.buildUpstream(tower: self) }
 	public func buildTask() {
         guard let core, variableToken.status != .deleted else { return }

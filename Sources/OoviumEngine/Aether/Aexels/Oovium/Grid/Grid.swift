@@ -55,7 +55,7 @@ public class Grid: Aexel {
 	}
 
 // Other ===========================================================================================
-    public func cellsForColumn(i: Int) -> [Cell] { cells.filter { $0.colNo == i } }
+    public func cellsForColumn(colNo: Int) -> [Cell] { cells.filter { $0.colNo == colNo } }
 	public func numberCells() {
 		for j in 0..<rows {
 			for i in 0..<columns.count {
@@ -77,9 +77,7 @@ public class Grid: Aexel {
             newCells.append(cell)
 		}
 //        aether.state.buildMemory()
-//		columns.forEach {
-//			if $0.calculated { $0.disseminate() }
-//		}
+        columns.filter({ $0.calculated }).forEach {  $0.disseminate() }
         return newCells
 	}
 	public func deleteRow(rowNo: Int) {
@@ -155,17 +153,9 @@ public class Grid: Aexel {
 	public func column(colNo: Int) -> Column? {
 		return columns[colNo]
 	}
-    public func column(tag: String) -> Column? { nil/*columns.first { $0.chain.tower.variableToken.tag == tag }*/ }
-	public var maxCellNo: Int {
-		var max: Int = 0
-		cells.forEach {if $0.no > max {max = $0.no}}
-		return max
-	}
-	public var maxColumnNo: Int {
-		var max: Int = 0
-		columns.forEach {if $0.no > max {max = $0.no}}
-		return max
-	}
+    public func column(tag: String) -> Column? { columns.first { $0.chain.key!.tag == tag } }
+	public var maxCellNo: Int { cells.maximum({ $0.no }) ?? 0 }
+    public var maxColumnNo: Int { columns.maximum({ $0.colNo }) ?? -1 }
 
 // Events ==========================================================================================
 	public override func onLoad() {}
@@ -190,17 +180,11 @@ public class Grid: Aexel {
     
 // Aexon ===========================================================================================
     public override var code: String { "Gr" }
-    public override var tokenKeys: [TokenKey] {
-        columns.flatMap({ $0.tokenKeys })
-        + cells.flatMap({ $0.tokenKeys })
-    }
+    public override var tokenKeys: [TokenKey] { columns.flatMap({ $0.tokenKeys }) }
+    public override func createCores() -> [Core] { columns.flatMap({ $0.createCores() }) }
     public override func newNo(type: String) -> Int {
-        if type == "column" { return columns.count + 1 }
-        else /*if key == "cell"*/ { return aether.newNo(type: type) }
-    }
-    public override func createCores() -> [Core] {
-        columns.flatMap({ $0.createCores() })
-        + cells.flatMap({ $0.createCores() })
+        if type == "column" { return maxColumnNo + 1 }
+        else /*if key == "cell"*/ { return maxCellNo + 1 }
     }
 
 // Domain ==========================================================================================

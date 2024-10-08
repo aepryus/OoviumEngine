@@ -39,6 +39,7 @@ public class Column: Aexon {
     public var calculated: Bool { !chain.isEmpty }
 	public var hasFooter: Bool { aggregate != .none && aggregate != .running }
     public var colNo: Int { grid.columns.enumerated().first(where: { $0.1 === self })!.0 }
+    public var cells: [Cell] { grid.cellsForColumn(colNo: no) }
 	
 	public func render() {
 //		if aggregate != .none {
@@ -97,6 +98,7 @@ public class Column: Aexon {
             }
         }
     }
+    public func cellKeys() -> [TokenKey] { grid.cells.filter({ $0.colNo == colNo }).map({ $0.chain.key! }) }
 
 // Inits ===========================================================================================
 	public init(grid: Grid) {
@@ -115,14 +117,18 @@ public class Column: Aexon {
 	
 // Aexon ===========================================================================================
     override var code: String { "Co" }
-    public override var tokenKeys: [TokenKey] { [
-        headerTokenKey
-//        , footerTokenKey
-    ] }
-    override func createCores() -> [Core] { [
-        HeaderCore(column: self)
-//        , FooterCore(column: self)
-    ] }
+    public override var tokenKeys: [TokenKey] {
+        cells.flatMap({ $0.tokenKeys }) + [
+            headerTokenKey,
+            footerTokenKey
+        ]
+    }
+    override func createCores() -> [Core] {
+        cells.flatMap({ $0.createCores() }) + [
+            HeaderCore(column: self),
+            FooterCore(column: self)
+        ]
+    }
     
 // Domain ==========================================================================================
     public override var properties: [String] { super.properties + ["name", "chain", "aggregate", "justify", "format"] }

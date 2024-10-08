@@ -106,7 +106,11 @@ public class ChainCore: Core, CustomStringConvertible {
     
     override func aetherExeCompleted(_ aetherExe: AetherExe) { loadTokens() }
 
-    override func buildUpstream(tower: Tower) { tokens.compactMap { $0 as? TowerToken }.forEach { $0.tower.attach(tower) } }
+    override func buildUpstream(tower: Tower) {
+        tokens.compactMap { $0 as? TowerToken }.forEach {
+            $0.tower.attach(tower)
+        }
+    }
     override func renderDisplay(tower: Tower) -> String {
         if tower.variableToken.status == .deleted { fatalError() }
         if tower.variableToken.status == .invalid { return "INVALID" }
