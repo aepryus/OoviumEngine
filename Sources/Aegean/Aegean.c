@@ -171,6 +171,10 @@ void AEMemorySetName(Memory* memory, mnimi index, char* name) {
 	strcpy(memory->slots[index].name, name);
 }
 void AEMemorySet(Memory* memory, mnimi index, Obj obj) {
+    if (index == 3) {
+        printf("wtf");
+    }
+    
 	if (!memory->slots[index].stacked)
 		memory->slots[index].obj = obj;
 	else

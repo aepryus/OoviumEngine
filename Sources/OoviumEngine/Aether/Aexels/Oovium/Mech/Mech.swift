@@ -21,12 +21,13 @@ public class Mech: Aexel, Mechlike, VariableTokenDelegate {
 
     public var mechlikeTokenKey: TokenKey { TokenKey(code: .ml, tag: key) }
     public var variableTokenKey: TokenKey { TokenKey(code: .va, tag: key) }
+    public var resultTokenKey: TokenKey { TokenKey(code: .va, tag: "\(key).result") }
 
 // Inits ===========================================================================================
 	public required init(at: V2, aether: Aether) {
 		super.init(at: at, aether: aether)
         
-        resultChain = Chain(key: TokenKey(code: .va, tag: "\(key).result"))
+        resultChain = Chain(key: resultTokenKey)
         
 		name = "f"
 		addInput()
@@ -89,8 +90,8 @@ public class Mech: Aexel, Mechlike, VariableTokenDelegate {
     public override var code: String { "Me" }
     public override var tokenKeys: [TokenKey] {
         inputs.flatMap({ $0.tokenKeys }) + [
-            resultChain.key!,
-            variableTokenKey
+            resultTokenKey,
+            mechlikeTokenKey
         ]
     }
     public override func newNo(type: String) -> Int { inputs.count + 1 }

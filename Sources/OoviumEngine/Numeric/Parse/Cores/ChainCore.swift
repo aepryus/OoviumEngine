@@ -9,15 +9,22 @@
 import Aegean
 import Foundation
 
+protocol ChainCoreDelegate: VariableTokenDelegate {
+    var editing: Bool { get }
+    var alwaysShow: Bool { get }
+}
+
 public class ChainCore: Core, CustomStringConvertible {
     let chain: Chain
     let _fog: TokenKey?
+    weak var delegate: ChainCoreDelegate?
     
     public var tokens: [Token] = []
 
-    init(chain: Chain, fog: TokenKey? = nil) {
+    init(chain: Chain, fog: TokenKey? = nil, delegate: ChainCoreDelegate? = nil) {
         self.chain = chain
         self._fog = fog
+        self.delegate = delegate
     }
     
     override var fog: TokenKey? {
@@ -104,6 +111,7 @@ public class ChainCore: Core, CustomStringConvertible {
 // Core ===================================================================================
     override var key: TokenKey { chain.key! }
     
+    override func createTower(_ aetherExe: AetherExe) -> Tower { aetherExe.createTower(key: key, core: self, tokenDelegate: delegate) }
     override func aetherExeCompleted(_ aetherExe: AetherExe) { loadTokens() }
 
     override func buildUpstream(tower: Tower) {
@@ -142,11 +150,10 @@ public class ChainCore: Core, CustomStringConvertible {
     }
     
 // CustomStringConvertible =========================================================================
-    private var shouldDisplayTokens: Bool { /*editing ||*/ tower?.fog != nil || tower?.variableToken.status != .ok /*|| alwaysShow*/ }
+    private var shouldDisplayTokens: Bool { delegate?.editing ?? false || tower?.fog != nil || tower?.variableToken.status != .ok || delegate?.alwaysShow ?? false  }
     public var description: String {
         guard tokens.count > 0 else { return "" }
         guard shouldDisplayTokens else { return tower?.obje.display ?? "" }
         return tokens.map({ $0.display }).joined()
     }
-
 }

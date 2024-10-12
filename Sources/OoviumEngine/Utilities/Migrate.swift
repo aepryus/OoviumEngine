@@ -516,7 +516,7 @@ public class Migrate {
                             if let tokens: String = aexelAtts["deltaChain"] as? String { aexelAtts["deltaChain"] = "Cr\(no).delta::\(tokens)" }
                             if let tokens: String = aexelAtts["whileChain"] as? String { aexelAtts["whileChain"] = "Cr\(no).while::\(tokens)" }
                         case "mech":
-                            if let tokens: String = aexelAtts["resultChain"] as? String { aexelAtts["resultChain"] = "Me\(no)::\(tokens)" }
+                            if let tokens: String = aexelAtts["resultChain"] as? String { aexelAtts["resultChain"] = "Me\(no).result::\(tokens)" }
                         case "tail":
                             if let tokens: String = aexelAtts["whileChain"] as? String { aexelAtts["whileChain"] = "Ta\(no).while::\(tokens)" }
                             if let tokens: String = aexelAtts["resultChain"] as? String { aexelAtts["resultChain"] = "Ta\(no).result::\(tokens)" }
