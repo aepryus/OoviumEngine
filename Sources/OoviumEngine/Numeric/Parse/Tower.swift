@@ -74,7 +74,7 @@ public class Tower: Hashable, CustomStringConvertible {
 	var upstream: Dendrite = Dendrite()
 	var downstream: Dendrite = Dendrite()
 
-	public weak var listener: TowerListener? = nil
+//	public weak var listener: TowerListener? = nil
 
     public var fog: TokenKey? { core?.fog }
     public var isFogFirewall: Bool { core?.fog != nil }
@@ -267,7 +267,9 @@ public class Tower: Hashable, CustomStringConvertible {
         listeners[key] = WeakListener(listener)
     }
     public static func stopListening(to key: TokenKey) { listeners[key] = nil }
-    public static func notifyListeners(towers: Set<Tower>) { towers.compactMap({ listeners[$0.variableToken.key]?.value }).forEach { $0.onTriggered() } }
+    public static func notifyListeners(towers: Set<Tower>) {
+        towers.compactMap({ listeners[$0.variableToken.key]?.value }).forEach { $0.onTriggered() }
+    }
 
 	public static func printTowers(_ towers: WeakSet<Tower>) {
 		print("[ Towers =================================== ]\n")

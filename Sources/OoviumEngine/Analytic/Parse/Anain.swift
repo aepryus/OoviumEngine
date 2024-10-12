@@ -264,7 +264,7 @@ public class Anain: NSObject, Packable {
     public func edit() {
         editing = true
         cursor = tokens.count
-        tower.listener?.onTriggered()
+//        tower.listener?.onTriggered()
 //        AETaskRelease(tower.task)
 //        tower.task = AETaskCreateNull()
     }

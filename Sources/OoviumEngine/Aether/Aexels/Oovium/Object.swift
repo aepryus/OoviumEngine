@@ -9,13 +9,10 @@
 import Acheron
 import Foundation
 
-public class Object: Aexel, ChainCoreDelegate {
+public class Object: Aexel, VariableTokenDelegate {
 	@objc public var chain: Chain!
     @objc public var label: String = ""
     
-    var editing: Bool = false
-    var alwaysShow: Bool = false
-
 // Inits ===========================================================================================
     public required init(at: V2, aether: Aether) {
         super.init(at: at, aether: aether)
@@ -29,7 +26,7 @@ public class Object: Aexel, ChainCoreDelegate {
     public override var code: String { "Ob" }
     public override var tokenKeys: [TokenKey] { [chain.key!] }
     public override func createCores() -> [Core] { [
-        ChainCore(chain: chain, delegate: self)
+        ChainCore(chain: chain, variableTokenDelegate: self)
     ] }
 
 // Domain ==========================================================================================

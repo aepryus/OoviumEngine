@@ -9,22 +9,17 @@
 import Aegean
 import Foundation
 
-protocol ChainCoreDelegate: VariableTokenDelegate {
-    var editing: Bool { get }
-    var alwaysShow: Bool { get }
-}
-
 public class ChainCore: Core, CustomStringConvertible {
     let chain: Chain
     let _fog: TokenKey?
-    weak var delegate: ChainCoreDelegate?
+    weak var variableTokenDelegate: VariableTokenDelegate?
     
     public var tokens: [Token] = []
 
-    init(chain: Chain, fog: TokenKey? = nil, delegate: ChainCoreDelegate? = nil) {
+    init(chain: Chain, fog: TokenKey? = nil, variableTokenDelegate: VariableTokenDelegate? = nil) {
         self.chain = chain
         self._fog = fog
-        self.delegate = delegate
+        self.variableTokenDelegate = variableTokenDelegate
     }
     
     override var fog: TokenKey? {
@@ -40,7 +35,8 @@ public class ChainCore: Core, CustomStringConvertible {
     public var naturalDisplay: String { fatalError() }
     public func edit() {
         guard let tower else { return }
-        tower.listener?.onTriggered()
+//        tower.listener?.onTriggered()
+        Tower.notifyListeners(towers: [tower])
         AETaskRelease(tower.task)
         tower.task = AETaskCreateNull()
     }
@@ -111,7 +107,7 @@ public class ChainCore: Core, CustomStringConvertible {
 // Core ===================================================================================
     override var key: TokenKey { chain.key! }
     
-    override func createTower(_ aetherExe: AetherExe) -> Tower { aetherExe.createTower(key: key, core: self, tokenDelegate: delegate) }
+    override func createTower(_ aetherExe: AetherExe) -> Tower { aetherExe.createTower(key: key, core: self, variableTokenDelegate: variableTokenDelegate) }
     override func aetherExeCompleted(_ aetherExe: AetherExe) { loadTokens() }
 
     override func buildUpstream(tower: Tower) {
@@ -150,7 +146,7 @@ public class ChainCore: Core, CustomStringConvertible {
     }
     
 // CustomStringConvertible =========================================================================
-    private var shouldDisplayTokens: Bool { delegate?.editing ?? false || tower?.fog != nil || tower?.variableToken.status != .ok || delegate?.alwaysShow ?? false  }
+    private var shouldDisplayTokens: Bool { tower?.fog != nil || tower?.variableToken.status != .ok }
     public var description: String {
         guard tokens.count > 0 else { return "" }
         guard shouldDisplayTokens else { return tower?.obje.display ?? "" }

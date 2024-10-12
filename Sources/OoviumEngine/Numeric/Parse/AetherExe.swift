@@ -120,6 +120,8 @@ public class AetherExe {
         newTowers.forEach { $0.buildStream() }
     }
     
+    public func inAFog(key: TokenKey) -> Bool { tower(key: key)?.fog != nil }
+    
 //    public func paste(array: [[String:Any]]) -> [Aexel] {
 //        print(array.toJSON())
 //        var substitutions: [String:Token] = [:]
@@ -207,8 +209,8 @@ public class AetherExe {
         buildMemory()
     }
     public func destroy(tower: Tower) { destroy(towers: [tower]) }
-    func createTower(key: TokenKey, core: Core, tokenDelegate: VariableTokenDelegate? = nil) -> Tower {
-        let token = VariableToken(tag: key.tag, delegate: tokenDelegate)
+    func createTower(key: TokenKey, core: Core, variableTokenDelegate: VariableTokenDelegate? = nil) -> Tower {
+        let token = VariableToken(tag: key.tag, delegate: variableTokenDelegate)
         tokens[token.key] = token
         let tower = Tower(aetherExe: self, token: token, core: core)
         towers.append(tower)
