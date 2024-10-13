@@ -11,16 +11,28 @@ import Aegean
 class HeaderCore: Core, VariableTokenDelegate {
     let column: Column
     
+    public var tokens: [Token] = []
+    
     init(column: Column) {
         self.column = column
     }
     
     var grid: Grid { column.grid }
     
+    public var tokensDisplay: String {
+        tokens.map({ $0.display }).joined()
+    }
+    
+    func loadTokens() {
+        guard let aetherExe else { return }
+        tokens = column.chain.tokenKeys.map({ (key: TokenKey) in aetherExe.token(key: key) })
+    }
+
 // Core ============================================================================================
     override var key: TokenKey { column.headerTokenKey }
     
     override func createTower(_ aetherExe: AetherExe) -> Tower { aetherExe.createHeaderTower(tag: key.tag, core: self, tokenDelegate: self) }
+    override func aetherExeCompleted(_ aetherExe: AetherExe) { loadTokens() }
 
     override func buildUpstream(tower: Tower) {}
     override func renderDisplay(tower: Tower) -> String { "---" }

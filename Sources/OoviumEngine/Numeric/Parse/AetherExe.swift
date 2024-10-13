@@ -45,7 +45,9 @@ public class AetherExe {
 
 // TokenKeys =======================================================================================
     public func chainCore(key: TokenKey) -> ChainCore { (cores[key] as! ChainCore) }
-    public func tokenDisplay(key: TokenKey) -> String { (cores[key] as? ChainCore)?.tokensDisplay ?? "" }
+    public func tokenDisplay(key: TokenKey) -> String {
+        (cores[key] as? ChainCore)?.tokensDisplay ?? (cores[key] as? HeaderCore)?.tokensDisplay ?? ""
+    }
     public func valueDisplay(key: TokenKey) -> String { (cores[key] as! ChainCore).valueDisplay }
     public func naturalDisplay(key: TokenKey) -> String { (cores[key] as! ChainCore).naturalDisplay }
 
