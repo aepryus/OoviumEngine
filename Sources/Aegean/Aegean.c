@@ -41,6 +41,8 @@ Obj AEObjString(char* string) {
     // Added because of a crash when using strings in an if() function.  This can be removed when the if is fixed.
     if (strlen(string) > 0)
         strcpy(obj.a.p, string);
+    else
+        ((char*)obj.a.p)[0] = 0;
 	obj.type = AETypeString;
 	return obj;
 }
