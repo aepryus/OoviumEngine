@@ -37,7 +37,7 @@ public class Chain: NSObject, Packable {
     public required init(_ chainString: String) {
         var chainString = chainString
         if let index = chainString.loc(of: "::") {
-            key = TokenKey(code: .va, tag: chainString[..<index])
+            key = TokenKey(chainString[..<index])
             chainString.removeFirst(index+2)
         } else { key = nil }
         if !chainString.isEmpty { tokenKeys = chainString.components(separatedBy: ";").map({ TokenKey($0) }) }
@@ -45,7 +45,7 @@ public class Chain: NSObject, Packable {
 	}
 	public func pack() -> String {
         var chainString: String = ""
-        if let key { chainString += "\(key.tag)::" }
+        if let key { chainString += "\(key)::" }
         chainString += tokenKeys.map({ $0.description }).joined(separator: ";")
         return chainString
 	}

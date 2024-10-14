@@ -38,7 +38,7 @@ class HeaderCore: Core, VariableTokenDelegate {
     override func renderDisplay(tower: Tower) -> String { "---" }
     override func renderTask(tower: Tower) -> UnsafeMutablePointer<Task>? { nil }
     override func taskCompleted(tower: Tower, askedBy: Tower) -> Bool { true }
-    override func resetTask(tower: Tower) {}
+    override func resetTask(tower: Tower) { loadTokens() }
     override func executeTask(tower: Tower) {}
     
 // VariableTokenDelegate ===========================================================================

@@ -44,7 +44,7 @@ public class Grid: Aexel {
 		
 		let column = Column(grid: self)
 		column.parent = self
-		column.name = Grid.name(n: 1)
+		column.name = Grid.name(n: 0)
 		columns.append(column)
 		let cell = Cell(grid: self)
 		cell.parent = self
@@ -111,7 +111,7 @@ public class Grid: Aexel {
 		for rowNo in 0..<rows {
 			let cell: Cell = Cell(grid: self)
 			cell.parent = self
-			cell.colNo = cc + 1
+			cell.colNo = cc
 			cell.rowNo = rowNo
 			cells.insert(cell, at: nc)
 			nc += 1 + cc
@@ -193,7 +193,7 @@ public class Grid: Aexel {
 
 // Static ==========================================================================================
 	static func name(n: Int) -> String {
-		var n: Int = n
+		var n: Int = n+1
 		var name: String = String()
 		while n != 0 {
 			let c: Character = Character(UnicodeScalar((n-1)%26 + Int(("A" as UnicodeScalar).value))!)
