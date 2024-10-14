@@ -16,6 +16,11 @@ public class Core: Hashable {
     var tower: Tower!
     var fog: TokenKey? { nil }
     var isFogFirewall: Bool { false }
+    
+    public var tokensDisplay: String { "not implemented yet" }
+    public var valueDisplay: String { "not implemented yet" }
+    public var naturalDisplay: String { "not implemented yet" }
+
 
     func createTower(_ aetherExe: AetherExe) -> Tower { aetherExe.createTower(key: key, core: self) }
     func aetherExeCompleted(_ aetherExe: AetherExe) {}

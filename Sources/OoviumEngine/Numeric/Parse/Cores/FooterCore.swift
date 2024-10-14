@@ -135,15 +135,17 @@ class FooterCore: Core {
     
 // Core ===================================================================================
     override var key: TokenKey { column.footerTokenKey }
-    
+    override var valueDisplay: String { tower?.obje.display ?? "" }
+
     override func createTower(_ aetherExe: AetherExe) -> Tower { aetherExe.createTower(key: key, core: self) }
     override func buildUpstream(tower: Tower) {
-//        guard aggregate != .none && aggregate != .running && aggregate != .match else { return }
-//        tower.abstractUp()
-//        for i in 0..<grid.rows {
-//            let cell = grid.cell(colNo: colNo, rowNo: i)
-//            cell.tower.attach(tower)
-//        }
+        guard column.aggregate != .none && column.aggregate != .running && column.aggregate != .match else { return }
+        tower.abstractUp()
+        for i in 0..<column.grid.rows {
+            let cell: Cell = column.grid.cell(colNo: column.colNo, rowNo: i)
+            let cellTower: Tower = tower.aetherExe.tower(key: cell.chain.key!)!
+            cellTower.attach(tower)
+        }
     }
     override func renderDisplay(tower: Tower) -> String { tower.obje.display }
     override func renderTask(tower: Tower) -> UnsafeMutablePointer<Task>? {

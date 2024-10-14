@@ -62,7 +62,7 @@ class Dendrite: Sequence {
 }
 
 public class Tower: Hashable, CustomStringConvertible {
-    private unowned let aetherExe: AetherExe
+    public unowned let aetherExe: AetherExe
     public let core: Core?
 
     private let _variableToken: VariableToken

@@ -19,7 +19,7 @@ class HeaderCore: Core, VariableTokenDelegate {
     
     var grid: Grid { column.grid }
     
-    public var tokensDisplay: String {
+    public override var tokensDisplay: String {
         tokens.map({ $0.display }).joined()
     }
     

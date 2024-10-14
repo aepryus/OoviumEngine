@@ -30,9 +30,9 @@ public class ChainCore: Core, CustomStringConvertible {
     override var isFogFirewall: Bool { _fog != nil }
     
 // Public ==========================================================================================
-    public var tokensDisplay: String { tokens.map({ $0.display }).joined() }
-    public var valueDisplay: String { tokens.count > 0 ? tower?.obje.display ?? "" : "" }
-    public var naturalDisplay: String { fatalError() }
+    public override var tokensDisplay: String { tokens.map({ $0.display }).joined() }
+    public override var valueDisplay: String { tokens.count > 0 ? tower?.obje.display ?? "" : "" }
+    public override var naturalDisplay: String { fatalError() }
     public func edit() {
         guard let tower else { return }
 //        tower.listener?.onTriggered()
