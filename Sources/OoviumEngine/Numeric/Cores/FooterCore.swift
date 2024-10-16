@@ -74,28 +74,6 @@ class FooterCore: Core {
 
         return AELambdaCreate(mnimi(vi), c, UInt8(cn), v, UInt8(vn), m, UInt8(mn), nil)
     }
-    private func compileRUN() -> UnsafeMutablePointer<Lambda>? {
-        let memory: UnsafeMutablePointer<Memory> = aetherExe.memory
-        let vi: mnimi = AEMemoryIndexForName(memory, column.footerTokenKey.tag.toInt8())
-        
-        let vn: Int = column.grid.rows
-        let v: UnsafeMutablePointer<mnimi> = UnsafeMutablePointer<mnimi>.allocate(capacity: vn)
-        defer { v.deallocate() }
-        for i: Int in 0..<vn {
-            let cell: Cell = column.grid.cell(colNo: column.colNo, rowNo: i)
-            v[i] = AEMemoryIndexForName(memory, cell.chain.key!.tag.toInt8())
-        }
-
-        let mn: Int = vn
-        let m: UnsafeMutablePointer<UInt8> = UnsafeMutablePointer<UInt8>.allocate(capacity: mn)
-        defer { m.deallocate() }
-
-        for i: Int in 0..<vn {
-            m[i] = UInt8(MorphNumVarForce.rawValue)
-        }
-
-        return AELambdaCreate(mnimi(vi), nil, 0, v, UInt8(vn), m, UInt8(mn), nil)
-    }
     private func compileMTC() -> UnsafeMutablePointer<Lambda>? {
         nil
 //        column.footerChain.compile().compile(name: <#T##String#>, tower: <#T##Tower#>)
@@ -127,7 +105,7 @@ class FooterCore: Core {
             case .none:     return compileNON()
             case .sum:      return compileSUM()
             case .average:  return compileAVG()
-            case .running:  return compileRUN()
+            case .running:  return compileNON()
             case .match:    return compileMTC()
             case .count:    return compileCNT()
         }
