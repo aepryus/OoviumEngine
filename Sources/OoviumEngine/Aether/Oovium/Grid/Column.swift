@@ -87,7 +87,7 @@ public class Column: Aexon {
                 footerChain.clear()
                 for token in chain.tokenKeys {
                     if let column = grid.column(tag: token.tag) {
-                        column.footerChain.post(key: column.footerChain.key!)
+                        footerChain.post(key: column.footerTokenKey)
                     } else {
                         footerChain.post(key: token)
                     }

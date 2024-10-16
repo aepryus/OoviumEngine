@@ -409,8 +409,19 @@ public class Migrate {
         
         return sb
     }
-    public static func migrateChainTo31(_ tokensString: String, tag: String) -> String {
-        "\(tag)::\(tokensString)"
+    public static func migrateChainTo31(_ tokensString: String) -> String {
+        guard tokensString != "" else {
+            return ""
+        }
+        let keys: [String] = tokensString.components(separatedBy: ";")
+
+        var sb: String = ""
+//        keys.forEach {
+//        }
+
+        if sb.count > 0 { sb.removeLast() }
+        
+        return sb
     }
 	public static func migrateAether(json: String) throws -> String {
 		var attributes: [String:Any] = json.toAttributes()
@@ -493,6 +504,10 @@ public class Migrate {
         if fileVersion == "3.0" { migrate = true }
         if migrate {
             attributes["version"] = "3.1"
+            attributes = attributes.modify(query: chainNames, convert: { (value: Any) in
+                Migrate.migrateChainTo31(value as! String)
+            })
+
             if var aexelArray: [[String:Any]] = attributes["aexels"] as? [[String:Any]] {
                 for (index, var aexelAtts): (Int, [String:Any]) in aexelArray.enumerated() {
                     guard let type: String = aexelAtts["type"] as? String,

@@ -75,8 +75,22 @@ class FooterCore: Core {
         return AELambdaCreate(mnimi(vi), c, UInt8(cn), v, UInt8(vn), m, UInt8(mn), nil)
     }
     private func compileMTC() -> UnsafeMutablePointer<Lambda>? {
-        nil
-//        column.footerChain.compile().compile(name: <#T##String#>, tower: <#T##Tower#>)
+        guard let tower: Tower = aetherExe.tower(key: column.footerTokenKey) else { return nil }
+        let chain: Chain = column.footerChain
+        let tokens: [Token] = chain.tokenKeys.map({ (key: TokenKey) in aetherExe.token(key: key) })
+        let (lambda, lastMorphNo) = Parser.compile(tokens: tokens, tokenKey: chain.key, memory: tower.memory)
+        if let lambda {
+            if tower.variableToken.status == .invalid { tower.variableToken.status = .ok }
+            if let lastMorphNo {
+                let morph = Morph(rawValue: lastMorphNo)
+                tower.variableToken.def = morph.def
+            }
+            else { tower.variableToken.def = RealDef.def }
+            return lambda
+        } else {
+            if tower.variableToken.status == .ok { tower.variableToken.status = .invalid }
+            return nil
+        }
     }
     private func compileCNT() -> UnsafeMutablePointer<Lambda>? {
         let memory: UnsafeMutablePointer<Memory> = aetherExe.memory
@@ -110,8 +124,8 @@ class FooterCore: Core {
             case .count:    return compileCNT()
         }
     }
-    
-// Core ===================================================================================
+
+    // Core ========================================================================================
     override var key: TokenKey { column.footerTokenKey }
     override var valueDisplay: String { tower?.obje.display ?? "" }
 
