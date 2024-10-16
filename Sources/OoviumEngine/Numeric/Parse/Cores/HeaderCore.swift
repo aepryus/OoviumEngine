@@ -32,13 +32,22 @@ class HeaderCore: Core, VariableTokenDelegate {
     override var key: TokenKey { column.headerTokenKey }
     
     override func createTower(_ aetherExe: AetherExe) -> Tower { aetherExe.createHeaderTower(tag: key.tag, core: self, tokenDelegate: self) }
+    override func createTowerToken(_ aetherExe: AetherExe) -> TowerToken { aetherExe.columnToken(tag: key.tag) }
     override func aetherExeCompleted(_ aetherExe: AetherExe) { loadTokens() }
 
-    override func buildUpstream(tower: Tower) {}
+    override func buildUpstream(tower: Tower) {
+        aetherExe.nukeUpstream(key: column.chain.key!)
+        tokens.compactMap { $0 as? TowerToken }.forEach {
+            $0.tower.attach(tower)
+        }
+    }
     override func renderDisplay(tower: Tower) -> String { "---" }
     override func renderTask(tower: Tower) -> UnsafeMutablePointer<Task>? { nil }
     override func taskCompleted(tower: Tower, askedBy: Tower) -> Bool { true }
-    override func resetTask(tower: Tower) { loadTokens() }
+    override func resetTask(tower: Tower) {
+        loadTokens()
+//        column.cells.forEach { aetherExe.tower(key: $0.chain.key!)?.resetTask() }
+    }
     override func executeTask(tower: Tower) {}
     
 // VariableTokenDelegate ===========================================================================

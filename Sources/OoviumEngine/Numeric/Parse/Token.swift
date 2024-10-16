@@ -43,8 +43,8 @@ public enum TokenCode: CaseIterable {
 }
 
 public struct TokenKey: Hashable, CustomStringConvertible {
-    let code: TokenCode
-    let tag: String
+    public let code: TokenCode
+    public let tag: String
 
     init(_ string: String) {
         self.code = TokenCode.from(string: string[0...1])!

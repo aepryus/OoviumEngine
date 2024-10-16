@@ -157,7 +157,9 @@ class FooterCore: Core {
     override func taskCompleted(tower: Tower, askedBy: Tower) -> Bool {
         AEMemoryLoaded(tower.memory, tower.index) != 0
     }
-    override func resetTask(tower: Tower) {}
+    override func resetTask(tower: Tower) {
+        AEMemoryUnfix(tower.memory, tower.index)
+    }
     override func executeTask(tower: Tower) {
         AETaskExecute(tower.task, tower.memory)
         AEMemoryFix(tower.memory, tower.index)

@@ -32,8 +32,6 @@ import Foundation
 	}
 
     
-//    func token(key: String) -> Token? { state.token(key: key) }
-//    func variableToken(tag: String) -> Token { state.variableToken(tag: tag) }
     func newNo(type: String) -> Int { (aexels.filter({ $0.type == type }).map({ $0.no }).max() ?? 0) + 1 }
     
     public func compile() -> AetherExe { AetherExe(aether: self) }
@@ -42,10 +40,6 @@ import Foundation
 	public func addAexel(_ aexel: Aexel) {
 		add(aexel)
 		aexels.append(aexel)
-
-//        aexel.towers.forEach { $0.buildStream() }
-//        state.buildMemory()
-//        Tower.evaluate(towers: aexel.towers)
 	}
     public func remove(aexels: [Aexel]) {
 //        let removed: [Tower] = []

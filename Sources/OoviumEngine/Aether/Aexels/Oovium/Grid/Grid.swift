@@ -120,19 +120,19 @@ public class Grid: Aexel {
         
         return column
 	}
-	public func deleteColumn(_ column: Column) {
-//		let colNo: Int = column.colNo
-//        var toDestroy: [Tower] = []
-//		for rowNo in 0..<rows {
-//			let cellNo = columns.count*(rows-1-rowNo)+colNo
-//            toDestroy.append(cells[cellNo].tower)
-//			cells.remove(at: cellNo)
-//		}
-//        toDestroy.append(columns[colNo].chain.tower)
-//        toDestroy.append(columns[colNo].footerChain.tower)
-//		columns.remove(at: colNo)
-//		numberCells()
-//        aether.state.destroy(towers: toDestroy)
+	public func deleteColumn(_ column: Column) -> [TokenKey] {
+		let colNo: Int = column.colNo
+        var toDestroy: [TokenKey] = []
+		for rowNo in 0..<rows {
+			let cellNo = columns.count*(rows-1-rowNo)+colNo
+            toDestroy.append(cells[cellNo].chain.key!)
+			cells.remove(at: cellNo)
+		}
+        toDestroy.append(columns[colNo].headerTokenKey)
+        toDestroy.append(columns[colNo].footerTokenKey)
+		columns.remove(at: colNo)
+		numberCells()
+        return toDestroy
 	}
 	public func move(column: Column, to: Int) {
 		let from = column.colNo

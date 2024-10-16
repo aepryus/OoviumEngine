@@ -31,12 +31,12 @@ public class Column: Aexon {
 	public var _footerWidth: Double? = nil
     
     public lazy var headerTokenKey: TokenKey = TokenKey(code: .cl, tag: fullKey)
-    public lazy var footerTokenKey: TokenKey = TokenKey(code: .va, tag: fullKey)
+    public lazy var footerTokenKey: TokenKey = TokenKey(code: .va, tag: "\(grid.key).Ft\(no)")
     
     public lazy var footerChain: Chain = Chain(key: footerTokenKey)
 	
 	public var grid: Grid { parent as! Grid }
-    public var calculated: Bool { !chain.isEmpty }
+    public var calculated: Bool = false
 	public var hasFooter: Bool { aggregate != .none && aggregate != .running }
     public var colNo: Int { grid.columns.enumerated().first(where: { $0.1 === self })!.0 }
     public var cells: [Cell] { grid.cellsForColumn(colNo: no) }
@@ -49,8 +49,25 @@ public class Column: Aexon {
 //		}
 	}
     
+
+// Inits ===========================================================================================
+	public init(grid: Grid) {
+//		no = grid.maxColumnNo + 1
+        super.init(parent: grid)
+		parent = grid
+        chain = Chain(key: headerTokenKey)
+//        footerChain = Chain(key: TokenKey(code: .va, tag: fullKey))
+//		chain.tower = tower
+//		chain.alwaysShow = true
+//		footerChain.tower = footerTower
+	}
+	public required init(attributes: [String:Any], parent: Domain?) {
+		super.init(attributes: attributes, parent: parent)
+        calculated = !chain.isEmpty
+	}
+    
     public func disseminate() {
-        guard !chain.isEmpty else { return }
+        guard !chain.isEmpty || calculated else { return }
         
         if aggregate != .running {
             for i in 0..<grid.rows {
@@ -97,23 +114,9 @@ public class Column: Aexon {
                 }
             }
         }
+        calculated = !chain.isEmpty
     }
     public func cellKeys() -> [TokenKey] { grid.cells.filter({ $0.colNo == colNo }).map({ $0.chain.key! }) }
-
-// Inits ===========================================================================================
-	public init(grid: Grid) {
-//		no = grid.maxColumnNo + 1
-        super.init(parent: grid)
-		parent = grid
-        chain = Chain(key: headerTokenKey)
-//        footerChain = Chain(key: TokenKey(code: .va, tag: fullKey))
-//		chain.tower = tower
-//		chain.alwaysShow = true
-//		footerChain.tower = footerTower
-	}
-	public required init(attributes: [String:Any], parent: Domain?) {
-		super.init(attributes: attributes, parent: parent)
-	}
 	
 // Aexon ===========================================================================================
     override var code: String { "Co" }

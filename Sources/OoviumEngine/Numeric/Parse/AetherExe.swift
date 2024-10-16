@@ -23,7 +23,7 @@ public class AetherExe {
     init(aether: Aether) {
         self.aether = aether
         
-        aether.aexels.forEach({ add(aexon: $0) })
+        plugIn(aexons: aether.aexels)
 
         // Combined ? ======================
         cores.values.forEach { $0.aetherExe = self }
@@ -73,12 +73,25 @@ public class AetherExe {
         dependsOnTower.downstream.decrement(tower: keyTower)
     }
     public func nuke(key: TokenKey) {
-        let tower: Tower = tower(for: key)
+        guard let token: TowerToken = tokens[key],
+              let tower: Tower = towerLookup[token]
+        else { return }
+        
         tower.upstream.forEach { $0.downstream.nuke(tower: tower) }
         tower.downstream.forEach { $0.upstream.nuke(tower: tower) }
+        tower.upstream.nukeAll()
+        tower.downstream.nukeAll()
+        towers.remove(object: tower)
+        towerLookup[token] = nil
+        tokens[key] = nil
     }
     public func nuke(keys: [TokenKey]) { keys.forEach { nuke(key: $0) } }
-    
+    public func nukeUpstream(key: TokenKey) {
+        let tower: Tower = tower(for: key)
+        tower.upstream.forEach { $0.downstream.nuke(tower: tower) }
+        tower.upstream.nukeAll()
+    }
+
     func add(chain: Chain) {
 //        let state: ChainCore = ChainCore(chain: chain)
 //        if let key: TokenKey = chain.key { state.tower = createTower(key: key, towerDelegate: state) }
@@ -91,6 +104,9 @@ public class AetherExe {
     
     public func token(key: TokenKey) -> Token { tokens[key] ?? Token.token(key: key) ?? .zero }
     func variableToken(tag: String) -> VariableToken {
+        if tag == "Gr1.Co1" {
+            print("found it")
+        }
         let key: TokenKey = TokenKey(code: .va, tag: tag)
         if let token: VariableToken = tokens[key] as? VariableToken { return token }
         let token: VariableToken = VariableToken(tag: tag)
@@ -104,21 +120,38 @@ public class AetherExe {
         tokens[key] = token
         return token
     }
+    func columnToken(tag: String) -> ColumnToken {
+        let key: TokenKey = TokenKey(code: .cl, tag: tag)
+        if let token: ColumnToken = tokens[key] as? ColumnToken { return token }
+        let token: ColumnToken = ColumnToken(tag: tag)
+        tokens[key] = token
+        return token
+    }
+
     public func tower(key: TokenKey) -> Tower? {
         guard let token: TowerToken = tokens[key] else { return nil }
         return towerLookup[token]
     }
     
-    public func add(aexon: Aexon) {
-        var newTowers: [Tower] = []
+    private func harvest(aexon: Aexon) -> [Tower] {
+        var towers: [Tower] = []
         aexon.createCores().forEach { (core: Core) in
             core.tower = core.createTower(self)
-            newTowers.append(core.tower)
+            let towerToken: TowerToken = core.createTowerToken(self)
+            towerToken.tower = core.tower
+            tokens[core.key] = towerToken
+            towerLookup[towerToken] = core.tower
+            towers.append(core.tower)
             core.aetherExe = self
             cores[core.key] = core
         }
-        newTowers.forEach { $0.buildStream() }
+        return towers
     }
+    public func plugIn(aexons: [Aexon]) {
+        let towers: [Tower] = aexons.flatMap({ harvest(aexon: $0) })
+        towers.forEach { $0.buildStream() }
+    }
+    public func plugIn(aexon: Aexon) { plugIn(aexons: [aexon]) }
     
     public func inAFog(key: TokenKey) -> Bool { tower(key: key)?.fog != nil }
     
@@ -172,7 +205,6 @@ public class AetherExe {
     }
     public func trigger(key: TokenKey) { trigger(keys: [key]) }
 
-    
 // Evaluate ========================================================================================
     public func buildMemory() {
         var vars: [String] = ["k"]
@@ -241,5 +273,5 @@ public class AetherExe {
         return tower
     }
     
-    func printTowers() { Tower.printTowers(towers) }
+    public func printTowers() { Tower.printTowers(towers) }
 }

@@ -418,8 +418,6 @@ public class Migrate {
         
         let result: ComparisonResult =  fileVersion.compare(Aether.engineVersion, options: .numeric)
         
-        print("QQ:\(result)")
-        
         guard result != .orderedDescending else { throw AetherLoadingError.fromNewerVersion(currentVersion: Aether.engineVersion, fileVersion: fileVersion) }
         guard result != .orderedSame else { return json }
 
