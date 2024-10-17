@@ -410,18 +410,19 @@ public class Migrate {
         return sb
     }
     public static func migrateChainTo31(_ tokensString: String) -> String {
-        guard tokensString != "" else {
-            return ""
-        }
-        let keys: [String] = tokensString.components(separatedBy: ";")
-
-        var sb: String = ""
-//        keys.forEach {
+        tokensString
+//        guard tokensString != "" else {
+//            return ""
 //        }
-
-        if sb.count > 0 { sb.removeLast() }
-        
-        return sb
+//        let keys: [String] = tokensString.components(separatedBy: ";")
+//
+//        var sb: String = ""
+////        keys.forEach {
+////        }
+//
+//        if sb.count > 0 { sb.removeLast() }
+//        
+//        return sb
     }
 	public static func migrateAether(json: String) throws -> String {
 		var attributes: [String:Any] = json.toAttributes()
@@ -504,9 +505,9 @@ public class Migrate {
         if fileVersion == "3.0" { migrate = true }
         if migrate {
             attributes["version"] = "3.1"
-            attributes = attributes.modify(query: chainNames, convert: { (value: Any) in
-                Migrate.migrateChainTo31(value as! String)
-            })
+//            attributes = attributes.modify(query: chainNames, convert: { (value: Any) in
+//                Migrate.migrateChainTo31(value as! String)
+//            })
 
             if var aexelArray: [[String:Any]] = attributes["aexels"] as? [[String:Any]] {
                 for (index, var aexelAtts): (Int, [String:Any]) in aexelArray.enumerated() {
@@ -545,7 +546,7 @@ public class Migrate {
                             if var subArray: [[String:Any]] = aexelAtts["columns"] as? [[String:Any]] {
                                 for (subIndex, var subAtts): (Int, [String:Any]) in subArray.enumerated() {
                                     guard let subNo: Int = subAtts["no"] as? Int else { continue }
-                                    if let tokens: String = subAtts["chain"] as? String { subAtts["chain"] = "Gr\(no).Co\(subNo)::\(tokens)" }
+                                    if let tokens: String = subAtts["chain"] as? String { subAtts["chain"] = "cl:Gr\(no).Co\(subNo)::\(tokens)" }
                                     subArray[subIndex] = subAtts
                                 }
                                 aexelAtts["columns"] = subArray

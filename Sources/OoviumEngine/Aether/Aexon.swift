@@ -33,7 +33,7 @@ public class Aexon: Domain {
 
     var code: String { fatalError() }
     var key: String { "\(code)\(no)" }
-    var fullKey: String { "\((parent as! Aexon).key).\(key)" }
+    var fullKey: String { "\((parent as! Aexon).fullKey).\(key)" }
     public var tokenKeys: [TokenKey] { [] }
 
 // Methods =========================================================================================

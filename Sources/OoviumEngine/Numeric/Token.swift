@@ -47,8 +47,13 @@ public struct TokenKey: Hashable, CustomStringConvertible {
     public let tag: String
 
     init(_ string: String) {
-        self.code = TokenCode.from(string: string[0...1])!
-        self.tag = string[3...]
+        if string.loc(of: ":") == 2 {
+            self.code = TokenCode.from(string: string[0...1])!
+            self.tag = string[3...]
+        } else {
+            self.code = .va
+            self.tag = string
+        }
     }
     init(code: TokenCode, tag: String) {
         self.code = code

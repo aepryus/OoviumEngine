@@ -45,7 +45,10 @@ public class Chain: NSObject, Packable {
 	}
 	public func pack() -> String {
         var chainString: String = ""
-        if let key { chainString += "\(key)::" }
+        if let key {
+            if key.code == .va { chainString += "\(key.tag)::" }
+            else { chainString += "\(key)::" }
+        }
         chainString += tokenKeys.map({ $0.description }).joined(separator: ";")
         return chainString
 	}
