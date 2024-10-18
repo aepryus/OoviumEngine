@@ -63,7 +63,11 @@ public class Grid: Aexel {
 //			}
 //		}
 //	}
-    public func addRow() -> [Cell] { columns.map({ $0.addRow() })
+    public func addRow() -> [Cell] {
+        rows += 1
+
+        return columns.map({ $0.addRow() })
+    }
 //
 //        
 //        
@@ -81,7 +85,6 @@ public class Grid: Aexel {
 ////        aether.state.buildMemory()
 //        columns.filter({ $0.calculated }).forEach {  $0.disseminate() }
 //        return newCells
-	}
 	public func deleteRow(rowNo: Int) {
 //		rows -= 1
 //        var toDestroy: [Tower] = []
@@ -140,7 +143,7 @@ public class Grid: Aexel {
 	}
 	public func move(column: Column, to: Int) {
 		let from = column.colNo
-		columns.remove(at: from)
+		columns.remove(at: from-1)
 		columns.insert(column, at: to)
 //		for rowNo in 0..<rows {
 //			let fNo = rowNo*columns.count+from

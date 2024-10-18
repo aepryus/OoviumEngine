@@ -15,12 +15,8 @@ public class Obje: CustomStringConvertible {
 	init(memory: UnsafeMutablePointer<Memory>, index: mnimi) {
 		self.obj = AEMemoryMirror(memory, index)
 	}
-	public init(_ obj: Obj) {
-		self.obj = obj
-	}
-	deinit {
-		AEObjWipe(&obj)
-	}
+	public init(_ obj: Obj) { self.obj = obj }
+	deinit { AEObjWipe(&obj) }
 	
 	public var def: Def { Def.def(obj: obj) ?? RealDef.def }
 	public var display: String { def.format(obj: obj) }

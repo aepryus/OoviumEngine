@@ -60,10 +60,8 @@ public class Column: Aexon {
         name = Grid.name(n: no)
         chain = Chain(key: headerTokenKey)
         
-        let cell = Cell(column: self)
-        cell.parent = self
-        cells.append(cell)
-
+        for _ in 0..<grid.rows { cells.append(Cell(column: self)) }
+        
 //        footerChain = Chain(key: TokenKey(code: .va, tag: fullKey))
 //		chain.tower = tower
 //		chain.alwaysShow = true

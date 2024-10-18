@@ -267,11 +267,10 @@ public class Tower: Hashable, CustomStringConvertible {
     }
     
     private static var listeners: [TokenKey:WeakListener] = [:]
-    public static func startListening(to key: TokenKey, listener: TowerListener) {
-        listeners[key] = WeakListener(listener)
-    }
-    public static func stopListening(to key: TokenKey) { listeners[key] = nil }
+    public static func startListening(to key: TokenKey, listener: TowerListener) { listeners[key] = WeakListener(listener) }
+    static func cleanupListeners() { listeners = listeners.filter({ $1.value != nil }) }
     public static func notifyListeners(towers: Set<Tower>) {
+        cleanupListeners()
         towers.compactMap({ listeners[$0.variableToken.key]?.value }).forEach { $0.onTriggered() }
     }
 
