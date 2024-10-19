@@ -265,6 +265,11 @@ public class Tower: Hashable, CustomStringConvertible {
         } while progress
         notifyListeners(towers: towers)
     }
+    public static func trigger(towers: Set<Tower>) {
+        var evaluate: Set<Tower> = Set(towers)
+        towers.forEach({ evaluate.formUnion($0.allDownstream()) })
+        Tower.evaluate(towers: evaluate)
+    }
     
     private static var listeners: [TokenKey:WeakListener] = [:]
     public static func startListening(to key: TokenKey, listener: TowerListener) { listeners[key] = WeakListener(listener) }

@@ -80,7 +80,7 @@ public class Column: Aexon {
         guard !chain.isEmpty || calculated else { return }
         
         if aggregate != .running {
-            for i in 0..<grid.rows {
+            for i in 1...grid.rows {
                 let cell = grid.cell(colNo: colNo, rowNo: i)
                 cell.chain.clear()
 
@@ -105,7 +105,7 @@ public class Column: Aexon {
             }
 
         } else {
-            for i in 0..<grid.rows {
+            for i in 1...grid.rows {
                 let cell = grid.cell(colNo: colNo, rowNo: i)
                 cell.chain.clear()
 
@@ -117,7 +117,7 @@ public class Column: Aexon {
                         cell.chain.post(key: tokenKey)
                     }
                 }
-                if i != 0 {
+                if i != 1 {
                     cell.chain.post(key: Token.add.key)
                     let above: Cell = grid.cell(colNo: colNo, rowNo: i-1)
                     cell.chain.post(key: above.chain.key!)
@@ -154,6 +154,7 @@ public class Column: Aexon {
         let cell: Cell = cells.remove(at: rowNo-1)
         cells.insert(cell, at: toRowNo-1)
 //        numberCells()
+        
     }
 
 // Aexon ===========================================================================================
