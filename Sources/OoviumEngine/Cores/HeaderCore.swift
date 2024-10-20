@@ -46,7 +46,6 @@ class HeaderCore: Core, VariableTokenDelegate {
     override func taskCompleted(tower: Tower, askedBy: Tower) -> Bool { true }
     override func resetTask(tower: Tower) {
         loadTokens()
-//        column.cells.forEach { aetherExe.tower(key: $0.chain.key!)?.resetTask() }
     }
     override func executeTask(tower: Tower) {}
     

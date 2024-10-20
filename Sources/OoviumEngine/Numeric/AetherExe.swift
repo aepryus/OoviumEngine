@@ -36,9 +36,6 @@ public class AetherExe {
     deinit { AEMemoryRelease(memory) }
 
 // Computed ========================================================================================
-//    private var mechlikeTowers: [Tower] { aether.aexels.filter({ $0 is Mechlike }).flatMap({ $0.towers }) }
-//    private var webTowers: [Tower] { aether.aexels.flatMap({ $0.towers }).filter({ $0.web != nil }) }
-    
     private func tower(for token: TowerToken) -> Tower { towerLookup[token]! }
     private func token(for key: TokenKey) -> TowerToken { tokens[key]! }
     private func tower(for key: TokenKey) -> Tower { tower(for: token(for: key)) }
@@ -92,21 +89,8 @@ public class AetherExe {
         tower.upstream.nukeAll()
     }
 
-    func add(chain: Chain) {
-//        let state: ChainCore = ChainCore(chain: chain)
-//        if let key: TokenKey = chain.key { state.tower = createTower(key: key, towerDelegate: state) }
-//        chain.load(state: state)
-        
-        buildMemory()
-//        evaluate()
-    }
-    func remove(chain: Chain) {}
-    
     public func token(key: TokenKey) -> Token { tokens[key] ?? Token.token(key: key) ?? .zero }
     func variableToken(tag: String) -> VariableToken {
-        if tag == "Gr1.Co1" {
-            print("found it")
-        }
         let key: TokenKey = TokenKey(code: .va, tag: tag)
         if let token: VariableToken = tokens[key] as? VariableToken { return token }
         let token: VariableToken = VariableToken(tag: tag)
@@ -216,8 +200,6 @@ public class AetherExe {
         vars.enumerated().forEach { AEMemorySetName(memory, UInt16($0), $1.toInt8()) }
         AEMemoryLoad(memory, oldMemory)
         AEMemoryRelease(oldMemory)
-        
-//        Tower.evaluate(towers: Set<Tower>(webTowers))
     }
     
 // Towers ==========================================================================================

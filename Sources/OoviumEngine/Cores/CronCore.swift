@@ -82,6 +82,5 @@ public class CronCore: Core {
     override func executeTask(tower: Tower) {
         AEMemorySetValue(tower.memory, tower.index, t)
         AEMemoryFix(tower.memory, tower.index)
-//        tower.variableToken.value = tower.obje.display
     }
 }

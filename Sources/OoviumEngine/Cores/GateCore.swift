@@ -62,6 +62,5 @@ class GateCore: Core {
     override func executeTask(tower: Tower) {
         AETaskExecute(tower.task, tower.memory)
         AEMemoryFix(tower.memory, tower.index)
-//        tower.variableToken.label = Oovium.format(value: tower.value)
     }
 }

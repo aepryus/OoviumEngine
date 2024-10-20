@@ -35,7 +35,6 @@ public class ChainCore: Core, CustomStringConvertible {
     public override var naturalDisplay: String { fatalError() }
     public func edit() {
         guard let tower else { return }
-//        tower.listener?.onTriggered()
         Tower.notifyListeners(towers: [tower])
         AETaskRelease(tower.task)
         tower.task = AETaskCreateNull()
@@ -49,7 +48,6 @@ public class ChainCore: Core, CustomStringConvertible {
     public func replaceWith(tokens: String) {
         let keys: [TokenKey] = tokens.components(separatedBy: ";").map({ TokenKey($0) })
         chain.tokenKeys = keys
-//            buildTokens()
     }
     public func replaceWith(natural: String) {
         chain.tokenKeys = Chain.convert(natural: natural)

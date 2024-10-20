@@ -160,7 +160,6 @@ class MechCore: Core {
         if tower.variableToken.status == .blocked { return "BLOCKED" }
         return mech.name
     }
-//    func renderTask(tower: Tower) -> UnsafeMutablePointer<Task>? { nil }
     override func taskCompleted(tower: Tower, askedBy: Tower) -> Bool {
         AEMemoryLoaded(tower.memory, AEMemoryIndexForName(tower.memory, mech.variableTokenKey.tag.toInt8())) != 0 || (askedBy !== tower && askedBy.fog == key)
     }
