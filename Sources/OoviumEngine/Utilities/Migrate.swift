@@ -409,20 +409,29 @@ public class Migrate {
         
         return sb
     }
-    public static func migrateChainTo31(_ tokensString: String) -> String {
-        tokensString
-//        guard tokensString != "" else {
-//            return ""
-//        }
-//        let keys: [String] = tokensString.components(separatedBy: ";")
-//
-//        var sb: String = ""
-////        keys.forEach {
-////        }
-//
-//        if sb.count > 0 { sb.removeLast() }
-//        
-//        return sb
+    fileprivate static func migrateChainTo31(_ tokensString: String, subs: [Subs]) -> String {
+        
+        let divider: Int = tokensString.loc(of: "::")!
+        let key: String = tokensString[0...(divider-1)]
+        let keys: [String] = tokensString[(divider+2)...].components(separatedBy: ";")
+        
+        guard tokensString.count > divider + 2 else { return tokensString }
+
+        var sb: String = "\(key)::"
+        keys.forEach {
+            sb.append($0[0...2])
+            
+            var tag: String = $0[3...]
+            
+            subs.forEach { if tag == $0.from { tag = $0.to } }
+
+            sb.append(tag)
+            sb.append(";")
+        }
+
+        if sb.count > 0 { sb.removeLast() }
+        
+        return sb
     }
 	public static func migrateAether(json: String) throws -> String {
 		var attributes: [String:Any] = json.toAttributes()
@@ -504,10 +513,15 @@ public class Migrate {
         
         if fileVersion == "3.0" { migrate = true }
         if migrate {
+            print(attributes.toJSON())
+            print("================================================================================================")
+            print("================================================================================================")
+            print("================================================================================================")
+            print("================================================================================================")
+
             attributes["version"] = "3.1"
-//            attributes = attributes.modify(query: chainNames, convert: { (value: Any) in
-//                Migrate.migrateChainTo31(value as! String)
-//            })
+            
+            var subs: [Subs] = []
 
             if var aexelArray: [[String:Any]] = attributes["aexels"] as? [[String:Any]] {
                 for (index, var aexelAtts): (Int, [String:Any]) in aexelArray.enumerated() {
@@ -547,17 +561,27 @@ public class Migrate {
                                 for (subIndex, var subAtts): (Int, [String:Any]) in subArray.enumerated() {
                                     guard let subNo: Int = subAtts["no"] as? Int else { continue }
                                     if let tokens: String = subAtts["chain"] as? String { subAtts["chain"] = "cl:Gr\(no).Co\(subNo)::\(tokens)" }
+                                    
+                                    var newCellNo: Int = 1
+                                    if let cellArray: [[String:Any]] = aexelAtts["cells"] as? [[String:Any]] {
+                                        var filteredArray: [[String:Any]] = []
+                                        for var cellAtts: [String:Any] in cellArray {
+                                            guard let cellNo: Int = cellAtts["no"] as? Int,
+                                                  cellAtts["colNo"] as! Int == subNo - 1
+                                            else { continue }
+                                            cellAtts["no"] = newCellNo
+                                            if let tokens: String = cellAtts["chain"] as? String { cellAtts["chain"] = "Gr\(no).Co\(subNo).Ce\(newCellNo)::\(tokens)" }
+                                            filteredArray.append(cellAtts)
+                                            subs.append(Subs(from: "Gr\(no).Ce\(cellNo)", to: "Gr\(no).Co\(subNo).Ce\(newCellNo)"))
+                                            newCellNo += 1
+                                        }
+                                        subAtts["cells"] = filteredArray
+                                    }
+                                    
                                     subArray[subIndex] = subAtts
                                 }
                                 aexelAtts["columns"] = subArray
-                            }
-                            if var subArray: [[String:Any]] = aexelAtts["cells"] as? [[String:Any]] {
-                                for (subIndex, var subAtts): (Int, [String:Any]) in subArray.enumerated() {
-                                    guard let subNo: Int = subAtts["no"] as? Int else { continue }
-                                    if let tokens: String = subAtts["chain"] as? String { subAtts["chain"] = "Gr\(no).Ce\(subNo)::\(tokens)" }
-                                    subArray[subIndex] = subAtts
-                                }
-                                aexelAtts["cells"] = subArray
+                                aexelAtts["cells"] = nil
                             }
                         default: break
                     }
@@ -565,6 +589,14 @@ public class Migrate {
                 }
                 attributes["aexels"] = aexelArray
             }
+            
+            print(attributes.toJSON())
+            attributes = attributes.modify(query: chainNames, convert: { (value: Any) in
+                print(value as! String)
+                return Migrate.migrateChainTo31(value as! String, subs: subs)
+            })
+
+            print(attributes.toJSON())
         }
 
         return attributes.toJSON()

@@ -10,8 +10,6 @@ import Acheron
 import Foundation
 
 public class Cell: Aexon {
-//	@objc public var colNo: Int = 0
-//	@objc public var rowNo: Int = 0
 	@objc public var chain: Chain!
 
 // Inits ===========================================================================================
@@ -24,9 +22,6 @@ public class Cell: Aexon {
 	}
     
 // Computed ========================================================================================
-//    public var tower: Tower { chain.tower }
-//    public var token: Token { tower.variableToken }
-    
     public var column: Column { parent as! Column }
     public var grid: Grid { column.grid }
     
@@ -42,5 +37,4 @@ public class Cell: Aexon {
 
 // Domain ==========================================================================================
     public override var properties: [String] { super.properties + ["chain"] }
-//	public override var properties: [String] { super.properties + ["colNo", "rowNo", "chain"] }
 }
