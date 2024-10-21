@@ -197,7 +197,7 @@ class MathTests: XCTestCase {
                     {
                       "name" : "n",
                       "no" : 1,
-                      "chain" : "Ta1.v1.result::va:Ta1.v1",
+                      "chain" : "Ta1.i1.result::va:Ta1.i1",
                       "modified" : "2021-03-07T23:04:14+0900",
                       "iden" : "A819C130-6DBA-4CA7-A359-D819E3C69C04",
                       "type" : "vertebra"
@@ -206,7 +206,7 @@ class MathTests: XCTestCase {
                       "iden" : "D1C1A3E8-5B68-4DF6-9433-F4E9B2DEC969",
                       "type" : "vertebra",
                       "modified" : "2021-03-07T23:04:52+0900",
-                      "chain" : "Ta1.v2.result::va:Ta1.v2;op:+;dg:1",
+                      "chain" : "Ta1.i2.result::va:Ta1.i2;op:+;dg:1",
                       "no" : 2,
                       "name" : "p"
                     }
@@ -227,7 +227,7 @@ class MathTests: XCTestCase {
                   "x" : 1967.30859375,
                   "y" : 1038,
                   "type" : "object",
-                  "chain" : "Ob1::sp:(;va:Ta1.v2;op:+;dg:1;sp:);op:×;sp:(;va:Ta1.v2;op:+;dg:1;sp:);op:>;va:Ta1.v1",
+                  "chain" : "Ob1::sp:(;va:Ta1.i2;op:+;dg:1;sp:);op:×;sp:(;va:Ta1.i2;op:+;dg:1;sp:);op:>;va:Ta1.i1",
                   "label" : "prime",
                   "iden" : "094D10F0-B553-4012-93C4-A0CF8AF7B455"
                 },
@@ -238,7 +238,7 @@ class MathTests: XCTestCase {
                   "x" : 2021.51171875,
                   "type" : "object",
                   "label" : "factor",
-                  "chain" : "Ob2::sp:(;va:Ta1.v1;op:÷;va:Ta1.v2;sp:);op:=;fn:floor;va:Ta1.v1;op:÷;va:Ta1.v2;sp:)",
+                  "chain" : "Ob2::sp:(;va:Ta1.i1;op:÷;va:Ta1.i2;sp:);op:=;fn:floor;va:Ta1.i1;op:÷;va:Ta1.i2;sp:)",
                   "iden" : "25C46F80-0A51-4655-9638-60C6FA25B47F"
                 },
                 {
@@ -257,9 +257,9 @@ class MathTests: XCTestCase {
                   "name" : "",
                   "no" : 1,
                   "iden" : "E8B55187-1382-4AE3-B83C-22A7B6E69185",
-                  "elseChain" : "Gt1.else::va:Ta1.v1",
+                  "elseChain" : "Gt1.else::va:Ta1.i1",
                   "x" : 2005.12109375,
-                  "thenChain" : "Gt1.then::va:Ta1.v2",
+                  "thenChain" : "Gt1.then::va:Ta1.i2",
                   "ifChain" : "Gt1.if::va:Ob2"
                 },
                 {

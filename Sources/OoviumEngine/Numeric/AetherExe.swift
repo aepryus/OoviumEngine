@@ -24,11 +24,6 @@ public class AetherExe {
         self.aether = aether
         
         plugIn(aexons: aether.aexels)
-
-        // Combined ? ======================
-        cores.values.forEach { $0.aetherExe = self }
-        towers.forEach { $0.buildStream() }
-        // =================================
         
         buildMemory()
         Tower.evaluate(towers: Set(towers))
@@ -89,7 +84,7 @@ public class AetherExe {
         tower.upstream.nukeAll()
     }
 
-    public func token(key: TokenKey) -> Token { tokens[key] ?? Token.token(key: key) ?? .zero }
+    public func token(key: TokenKey) -> Token { tokens[key] ?? Token.token(key: key)! }
     func variableToken(tag: String) -> VariableToken {
         let key: TokenKey = TokenKey(code: .va, tag: tag)
         if let token: VariableToken = tokens[key] as? VariableToken { return token }
@@ -121,18 +116,20 @@ public class AetherExe {
         var towers: [Tower] = []
         aexon.createCores().forEach { (core: Core) in
             core.tower = core.createTower(self)
-            let towerToken: TowerToken = core.createTowerToken(self)
-            towerToken.tower = core.tower
-            tokens[core.key] = towerToken
-            towerLookup[towerToken] = core.tower
+            let towerTokens: [TowerToken] = core.createTowerTokens(self)
+            towerTokens.forEach { (token: TowerToken) in
+                token.tower = core.tower
+                tokens[token.key] = token
+                towerLookup[token] = core.tower
+            }
             towers.append(core.tower)
-            core.aetherExe = self
             cores[core.key] = core
         }
         return towers
     }
     public func plugIn(aexons: [Aexon]) {
         let towers: [Tower] = aexons.flatMap({ harvest(aexon: $0) })
+        cores.values.forEach { $0.aetherExe = self }
         towers.forEach { $0.buildStream() }
     }
     public func plugIn(aexon: Aexon) { plugIn(aexons: [aexon]) }

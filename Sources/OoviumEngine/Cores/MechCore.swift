@@ -146,7 +146,10 @@ class MechCore: Core {
     override var key: TokenKey { mech.variableTokenKey }
     
     override func createTower(_ aetherExe: AetherExe) -> Tower { aetherExe.createMechlikeTower(tag: key.tag, core: self, tokenDelegate: mech) }
-//    override func createTowerToken(_ aetherExe: AetherExe) -> TowerToken { aetherExe.mechlikeToken(tag: key.tag) }
+    override func createTowerTokens(_ aetherExe: AetherExe) -> [TowerToken] { [
+        aetherExe.mechlikeToken(tag: key.tag),
+        aetherExe.variableToken(tag: key.tag)
+    ] }
     override func aetherExeCompleted(_ aetherExe: AetherExe) {
         resultTower = aetherExe.tower(key: mech.resultChain.key!)
     }
@@ -162,7 +165,7 @@ class MechCore: Core {
     }
     override func taskCompleted(tower: Tower, askedBy: Tower) -> Bool {
         AEMemoryLoaded(tower.memory, AEMemoryIndexForName(tower.memory, mech.variableTokenKey.tag.toInt8())) != 0
-            || (askedBy !== tower && askedBy.fog == key)
+            || (askedBy !== tower && askedBy.fog == mech.mechlikeTokenKey)
     }
     override func taskBlocked(tower: Tower) -> Bool {
         resultTower.variableToken.status != .ok

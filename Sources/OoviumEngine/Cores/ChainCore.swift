@@ -109,6 +109,11 @@ public class ChainCore: Core, CustomStringConvertible {
     override func aetherExeCompleted(_ aetherExe: AetherExe) { loadTokens() }
 
     override func buildUpstream(tower: Tower) {
+        if tower.core?.key == TokenKey(code: .va, tag: "Me1.result") {
+            print("found it")
+        }
+        
+        
         aetherExe.nukeUpstream(key: chain.key!)
         tokens.compactMap { $0 as? TowerToken }.forEach {
             $0.tower.attach(tower)
