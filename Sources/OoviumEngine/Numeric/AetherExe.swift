@@ -48,7 +48,7 @@ public class AetherExe {
         let that: Tower = towerLookup[tokens[thatKey]!]!
         guard let thisToken: TowerToken = tokens[thisKey] else { return true }
         let this: Tower = towerLookup[thisToken]!
-        if this.downstream(contains: that) { return false }
+        if that.downstream(contains: this) { return false }
         guard let thisFog: TokenKey = this.fog, let thatFog: TokenKey = that.fog else { return true }
         return thisFog == thatFog
     }
