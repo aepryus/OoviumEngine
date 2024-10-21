@@ -15,7 +15,7 @@
 import Foundation
 
 public class Type: Aexel {
-	@objc public dynamic var color: OOColor = .black
+    @objc public dynamic var color: Text.Color = .black
 	
 	@objc public dynamic var fields: [Field] = []
     

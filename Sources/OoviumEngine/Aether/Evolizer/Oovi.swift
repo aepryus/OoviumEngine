@@ -14,7 +14,7 @@ public class Oovi: Aexel {
 	@objc public override var name: String {
 		didSet{nameChanged()}
 	}
-	@objc public var color: OOColor = OOColor.white
+    @objc public var color: Text.Color = Text.Color.white
 	@objc public var stepChain: Chain!
 	@objc public var amorousChain: Chain!
 	

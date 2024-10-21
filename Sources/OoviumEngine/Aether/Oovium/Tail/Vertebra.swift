@@ -18,16 +18,8 @@ public class Vertebra: Aexon, VariableTokenDelegate {
     }
 	@objc public dynamic var chain: Chain!
 
-//    var def: Def = RealDef.def
-
-//    public lazy var tower: Tower = { tail.aether.state.createTower(tag: "\(tail.key).\(key)", towerDelegate: self, tokenDelegate: self) }()
     public lazy var tokenKey: TokenKey = TokenKey(code: .va, tag: fullKey)
     
-    private func wire() {
-//        chain.tower = tail.aether.state.createTower(tag: "\(tail.key).\(key).chain", towerDelegate: chain)
-//        tower.web = tail.web
-    }
-
 // Inits ===========================================================================================
     init(tail: Tail, name: String) {
 		self.name = name
@@ -41,7 +33,7 @@ public class Vertebra: Aexon, VariableTokenDelegate {
 	var tail: Tail { parent as! Tail }
 
 // Aexon ===========================================================================================
-    public override var code: String { "v" }
+    public override var code: String { "i" }
     public override var tokenKeys: [TokenKey] { [
         chain.key!,
         tokenKey

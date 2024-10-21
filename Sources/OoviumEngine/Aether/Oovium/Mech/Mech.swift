@@ -38,7 +38,6 @@ public class Mech: Aexel, Mechlike, VariableTokenDelegate {
 	
 	public func add(input: Input) {
 		add(input)
-//		input.tower.web = web
 		inputs.append(input)
 	}
 	public func addInput() {
@@ -47,25 +46,10 @@ public class Mech: Aexel, Mechlike, VariableTokenDelegate {
         else { name = "p\(inputs.count+1)" }
         let input = Input(mech: self, name: name)
 		add(input: input)
-//        mechlikeToken.params = inputs.count
 	}
 	public func removeInput() {
 		let input = inputs.removeLast()
 		remove(input)
-//        aether.state.destroy(tower: input.tower)
-//        mechlikeToken.params = inputs.count
-	}
-	
-	
-// Events ==========================================================================================
-	public override func onLoad() {
-//        aether.inject(chain: resultChain, tag: "\(key).result")
-
-//        tower = aether.state.createMechlikeTower(tag: key, towerDelegate: self, tokenDelegate: self)
-//        tower.mechlikeToken?.params = inputs.count
-//
-//		resultTower.tailForWeb = web
-//		inputs.forEach {$0.tower.web = web}
 	}
 	
 // Aexel ===========================================================================================
@@ -80,8 +64,6 @@ public class Mech: Aexel, Mechlike, VariableTokenDelegate {
 				i += 1
 			}
 			super.name = newName
-			
-//			if recipe != nil { AERecipeSetName(recipe, name.toInt8()) }
 		}
 		get { super.name }
 	}
@@ -91,7 +73,7 @@ public class Mech: Aexel, Mechlike, VariableTokenDelegate {
     public override var tokenKeys: [TokenKey] {
         inputs.flatMap({ $0.tokenKeys }) + [
             resultTokenKey,
-            mechlikeTokenKey
+            variableTokenKey
         ]
     }
     public override func newNo(type: String) -> Int { inputs.count + 1 }

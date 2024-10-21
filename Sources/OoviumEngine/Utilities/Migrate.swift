@@ -513,14 +513,7 @@ public class Migrate {
         
         if fileVersion == "3.0" { migrate = true }
         if migrate {
-            print(attributes.toJSON())
-            print("================================================================================================")
-            print("================================================================================================")
-            print("================================================================================================")
-            print("================================================================================================")
-
             attributes["version"] = "3.1"
-            
             var subs: [Subs] = []
 
             if var aexelArray: [[String:Any]] = attributes["aexels"] as? [[String:Any]] {
@@ -590,13 +583,9 @@ public class Migrate {
                 attributes["aexels"] = aexelArray
             }
             
-            print(attributes.toJSON())
             attributes = attributes.modify(query: chainNames, convert: { (value: Any) in
-                print(value as! String)
-                return Migrate.migrateChainTo31(value as! String, subs: subs)
+                Migrate.migrateChainTo31(value as! String, subs: subs)
             })
-
-            print(attributes.toJSON())
         }
 
         return attributes.toJSON()

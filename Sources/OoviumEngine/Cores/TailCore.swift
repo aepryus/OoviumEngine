@@ -109,7 +109,7 @@ class TailCore: Core {
         return tail.name
     }
     override func taskCompleted(tower: Tower, askedBy: Tower) -> Bool {
-        return AEMemoryLoaded(tower.memory, AEMemoryIndexForName(tower.memory, tail.variableTokenKey.tag.toInt8())) != 0
+        AEMemoryLoaded(tower.memory, AEMemoryIndexForName(tower.memory, tail.variableTokenKey.tag.toInt8())) != 0
             || (askedBy !== tower && askedBy.fog == key)
     }
     override func taskBlocked(tower: Tower) -> Bool {

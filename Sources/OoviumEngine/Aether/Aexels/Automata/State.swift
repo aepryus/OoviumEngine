@@ -13,7 +13,7 @@ public class State: Aexon {
 //	@objc public var no: Int = 0
 	@objc public var color: Int = 0
 	
-    public init(no: Int, color: OOColor, automata: Automata) {
+    public init(no: Int, color: Text.Color, automata: Automata) {
 //		self.no = no
 		self.color = color.rawValue
 		super.init(parent: automata)

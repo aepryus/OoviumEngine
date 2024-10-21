@@ -77,7 +77,7 @@ public class Automata: Aexel {
 		states.append(state)
 	}
 	public func addState() {
-		let state = State(no: states.count, color: OOColor(rawValue: states.count)!, automata: self)
+		let state = State(no: states.count, color: Text.Color(rawValue: states.count)!, automata: self)
 		add(state: state)
 	}
 	

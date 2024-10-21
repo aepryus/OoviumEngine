@@ -38,10 +38,6 @@ class Dendrite: Sequence {
     
     func increment(tower: Tower) {
         towers[tower] = (towers[tower] ?? 0) + 1
-        
-        if towers[tower] ?? 0 > 1 {
-            print("hmm")
-        }
     }
     @discardableResult
     func decrement(tower: Tower) -> Bool {

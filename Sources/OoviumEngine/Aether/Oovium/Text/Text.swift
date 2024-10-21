@@ -9,9 +9,13 @@
 import Acheron
 import Foundation
 
+
 public class Text: Aexel, NSCopying {
-	@objc public var color: OOColor = .orange
-	@objc public var shape: OOShape = .ellipse
+    @objc public enum Color: Int { case red, orange, yellow, lime, maroon, peach, paleYellow, olive, magenta, lavender, marine, green, violet, cyan, cobolt, blue, black, grey, white, clear, cgaRed, cgaLightRed, cgaBrown, cgaYellow, cgaGreen, cgaLightGreen, cgaCyan, cgaLightCyan, cgaBlue, cgaLightBlue, cgaMagenta, cgaLightMagenta }
+    @objc public enum Shape: Int { case ellipse, rounded, rectangle, diamond }
+
+    @objc public var color: Color = .orange
+	@objc public var shape: Shape = .ellipse
 	
 	@objc public var edges: [Edge] = []
 	
