@@ -85,17 +85,17 @@ public class AetherExe {
     }
 
     public func token(key: TokenKey) -> Token { tokens[key] ?? Token.token(key: key)! }
-    func variableToken(tag: String) -> VariableToken {
+    func variableToken(tag: String, delegate: VariableTokenDelegate? = nil) -> VariableToken {
         let key: TokenKey = TokenKey(code: .va, tag: tag)
         if let token: VariableToken = tokens[key] as? VariableToken { return token }
-        let token: VariableToken = VariableToken(tag: tag)
+        let token: VariableToken = VariableToken(tag: tag, delegate: delegate)
         tokens[key] = token
         return token
     }
-    func mechlikeToken(tag: String) -> MechlikeToken {
+    func mechlikeToken(tag: String, delegate: VariableTokenDelegate? = nil) -> MechlikeToken {
         let key: TokenKey = TokenKey(code: .va, tag: tag)
         if let token: MechlikeToken = tokens[key] as? MechlikeToken { return token }
-        let token: MechlikeToken = MechlikeToken(tag: tag)
+        let token: MechlikeToken = MechlikeToken(tag: tag, delegate: delegate)
         tokens[key] = token
         return token
     }
