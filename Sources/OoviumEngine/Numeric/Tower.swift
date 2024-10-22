@@ -36,6 +36,9 @@ class Funnel {
 class Dendrite: Sequence {
     private var towers: [Tower:Int] = [:]
     
+    var towersSet: Set<Tower> { Set(towers.keys) }
+    var count: Int { towers.count }
+    
     func increment(tower: Tower) {
         towers[tower] = (towers[tower] ?? 0) + 1
     }

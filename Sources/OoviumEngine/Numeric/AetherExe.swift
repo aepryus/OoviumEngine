@@ -64,27 +64,42 @@ public class AetherExe {
         keyTower.upstream.decrement(tower: dependsOnTower)
         dependsOnTower.downstream.decrement(tower: keyTower)
     }
-    public func nuke(key: TokenKey) {
-        guard let token: TowerToken = tokens[key],
-              let tower: Tower = towerLookup[token]
-        else { return }
-        
+    
+    public func nukable(keys: [TokenKey]) -> Bool {
+        let towers: Set<Tower> = Set(keys.map({ tower(key: $0)! }))
+        let downstream: Set<Tower> = Set(towers.flatMap({ $0.downstream.towersSet }))
+        return downstream.isSubset(of: towers)
+    }
+    private func nukeUpstrean(tower: Tower) {
         tower.upstream.forEach { $0.downstream.nuke(tower: tower) }
-        tower.downstream.forEach { $0.upstream.nuke(tower: tower) }
         tower.upstream.nukeAll()
-        tower.downstream.nukeAll()
+    }
+    public func nukeUpstream(key: TokenKey) { nukeUpstrean(tower: tower(for: key)) }
+    public func nuke(key: TokenKey) -> Bool {
+        guard let token: TowerToken = tokens[key],
+              let tower: Tower = towerLookup[token],
+              tower.downstream.count == 0
+        else { return false }
+
+        nukeUpstrean(tower: tower)
         towers.remove(object: tower)
         towerLookup[token] = nil
         tokens[key] = nil
+
+        return true
     }
-    public func nuke(keys: [TokenKey]) { keys.forEach { nuke(key: $0) } }
-    public func nukeUpstream(key: TokenKey) {
-        let tower: Tower = tower(for: key)
-        tower.upstream.forEach { $0.downstream.nuke(tower: tower) }
-        tower.upstream.nukeAll()
+    public func nuke(keys: [TokenKey]) -> Bool {
+        let towers: Set<Tower> = Set(keys.map({ tower(key: $0)! }))
+        let downstream: Set<Tower> = Set(towers.flatMap({ $0.downstream.towersSet }))
+        
+        guard downstream.isSubset(of: towers) else { return false }
+        
+        keys.forEach { _ = nuke(key: $0) }
+        
+        return true
     }
 
-    public func token(key: TokenKey) -> Token { tokens[key] ?? Token.token(key: key)! }
+    public func token(key: TokenKey) -> Token { tokens[key] ?? Token.token(key: key) ?? .zero }
     func variableToken(tag: String, delegate: VariableTokenDelegate? = nil) -> VariableToken {
         let key: TokenKey = TokenKey(code: .va, tag: tag)
         if let token: VariableToken = tokens[key] as? VariableToken { return token }
