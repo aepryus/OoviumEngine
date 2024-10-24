@@ -55,7 +55,6 @@ public class Column: Aexon {
 	}
     
     public var maxCellNo: Int { cells.maximum({ $0.no }) ?? 0 }
-    override var chains: [Chain] { [chain] + cells.map({ $0.chain }) }
     public func cell(rowNo: Int) -> Cell { cells[rowNo-1] }
 
     public func disseminate() {
@@ -135,6 +134,7 @@ public class Column: Aexon {
             footerTokenKey
         ]
     }
+    override var chains: [Chain] { [chain] + cells.map({ $0.chain }) }
     override func createCores() -> [Core] {
         [HeaderCore(column: self),
          FooterCore(column: self)

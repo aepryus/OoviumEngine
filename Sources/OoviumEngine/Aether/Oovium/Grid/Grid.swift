@@ -93,12 +93,10 @@ public class Grid: Aexel {
 		exposed = true
 	}
 
-// Aexel ===========================================================================================
-    public override var chains: [Chain] { columns.flatMap { $0.chains } }
-    
 // Aexon ===========================================================================================
     public override var code: String { "Gr" }
     public override var tokenKeys: [TokenKey] { columns.flatMap({ $0.tokenKeys }) }
+    public override var chains: [Chain] { columns.flatMap { $0.chains } }
     public override func createCores() -> [Core] { columns.flatMap({ $0.createCores() }) }
     public override func newNo(type: String) -> Int { maxColumnNo + 1 }
 

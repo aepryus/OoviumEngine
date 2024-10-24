@@ -85,29 +85,18 @@ public class AetherExe {
         tower.upstream.nukeAll()
     }
     public func nukeUpstream(key: TokenKey) { nukeUpstrean(tower: tower(for: key)) }
-    public func nuke(key: TokenKey) -> Bool {
+    public func nuke(key: TokenKey) {
         guard let token: TowerToken = tokens[key],
-              let tower: Tower = towerLookup[token],
-              tower.downstream.count == 0
-        else { return false }
+              let tower: Tower = towerLookup[token]
+        else { fatalError() }
 
         nukeUpstrean(tower: tower)
         towers.remove(object: tower)
         towerLookup[token] = nil
         tokens[key] = nil
-
-        return true
+        cores[key] = nil
     }
-    public func nuke(keys: [TokenKey]) -> Bool {
-        let towers: Set<Tower> = Set(keys.map({ tower(key: $0)! }))
-        let downstream: Set<Tower> = Set(towers.flatMap({ $0.downstream.towersSet }))
-        
-        guard downstream.isSubset(of: towers) else { return false }
-        
-        keys.forEach { _ = nuke(key: $0) }
-        
-        return true
-    }
+    public func nuke(keys: [TokenKey]) { keys.forEach { nuke(key: $0) } }
 
     public func token(key: TokenKey) -> Token { tokens[key] ?? Token.token(key: key) ?? .zero }
     public func value(key: TokenKey) -> String? { (token(key: key) as? VariableToken)?.value }

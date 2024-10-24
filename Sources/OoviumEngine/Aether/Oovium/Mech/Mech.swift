@@ -77,6 +77,7 @@ public class Mech: Aexel, Mechlike, VariableTokenDelegate {
             mechlikeTokenKey
         ]
     }
+    public override var chains: [Chain] { [resultChain] }
     public override func newNo(type: String) -> Int { inputs.count + 1 }
     public override func createCores() -> [Core] {
         inputs.flatMap({ $0.createCores() }) + [
