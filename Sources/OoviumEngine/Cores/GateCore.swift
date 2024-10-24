@@ -19,7 +19,7 @@ class GateCore: Core {
     init(gate: Gate) { self.gate = gate }
     
 // Core ============================================================================================
-    override var key: TokenKey { gate.resultKey }
+    override var key: TokenKey { gate.tokenKey }
     override var fog: TokenKey? { ifTower.fog ?? thenTower.fog ?? elseTower.fog }
 
     override func aetherExeCompleted(_ aetherExe: AetherExe) {

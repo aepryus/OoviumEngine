@@ -11,11 +11,13 @@ import Foundation
 
 public class Cell: Aexon {
 	@objc public var chain: Chain!
+    
+    public var tokenKey: TokenKey { TokenKey(code: .va, tag: fullKey) }
 
 // Inits ===========================================================================================
 	public required init(column: Column) {
         super.init(parent: column)
-        chain = Chain(key: TokenKey(code: .va, tag: fullKey))
+        chain = Chain(key: tokenKey)
 	}
 	public required init(attributes: [String:Any], parent: Domain?) {
 		super.init(attributes: attributes, parent: parent)
@@ -30,7 +32,7 @@ public class Cell: Aexon {
 
 // Aexon ===========================================================================================
     override var code: String { "Ce" }
-    public override var tokenKeys: [TokenKey] { [ chain.key! ] }
+    public override var tokenKeys: [TokenKey] { [ tokenKey ] }
     override func createCores() -> [Core] { [
         ChainCore(chain: chain)
     ] }

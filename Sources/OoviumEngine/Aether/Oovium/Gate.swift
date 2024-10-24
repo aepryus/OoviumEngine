@@ -15,52 +15,26 @@ public class Gate: Aexel {
 	@objc public var thenChain: Chain!
 	@objc public var elseChain: Chain!
     
-    public var resultKey: TokenKey!
-	
-//	public var ifTower: Tower { ifChain.tower }
-//	public var thenTower: Tower { thenChain.tower }
-//	public var elseTower: Tower { elseChain.tower }
-//    public lazy var resultTower: Tower = aether.state.createTower(tag: key, towerDelegate: self)
-	
-//    public var token: VariableToken { resultTower.variableToken }
+    public var ifTokenKey: TokenKey { TokenKey(code: .va, tag: "\(key).if") }
+    public var thenTokenKey: TokenKey { TokenKey(code: .va, tag: "\(key).then") }
+    public var elseTokenKey: TokenKey { TokenKey(code: .va, tag: "\(key).else") }
+    public var tokenKey: TokenKey { TokenKey(code: .va, tag: key) }
 
 // Inits ===========================================================================================
 	public required init(at: V2, aether: Aether) {
 		super.init(at: at, aether: aether)
         
-        ifChain = Chain(key: TokenKey(code: .va, tag: "\(key).if"))
-        thenChain = Chain(key: TokenKey(code: .va, tag: "\(key).then"))
-        elseChain = Chain(key: TokenKey(code: .va, tag: "\(key).else"))
-        resultKey = TokenKey(code: .va, tag: key)
+        ifChain = Chain(key: ifTokenKey)
+        thenChain = Chain(key: thenTokenKey)
+        elseChain = Chain(key: elseTokenKey)
 	}
 	public required init(attributes: [String:Any], parent: Domain?) {
 		super.init(attributes: attributes, parent: parent)
-        resultKey = TokenKey(code: .va, tag: key)
 	}
 
-// Events ==========================================================================================
-	public override func onLoaded() {
-//        ifChain.tower = aether.state.createTower(tag: "\(key).if", towerDelegate: ifChain)
-//        thenChain.tower = aether.state.createTower(tag: "\(key).then", towerDelegate: thenChain)
-//        elseChain.tower = aether.state.createTower(tag: "\(key).else", towerDelegate: elseChain)
-
-//		ifTower.gateTo = resultTower
-//		ifTower.thenTo = thenTower
-//		ifTower.elseTo = elseTower
-//		thenTower.gate = ifTower
-//		elseTower.gate = ifTower
-//		
-//		let funnel = Funnel(options: [thenTower, elseTower], spout: resultTower)
-//		thenTower.funnel = funnel
-//		elseTower.funnel = funnel
-	}
-	public override func onAdded() {
-//		resultTower.buildStream()
-	}
-	
 // Aexon ===========================================================================================
     public override var code: String { "Gt" }
-    public override var tokenKeys: [TokenKey] { [ifChain.key!, elseChain.key!, thenChain.key!, resultKey] }
+    public override var tokenKeys: [TokenKey] { [ifTokenKey, thenTokenKey, elseTokenKey, tokenKey] }
     public override func createCores() -> [Core] { [
         ChainCore(chain: ifChain),
         ChainCore(chain: elseChain),

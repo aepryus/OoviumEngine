@@ -32,8 +32,8 @@ public class Column: Aexon {
 	public var _headerWidth: Double? = nil
 	public var _footerWidth: Double? = nil
     
-    public lazy var headerTokenKey: TokenKey = TokenKey(code: .cl, tag: fullKey)
-    public lazy var footerTokenKey: TokenKey = TokenKey(code: .va, tag: "\(grid.key).Ft\(no)")
+    public var headerTokenKey: TokenKey { TokenKey(code: .cl, tag: fullKey) }
+    public var footerTokenKey: TokenKey { TokenKey(code: .va, tag: "\(grid.key).Ft\(no)") }
     
 	public var grid: Grid { parent as! Grid }
     public var calculated: Bool = false
@@ -55,7 +55,7 @@ public class Column: Aexon {
 	}
     
     public var maxCellNo: Int { cells.maximum({ $0.no }) ?? 0 }
-    var chains: [Chain] { [chain] + cells.map({ $0.chain }) }
+    override var chains: [Chain] { [chain] + cells.map({ $0.chain }) }
     public func cell(rowNo: Int) -> Cell { cells[rowNo-1] }
 
     public func disseminate() {

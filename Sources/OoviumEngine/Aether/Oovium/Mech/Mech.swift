@@ -73,7 +73,8 @@ public class Mech: Aexel, Mechlike, VariableTokenDelegate {
     public override var tokenKeys: [TokenKey] {
         inputs.flatMap({ $0.tokenKeys }) + [
             resultTokenKey,
-            variableTokenKey
+            variableTokenKey,
+            mechlikeTokenKey
         ]
     }
     public override func newNo(type: String) -> Int { inputs.count + 1 }

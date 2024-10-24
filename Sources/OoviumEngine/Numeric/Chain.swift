@@ -20,7 +20,7 @@ import Acheron
 import Foundation
 
 public class Chain: NSObject, Packable {
-    public let key: TokenKey?
+    public var key: TokenKey?
     public var tokenKeys: [TokenKey]
     
 // Inits ===========================================================================================

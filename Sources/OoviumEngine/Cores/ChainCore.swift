@@ -52,13 +52,6 @@ public class ChainCore: Core, CustomStringConvertible {
     public func replaceWith(natural: String) {
         chain.tokenKeys = Chain.convert(natural: natural)
     }
-    public func exchange(substitutions: [TokenKey:Token]) {
-        var tokens: [Token] = []
-        self.tokens.forEach({ (token: Token) in
-            tokens.append(substitutions[token.key] ?? token)
-        })
-        self.tokens = tokens
-    }
 
 // Calculate =======================================================================================
     func loadTokens() {

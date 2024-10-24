@@ -13,6 +13,8 @@ public class Object: Aexel, VariableTokenDelegate {
 	@objc public var chain: Chain!
     @objc public var label: String = ""
     
+    public var tokenKey: TokenKey { TokenKey(code: .va, tag: key) }
+    
 // Inits ===========================================================================================
     public required init(at: V2, aether: Aether) {
         super.init(at: at, aether: aether)
@@ -24,7 +26,7 @@ public class Object: Aexel, VariableTokenDelegate {
 
 // Aexon ===========================================================================================
     public override var code: String { "Ob" }
-    public override var tokenKeys: [TokenKey] { [chain.key!] }
+    public override var tokenKeys: [TokenKey] { [tokenKey] }
     public override func createCores() -> [Core] { [
         ChainCore(chain: chain, variableTokenDelegate: self)
     ] }

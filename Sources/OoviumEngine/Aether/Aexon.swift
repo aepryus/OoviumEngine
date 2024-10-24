@@ -35,6 +35,7 @@ public class Aexon: Domain {
     var key: String { "\(code)\(no)" }
     var fullKey: String { "\((parent as! Aexon).fullKey).\(key)" }
     public var tokenKeys: [TokenKey] { [] }
+    var chains: [Chain] { [] }
 
 // Methods =========================================================================================
     func newNo(type: String) -> Int { aether.newNo(type: type) }

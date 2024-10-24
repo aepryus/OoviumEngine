@@ -28,7 +28,6 @@ public class Grid: Aexel {
 	@objc public var exposed: Bool = true
 	
 	@objc public var columns: [Column] = []
-//	@objc public var cells: [Cell] = []
 	
 	public var equalMode: EqualMode = .close
 	
@@ -54,38 +53,11 @@ public class Grid: Aexel {
 // Other ===========================================================================================
     public func column(colNo: Int) -> Column { columns[colNo-1] }
     public func cellsForColumn(colNo: Int) -> [Cell] { column(colNo: colNo).cells }
-//	public func numberCells() {
-//		for j in 0..<rows {
-//			for i in 0..<columns.count {
-//				let cellNo = columns.count*j+i
-//				cells[cellNo].colNo = i
-//				cells[cellNo].rowNo = j
-//			}
-//		}
-//	}
     public func addRow() -> [Cell] {
         rows += 1
 
         return columns.map({ $0.addRow() })
     }
-//
-//        
-//        
-//        column.addRow()
-//        var newCells: [Cell] = []
-//		rows += 1
-//		for _ in 0 ..< columns.count {
-//			let cell: Cell = Cell(grid: self)
-//			cell.parent = self
-////			cell.colNo = colNo
-////			cell.rowNo = rows-1
-//			cells.append(cell)
-//            newCells.append(cell)
-//		}
-////        aether.state.buildMemory()
-//        columns.filter({ $0.calculated }).forEach {  $0.disseminate() }
-//        return newCells
-//    public func delete(rowNo: Int) { columns.forEach { $0.delete(rowNo: rowNo) } }
     public func delete(rowNo: Int) -> [TokenKey] {
         rows -= 1
         var keys: [TokenKey] = []
@@ -98,56 +70,16 @@ public class Grid: Aexel {
         let column: Column = Column(grid: self)
         columns.append(column)
         return column
-        
-        
-//		let cc: Int = columns.count
-//		
-//		let column: Column = Column(grid: self)
-//		column.parent = self
-//		column.name = Grid.name(n: cc)
-//		columns.append(column)
-//		
-//		var nc: Int = cc
-//		for _ in 0..<rows {
-//			let cell: Cell = Cell(grid: self)
-//			cell.parent = self
-////			cell.colNo = cc
-////			cell.rowNo = rowNo
-//			cells.insert(cell, at: nc)
-//			nc += 1 + cc
-//		}
-////        aether.state.buildMemory()
-//        
-//        return column
 	}
 	public func deleteColumn(_ column: Column) -> [TokenKey] {
         let keys: [TokenKey] = column.tokenKeys
         columns.remove(object: column)
         return keys
-//		let colNo: Int = column.colNo
-//        var toDestroy: [TokenKey] = []
-//		for rowNo in 0..<rows {
-//			let cellNo = columns.count*(rows-1-rowNo)+colNo
-//            toDestroy.append(cells[cellNo].chain.key!)
-//			cells.remove(at: cellNo)
-//		}
-//        toDestroy.append(columns[colNo].headerTokenKey)
-//        toDestroy.append(columns[colNo].footerTokenKey)
-//		columns.remove(at: colNo)
-////		numberCells()
-//        return toDestroy
 	}
 	public func move(column: Column, to: Int) {
 		let from = column.colNo
 		columns.remove(at: from-1)
 		columns.insert(column, at: to)
-//		for rowNo in 0..<rows {
-//			let fNo = rowNo*columns.count+from
-//			let tNo = rowNo*columns.count+to
-//			let cell = cells.remove(at: fNo)
-//			cells.insert(cell, at: tNo)
-//		}
-//		numberCells()
 	}
 	
     public func cell(colNo: Int, rowNo: Int) -> Cell { columns[colNo-1].cells[rowNo-1] }
@@ -162,14 +94,7 @@ public class Grid: Aexel {
 	}
 
 // Aexel ===========================================================================================
-	public var towers: Set<Tower> {
-		let towers: [Tower] = []
-//		cells.forEach { towers.append($0.tower) }
-//        columns.forEach { towers.append($0.chain.tower) }
-//        columns.forEach { towers.append($0.footerChain.tower) }
-		return Set<Tower>(towers)
-	}
-    public var chains: [Chain] { columns.flatMap { $0.chains } }
+    public override var chains: [Chain] { columns.flatMap { $0.chains } }
     
 // Aexon ===========================================================================================
     public override var code: String { "Gr" }

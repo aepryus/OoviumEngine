@@ -148,7 +148,7 @@ public class Oovi: Aexel {
 // Aexel ===========================================================================================
     public override var code: String { "Ov" }
 //	public var towers: Set<Tower> { parameterTowers.union([amorousTower, stepTower]) }
-    public var chains: [Chain] { [amorousChain, stepChain] }
+    public override var chains: [Chain] { [amorousChain, stepChain] }
 
 // Domain ==========================================================================================
     override open var properties: [String] {

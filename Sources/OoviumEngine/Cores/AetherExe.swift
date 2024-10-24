@@ -22,11 +22,7 @@ public class AetherExe {
 
     init(aether: Aether) {
         self.aether = aether
-        
-        plugIn(aexons: aether.aexels)
-        
-        buildMemory()
-        Tower.evaluate(towers: Set(towers))
+        build()
     }
     deinit { AEMemoryRelease(memory) }
 
@@ -40,6 +36,20 @@ public class AetherExe {
     public func tokenDisplay(key: TokenKey) -> String { cores[key]!.tokensDisplay }
     public func valueDisplay(key: TokenKey) -> String { cores[key]!.valueDisplay }
     public func naturalDisplay(key: TokenKey) -> String { cores[key]!.naturalDisplay }
+    
+// Private =========================================================================================
+    private func reset() {
+        tokens = [:]
+        towers = []
+        towerLookup = [:]
+        AEMemoryRelease(memory)
+        memory = AEMemoryCreate(0)
+    }
+    private func build() {
+        plugIn(aexons: aether.aexels)
+        buildMemory()
+        Tower.evaluate(towers: Set(towers))
+    }
 
 // Methods =========================================================================================
     public func notifyListeners() { Tower.notifyListeners(towers: Set<Tower>(towers)) }
@@ -100,6 +110,7 @@ public class AetherExe {
     }
 
     public func token(key: TokenKey) -> Token { tokens[key] ?? Token.token(key: key) ?? .zero }
+    public func value(key: TokenKey) -> String? { (token(key: key) as? VariableToken)?.value }
     func variableToken(tag: String, delegate: VariableTokenDelegate? = nil) -> VariableToken {
         let key: TokenKey = TokenKey(code: .va, tag: tag)
         if let token: VariableToken = tokens[key] as? VariableToken { return token }
@@ -151,46 +162,40 @@ public class AetherExe {
     
     public func inAFog(key: TokenKey) -> Bool { tower(key: key)?.fog != nil }
     
-//    public func paste(array: [[String:Any]]) -> [Aexel] {
-//        print(array.toJSON())
-//        var substitutions: [String:Token] = [:]
-//        var aexels: [Aexel] = []
-//        var towers: Set<Tower> = Set<Tower>()
-//        let tempAether: Aether = Aether()
-//        array.forEach { (attributes: [String:Any]) in
-//            var attributes = attributes
-//            var aexel: Aexel = Loom.domain(attributes: attributes, parent: tempAether) as! Aexel
-//            let fromTokens: [Token] = aexel.towers.sorted(by: { $0.name < $1.name }).map({ $0.variableToken })
-//            let oldNo: Int = aexel.no
-//            let newNo: Int = state.nos.increment(key: aexel.type)
-//            print("\(oldNo) => \(newNo)")
-//            attributes["no"] = newNo
-//            aexel = Loom.domain(attributes: attributes, parent: self, replicate: true) as! Aexel
-//            aexel.x += 25
-//            aexel.y += 25
-//            let toTokens: [Token] = aexel.towers.sorted(by: { $0.name < $1.name }).map({ $0.variableToken })
-//            add(aexel)
-//            self.aexels.append(aexel)
-//            towers.formUnion(aexel.towers)
-//            for i in 0..<fromTokens.count { substitutions[fromTokens[i].key] = toTokens[i] }
-//            aexels.append(aexel)
-//        }
-//
-//        substitutions.forEach { print("Substituting: \($0.key) -> \($0.value.key)") }
-//
-//        aexels.flatMap({ $0.chains }).forEach({
-//            $0.buildTokens(aether: self)
-//            $0.exchange(substitutions: substitutions)
-//        })
-//
-//        towers.forEach { $0.buildStream() }
-//        state.buildMemory()
-//        Tower.evaluate(towers: towers)
-//
-//        state = AetherExe(aether: self)
-//
-//        return aexels
-//    }
+    public func paste(array: [[String:Any]]) -> [Aexel] {
+        print(array.toJSON())
+        var substitutions: [TokenKey:TokenKey] = [:]
+        var aexels: [Aexel] = []
+        let tempAether: Aether = Aether()
+        array.forEach { (attributes: [String:Any]) in
+            var attributes = attributes
+            var aexel: Aexel = Loom.domain(attributes: attributes, parent: tempAether) as! Aexel
+            let fromKeys: [TokenKey] = aexel.tokenKeys.sorted(by: { $0.description < $1.description })
+            let oldNo: Int = aexel.no
+            let newNo: Int = aether.newNo(type: aexel.type)
+            print("\(oldNo) => \(newNo)")
+            attributes["no"] = newNo
+            aexel = Loom.domain(attributes: attributes, parent: aether, replicate: true) as! Aexel
+            aexel.x += 25
+            aexel.y += 25
+            let toKeys: [TokenKey] = aexel.tokenKeys.sorted(by: { $0.description < $1.description })
+            aether.addAexel(aexel)
+            for i in 0..<fromKeys.count { substitutions[fromKeys[i]] = toKeys[i] }
+            aexels.append(aexel)
+        }
+
+        substitutions.forEach { print("Substituting: \($0.key) -> \($0.value)") }
+        let chains: [Chain] = aexels.flatMap({ $0.chains })
+        chains.forEach({
+            $0.key = substitutions[$0.key!] ?? $0.key
+            $0.tokenKeys = $0.tokenKeys.map({ substitutions[$0] ?? $0 })
+        })
+        
+        reset()
+        build()
+
+        return aexels
+    }
     
     public func trigger(keys: [TokenKey]) {
         let towersArray: [Tower] = keys.map({ tower(key: $0)! })

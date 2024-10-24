@@ -106,7 +106,7 @@ public class Automata: Aexel {
 //        spaceTowers.forEach { towers.insert($0) }
 //        return towers.union([resultTower, statesTower])
 //    }
-    public var chains: [Chain] { [statesChain, resultChain] }
+    public override var chains: [Chain] { [statesChain, resultChain] }
     
 // Aexon ===========================================================================================
     public override var code: String { "Au" }

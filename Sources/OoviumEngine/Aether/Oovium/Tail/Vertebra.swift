@@ -18,13 +18,14 @@ public class Vertebra: Aexon, VariableTokenDelegate {
     }
 	@objc public dynamic var chain: Chain!
 
-    public lazy var tokenKey: TokenKey = TokenKey(code: .va, tag: fullKey)
+    public var tokenKey: TokenKey { TokenKey(code: .va, tag: fullKey) }
+    var resultTokenKey: TokenKey { TokenKey(code: .va, tag: "\(fullKey).result") }
     
 // Inits ===========================================================================================
     init(tail: Tail, name: String) {
 		self.name = name
         super.init(parent: tail)
-        chain = Chain(key: TokenKey(code: .va, tag: "\(fullKey).result"))
+        chain = Chain(key: resultTokenKey)
 	}
 	required init(attributes: [String : Any], parent: Domain?) {
 		super.init(attributes: attributes, parent: parent)
@@ -35,8 +36,8 @@ public class Vertebra: Aexon, VariableTokenDelegate {
 // Aexon ===========================================================================================
     public override var code: String { "i" }
     public override var tokenKeys: [TokenKey] { [
-        chain.key!,
-        tokenKey
+        tokenKey,
+        resultTokenKey
     ] }
     public override func createCores() -> [Core] { [
         ChainCore(chain: chain, fog: tail.mechlikeTokenKey),

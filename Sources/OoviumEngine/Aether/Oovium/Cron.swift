@@ -24,18 +24,25 @@ public class Cron: Aexel {
 	@objc public var endMode: OOEndMode = .stop
 	@objc public var exposed: Bool = true
 
-    public lazy var tokenKey: TokenKey = TokenKey(code: .va, tag: fullKey)
+
+    var startTokenKey: TokenKey { TokenKey(code: .va, tag: "\(key).start") }
+    var stopTokenKey: TokenKey { TokenKey(code: .va, tag: "\(key).stop") }
+    var stepsTokenKey: TokenKey { TokenKey(code: .va, tag: "\(key).steps") }
+    var rateTokenKey: TokenKey { TokenKey(code: .va, tag: "\(key).rate") }
+    var deltaTokenKey: TokenKey { TokenKey(code: .va, tag: "\(key).delta") }
+    var whileTokenKey: TokenKey { TokenKey(code: .va, tag: "\(key).while") }
+    public var tokenKey: TokenKey { TokenKey(code: .va, tag: key) }
 
 // Inits ===========================================================================================
 	public required init(at: V2, aether: Aether) {
 		super.init(at: at, aether: aether)
 
-        startChain = Chain(key: TokenKey(code: .va, tag: "\(key).start"))
-        stopChain = Chain(key: TokenKey(code: .va, tag: "\(key).stop"))
-        stepsChain = Chain(key: TokenKey(code: .va, tag: "\(key).steps"))
-        rateChain = Chain(key: TokenKey(code: .va, tag: "\(key).rate"))
-        deltaChain = Chain(key: TokenKey(code: .va, tag: "\(key).delta"))
-        whileChain = Chain(key: TokenKey(code: .va, tag: "\(key).while"))
+        startChain = Chain(key: startTokenKey)
+        stopChain = Chain(key: stopTokenKey)
+        stepsChain = Chain(key: stepsTokenKey)
+        rateChain = Chain(key: rateTokenKey)
+        deltaChain = Chain(key: deltaTokenKey)
+        whileChain = Chain(key: whileTokenKey)
 	}
 	public required init(attributes: [String:Any], parent: Domain?) {
 		super.init(attributes: attributes, parent: parent)
@@ -43,15 +50,7 @@ public class Cron: Aexel {
 	
 // Aexon ===========================================================================================
     public override var code: String { "Cr" }
-    public override var tokenKeys: [TokenKey] { [
-        startChain.key!,
-        stopChain.key!,
-        stepsChain.key!,
-        rateChain.key!,
-        deltaChain.key!,
-        whileChain.key!,
-        tokenKey
-    ] }
+    public override var tokenKeys: [TokenKey] { [startTokenKey, stopTokenKey, stepsTokenKey, rateTokenKey, deltaTokenKey, whileTokenKey, tokenKey] }
     public override func createCores() -> [Core] { [
         ChainCore(chain: startChain),
         ChainCore(chain: stopChain),
