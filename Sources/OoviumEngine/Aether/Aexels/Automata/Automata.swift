@@ -16,6 +16,16 @@ public class Automata: Aexel {
 	
 	@objc public var states: [State] = []
 	
+    public var aTokenKey: TokenKey { TokenKey(code: .va, tag: "\(key).A") }
+    public var bTokenKey: TokenKey { TokenKey(code: .va, tag: "\(key).B") }
+    public var cTokenKey: TokenKey { TokenKey(code: .va, tag: "\(key).C") }
+    public var dTokenKey: TokenKey { TokenKey(code: .va, tag: "\(key).D") }
+    public var eTokenKey: TokenKey { TokenKey(code: .va, tag: "\(key).E") }
+    public var fTokenKey: TokenKey { TokenKey(code: .va, tag: "\(key).F") }
+    public var gTokenKey: TokenKey { TokenKey(code: .va, tag: "\(key).G") }
+    public var hTokenKey: TokenKey { TokenKey(code: .va, tag: "\(key).H") }
+    public var selfTokenKey: TokenKey { TokenKey(code: .va, tag: "\(key).Self") }
+
 //	public var statesTower: Tower { statesChain.tower }
 //	public var resultTower: Tower { resultChain.tower }
 	public var spaceTowers: [Tower] = []

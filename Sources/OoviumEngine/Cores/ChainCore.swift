@@ -98,7 +98,7 @@ public class ChainCore: Core, CustomStringConvertible {
 // Core ===================================================================================
     override var key: TokenKey { chain.key! }
     
-    override func createTower(_ aetherExe: AetherExe) -> Tower { aetherExe.createTower(key: key, core: self, variableTokenDelegate: variableTokenDelegate) }
+//    override func createTower(_ aetherExe: AetherExe) -> Tower { aetherExe.createTower(key: key, core: self, variableTokenDelegate: variableTokenDelegate) }
     override func aetherExeCompleted(_ aetherExe: AetherExe) { loadTokens() }
 
     override func buildUpstream(tower: Tower) {

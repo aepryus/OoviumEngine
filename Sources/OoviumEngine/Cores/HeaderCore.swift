@@ -31,7 +31,7 @@ class HeaderCore: Core, VariableTokenDelegate {
 // Core ============================================================================================
     override var key: TokenKey { column.headerTokenKey }
     
-    override func createTower(_ aetherExe: AetherExe) -> Tower { aetherExe.createHeaderTower(tag: key.tag, core: self, tokenDelegate: self) }
+//    override func createTower(_ aetherExe: AetherExe) -> Tower { aetherExe.createHeaderTower(tag: key.tag, core: self, tokenDelegate: self) }
     override func createTowerTokens(_ aetherExe: AetherExe) -> [TowerToken] { [aetherExe.columnToken(tag: key.tag)] }
     override func aetherExeCompleted(_ aetherExe: AetherExe) { loadTokens() }
 

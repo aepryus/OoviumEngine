@@ -68,16 +68,17 @@ public class Tower: Hashable, CustomStringConvertible {
     public unowned let aetherExe: AetherExe
     public let core: Core?
 
-    private let _variableToken: VariableToken
-    public lazy var variableToken: VariableToken = { _variableToken.tower = self; return _variableToken }()
+    var variableToken: VariableToken!
+    var mechlikeToken: MechlikeToken!
 
-    private let _mechlikeToken: MechlikeToken? = nil
-    public lazy var mechlikeToken: MechlikeToken? = { _mechlikeToken?.tower = self; return _mechlikeToken }()
+//    private let _variableToken: VariableToken
+//    public lazy var variableToken: VariableToken = { _variableToken.tower = self; return _variableToken }()
+//
+//    private let _mechlikeToken: MechlikeToken? = nil
+//    public lazy var mechlikeToken: MechlikeToken? = { _mechlikeToken?.tower = self; return _mechlikeToken }()
 
 	var upstream: Dendrite = Dendrite()
 	var downstream: Dendrite = Dendrite()
-
-//	public weak var listener: TowerListener? = nil
 
     public var fog: TokenKey? { core?.fog }
     public var isFogFirewall: Bool { core?.fog != nil }
@@ -90,12 +91,12 @@ public class Tower: Hashable, CustomStringConvertible {
 
 	var task: UnsafeMutablePointer<Task>? = nil
 	
-	var name: String { variableToken.tag }
+    var name: String { variableToken.tag }
     var memory: UnsafeMutablePointer<Memory> { aetherExe.memory }
     
-    init(aetherExe: AetherExe, token: VariableToken, core: Core) {
+    init(aetherExe: AetherExe, core: Core) {
 		self.aetherExe = aetherExe
-        self._variableToken = token
+//        self._variableToken = token
 		self.core = core
 	}
 	deinit { AETaskRelease(task) }

@@ -191,9 +191,9 @@ public class Graph: Aexel {
 //        zResultTower.attach(zTower)
     }
     func renderDisplay(tower: Tower) -> String {
-        if tower.variableToken.status == .deleted { fatalError() }
-        if tower.variableToken.status == .invalid { return "INVALID" }
-        if tower.variableToken.status == .blocked { return "BLOCKED" }
+//        if tower.variableToken.status == .deleted { fatalError() }
+//        if tower.variableToken.status == .invalid { return "INVALID" }
+//        if tower.variableToken.status == .blocked { return "BLOCKED" }
         return name
     }
 //    func renderTask(tower: Tower) -> UnsafeMutablePointer<Task>? { nil }
@@ -201,7 +201,7 @@ public class Graph: Aexel {
         true
 //        AEMemoryLoaded(tower.memory, AEMemoryIndexForName(aether.memory, variableToken.tag.toInt8())) != 0 || (askedBy !== tower && askedBy.web === self)
     }
-    func taskBlocked(tower: Tower) -> Bool { tower.variableToken.status != .ok }
+    func taskBlocked(tower: Tower) -> Bool { false/*tower.variableToken.status != .ok*/ }
     func resetTask(tower: Tower) {
 //        recipe = nil
 //        AEMemoryUnfix(tower.memory, AEMemoryIndexForName(aether.memory, tower.variableToken.tag.toInt8()))
@@ -210,7 +210,7 @@ public class Graph: Aexel {
 //        compileRecipe()
 //        AEMemorySet(tower.memory, AEMemoryIndexForName(aether.memory, tower.variableToken.tag.toInt8()), AEObjRecipe(recipe))
 //        AEMemoryFix(tower.memory, AEMemoryIndexForName(aether.state.memory, tower.variableToken.tag.toInt8()))
-        tower.variableToken.def = RecipeDef.def
+//        tower.variableToken.def = RecipeDef.def
     }
 }
 

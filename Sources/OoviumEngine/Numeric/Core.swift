@@ -21,7 +21,7 @@ public class Core: Hashable {
     public var valueDisplay: String { "not implemented yet" }
     public var naturalDisplay: String { "not implemented yet" }
 
-    func createTower(_ aetherExe: AetherExe) -> Tower { aetherExe.createTower(key: key, core: self) }
+//    func createTower(_ aetherExe: AetherExe) -> Tower { aetherExe.createTower(key: key, core: self) }
     func createTowerTokens(_ aetherExe: AetherExe) -> [TowerToken] { [aetherExe.variableToken(tag: key.tag)] }
     func aetherExeCompleted(_ aetherExe: AetherExe) {}
     

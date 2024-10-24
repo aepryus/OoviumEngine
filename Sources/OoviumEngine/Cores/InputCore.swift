@@ -14,7 +14,7 @@ class InputCore: Core, VariableTokenDelegate {
     init(input: Input) { self.input = input }
     
 // Core ============================================================================================
-    override func createTower(_ aetherExe: AetherExe) -> Tower { aetherExe.createTower(key: key, core: self, variableTokenDelegate: self) }
+//    override func createTower(_ aetherExe: AetherExe) -> Tower { aetherExe.createTower(key: key, core: self, variableTokenDelegate: self) }
 
     override var key: TokenKey { input.tokenKey }
     override var fog: TokenKey? { input.mech.mechlikeTokenKey }

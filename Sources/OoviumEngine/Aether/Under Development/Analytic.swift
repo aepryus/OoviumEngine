@@ -17,8 +17,9 @@ import Foundation
 public class Analytic: Aexel, VariableTokenDelegate {
     @objc public var anain: Anain = Anain()
     @objc public var label: String = ""
-
-    public var token: VariableToken { anain.tower.variableToken }
+    
+    public var tokenKey: TokenKey { TokenKey(code: .va, tag: key) }
+//    public var token: VariableToken { anain.tower.variableToken }
 
 // Events ==========================================================================================
     public override func onLoad() {

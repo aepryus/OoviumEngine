@@ -135,7 +135,7 @@ class FooterCore: Core {
     override var key: TokenKey { column.footerTokenKey }
     override var valueDisplay: String { tower?.obje.display ?? "" }
 
-    override func createTower(_ aetherExe: AetherExe) -> Tower { aetherExe.createTower(key: key, core: self) }
+//    override func createTower(_ aetherExe: AetherExe) -> Tower { aetherExe.createTower(key: key, core: self) }
     override func buildUpstream(tower: Tower) {
         tower.aetherExe.nukeUpstream(key: column.footerTokenKey)
         switch column.aggregate {
