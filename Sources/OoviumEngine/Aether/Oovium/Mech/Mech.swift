@@ -77,14 +77,14 @@ public class Mech: Aexel, Mechlike, VariableTokenDelegate {
             mechlikeTokenKey
         ]
     }
-    public override var chains: [Chain] { [resultChain] }
-    public override func newNo(type: String) -> Int { inputs.count + 1 }
     public override func createCores() -> [Core] {
         inputs.flatMap({ $0.createCores() }) + [
             ChainCore(chain: resultChain, fog: mechlikeTokenKey),
             MechCore(mech: self)
         ]
     }
+    public override var chains: [Chain] { [resultChain] }
+    public override func newNo(type: String) -> Int { inputs.count + 1 }
 
 // Domain ==========================================================================================
 	public override var properties: [String] { super.properties + ["resultChain"] }

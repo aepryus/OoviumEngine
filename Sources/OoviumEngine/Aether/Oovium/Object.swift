@@ -27,10 +27,8 @@ public class Object: Aexel, VariableTokenDelegate {
 // Aexon ===========================================================================================
     public override var code: String { "Ob" }
     public override var tokenKeys: [TokenKey] { [tokenKey] }
+    public override func createCores() -> [Core] { [ChainCore(chain: chain, variableTokenDelegate: self)] }
     public override var chains: [Chain] { [chain] }
-    public override func createCores() -> [Core] { [
-        ChainCore(chain: chain, variableTokenDelegate: self)
-    ] }
 
 // Domain ==========================================================================================
 	public override var properties: [String] { super.properties + ["chain", "label"] }

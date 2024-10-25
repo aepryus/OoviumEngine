@@ -35,13 +35,13 @@ public class Gate: Aexel {
 // Aexon ===========================================================================================
     public override var code: String { "Gt" }
     public override var tokenKeys: [TokenKey] { [ifTokenKey, thenTokenKey, elseTokenKey, tokenKey] }
-    public override var chains: [Chain] { [ifChain, thenChain, elseChain] }
     public override func createCores() -> [Core] { [
         ChainCore(chain: ifChain),
         ChainCore(chain: elseChain),
         ChainCore(chain: thenChain),
         GateCore(gate: self)
     ] }
+    public override var chains: [Chain] { [ifChain, thenChain, elseChain] }
 
 // Domain ==========================================================================================
     public override var properties: [String] { super.properties + ["ifChain", "thenChain", "elseChain"] }

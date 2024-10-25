@@ -88,8 +88,6 @@ public class Tail: Aexel, Mechlike, VariableTokenDelegate {
             mechlikeTokenKey
         ]
     }
-    public override var chains: [Chain] { vertebras.flatMap({ $0.chains }) + [whileChain, resultChain] }
-    public override func newNo(type: String) -> Int { vertebras.count + 1 }
     public override func createCores() -> [Core] {
         vertebras.flatMap({ $0.createCores() }) + [
             ChainCore(chain: whileChain, fog: mechlikeTokenKey),
@@ -97,6 +95,8 @@ public class Tail: Aexel, Mechlike, VariableTokenDelegate {
             TailCore(tail: self)
         ]
     }
+    public override var chains: [Chain] { vertebras.flatMap({ $0.chains }) + [whileChain, resultChain] }
+    public override func newNo(type: String) -> Int { vertebras.count + 1 }
 
 // Domain ==========================================================================================
 	public override var properties: [String] { super.properties + ["whileChain", "resultChain"] }

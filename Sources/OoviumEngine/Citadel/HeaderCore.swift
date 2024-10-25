@@ -8,7 +8,7 @@
 
 import Aegean
 
-class HeaderCore: Core, VariableTokenDelegate {
+class HeaderCore: Core {
     let column: Column
     
     public var tokens: [Token] = []
@@ -31,8 +31,7 @@ class HeaderCore: Core, VariableTokenDelegate {
 // Core ============================================================================================
     override var key: TokenKey { column.headerTokenKey }
     
-//    override func createTower(_ citadel: Citadel) -> Tower { citadel.createHeaderTower(tag: key.tag, core: self, tokenDelegate: self) }
-    override func createTowerTokens(_ citadel: Citadel) -> [TowerToken] { [citadel.towerToken(key: key, delegate: self)] }
+    override func createTowerTokens(_ citadel: Citadel) -> [TowerToken] { [citadel.towerToken(key: key, delegate: column)] }
     override func citadelCompleted(_ citadel: Citadel) { loadTokens() }
 
     override func buildUpstream(tower: Tower) {
@@ -44,11 +43,6 @@ class HeaderCore: Core, VariableTokenDelegate {
     override func renderDisplay(tower: Tower) -> String { "---" }
     override func renderTask(tower: Tower) -> UnsafeMutablePointer<Task>? { nil }
     override func taskCompleted(tower: Tower, askedBy: Tower) -> Bool { true }
-    override func resetTask(tower: Tower) {
-        loadTokens()
-    }
+    override func resetTask(tower: Tower) { loadTokens() }
     override func executeTask(tower: Tower) {}
-    
-// VariableTokenDelegate ===========================================================================
-    var alias: String? { column.name }
 }

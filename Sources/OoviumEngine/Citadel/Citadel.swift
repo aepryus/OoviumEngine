@@ -114,29 +114,6 @@ public class Citadel {
         return token
     }
     
-    
-//    func variableToken(tag: String, delegate: VariableTokenDelegate? = nil) -> VariableToken {
-//        let key: TokenKey = TokenKey(code: .va, tag: tag)
-//        if let token: VariableToken = tokens[key] as? VariableToken { return token }
-//        let token: VariableToken = VariableToken(tag: tag, delegate: delegate)
-//        tokens[key] = token
-//        return token
-//    }
-//    func mechlikeToken(tag: String, delegate: VariableTokenDelegate? = nil) -> MechlikeToken {
-//        let key: TokenKey = TokenKey(code: .ml, tag: tag)
-//        if let token: MechlikeToken = tokens[key] as? MechlikeToken { return token }
-//        let token: MechlikeToken = MechlikeToken(tag: tag, delegate: delegate)
-//        tokens[key] = token
-//        return token
-//    }
-//    func columnToken(tag: String) -> ColumnToken {
-//        let key: TokenKey = TokenKey(code: .cl, tag: tag)
-//        if let token: ColumnToken = tokens[key] as? ColumnToken { return token }
-//        let token: ColumnToken = ColumnToken(tag: tag)
-//        tokens[key] = token
-//        return token
-//    }
-
     public func tower(key: TokenKey) -> Tower? {
         guard let token: TowerToken = tokens[key] else { return nil }
         return towerLookup[token]

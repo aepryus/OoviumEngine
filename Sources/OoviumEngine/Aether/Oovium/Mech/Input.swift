@@ -32,9 +32,7 @@ public class Input: Aexon, VariableTokenDelegate {
 // Aexon ===========================================================================================
     public override var code: String { "i" }
     public override var tokenKeys: [TokenKey] { [tokenKey] }
-    public override func createCores() -> [Core] { [
-        InputCore(input: self)
-    ] }
+    public override func createCores() -> [Core] { [InputCore(input: self)] }
 
 // Domain ==========================================================================================
 	public override var properties: [String] { super.properties + ["name"] }

@@ -96,8 +96,8 @@ public class Grid: Aexel {
 // Aexon ===========================================================================================
     public override var code: String { "Gr" }
     public override var tokenKeys: [TokenKey] { columns.flatMap({ $0.tokenKeys }) }
-    public override var chains: [Chain] { columns.flatMap { $0.chains } }
     public override func createCores() -> [Core] { columns.flatMap({ $0.createCores() }) }
+    public override var chains: [Chain] { columns.flatMap { $0.chains } }
     public override func newNo(type: String) -> Int { maxColumnNo + 1 }
 
 // Domain ==========================================================================================

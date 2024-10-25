@@ -17,7 +17,7 @@ import Foundation
 	case left, center, right
 }
 
-public class Column: Aexon {
+public class Column: Aexon, VariableTokenDelegate {
 	@objc public var name: String = ""
 	var def: Def = RealDef.def
 	@objc public var chain: Chain!
@@ -134,15 +134,18 @@ public class Column: Aexon {
             footerTokenKey
         ]
     }
-    override var chains: [Chain] { [chain] + cells.map({ $0.chain }) }
     override func createCores() -> [Core] {
         [HeaderCore(column: self),
          FooterCore(column: self)
         ] + cells.flatMap({ $0.createCores() })
     }
+    override var chains: [Chain] { [chain] + cells.map({ $0.chain }) }
     public override func newNo(type: String) -> Int { maxCellNo + 1 }
 
 // Domain ==========================================================================================
     public override var properties: [String] { super.properties + ["name", "chain", "aggregate", "justify", "format", "footerChain"] }
     public override var children: [String] { super.children + ["cells"] }
+    
+// VariableTokenDelegate ===========================================================================
+    var alias: String? { name }
 }

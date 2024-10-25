@@ -32,11 +32,9 @@ public class Cell: Aexon {
 
 // Aexon ===========================================================================================
     override var code: String { "Ce" }
-    public override var tokenKeys: [TokenKey] { [ tokenKey ] }
+    public override var tokenKeys: [TokenKey] { [tokenKey] }
+    override func createCores() -> [Core] { [ChainCore(chain: chain)] }
     public override var chains: [Chain] { [chain] }
-    override func createCores() -> [Core] { [
-        ChainCore(chain: chain)
-    ] }
 
 // Domain ==========================================================================================
     public override var properties: [String] { super.properties + ["chain"] }
