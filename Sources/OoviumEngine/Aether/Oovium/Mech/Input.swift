@@ -9,7 +9,7 @@
 import Acheron
 import Foundation
 
-public class Input: Aexon {
+public class Input: Aexon, VariableTokenDelegate {
     @objc public dynamic var name: String = "" {
         didSet {
             if name == "" { name = oldValue }
@@ -37,5 +37,8 @@ public class Input: Aexon {
     ] }
 
 // Domain ==========================================================================================
-	public override var properties: [String] { super.properties + ["name"] }	
+	public override var properties: [String] { super.properties + ["name"] }
+
+// VariableTokenDelegate ===========================================================================
+    public var alias: String? { name }
 }

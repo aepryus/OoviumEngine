@@ -91,10 +91,9 @@ class TailCore: Core {
 // Core ===================================================================================
     override var key: TokenKey { tail.variableTokenKey }
     
-//    override func createTower(_ aetherExe: AetherExe) -> Tower { aetherExe.createMechlikeTower(tag: key.tag, core: self, tokenDelegate: tail) }
     override func createTowerTokens(_ aetherExe: AetherExe) -> [TowerToken] { [
-        aetherExe.mechlikeToken(tag: key.tag, delegate: tail),
-        aetherExe.variableToken(tag: key.tag, delegate: tail)
+        aetherExe.towerToken(key: tail.variableTokenKey, delegate: tail),
+        aetherExe.towerToken(key: tail.mechlikeTokenKey, delegate: tail)
     ] }
     override func aetherExeCompleted(_ aetherExe: AetherExe) {
         whileTower = aetherExe.tower(key: tail.whileChain.key!)

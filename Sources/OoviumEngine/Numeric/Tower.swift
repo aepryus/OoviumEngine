@@ -71,12 +71,6 @@ public class Tower: Hashable, CustomStringConvertible {
     var variableToken: VariableToken!
     var mechlikeToken: MechlikeToken!
 
-//    private let _variableToken: VariableToken
-//    public lazy var variableToken: VariableToken = { _variableToken.tower = self; return _variableToken }()
-//
-//    private let _mechlikeToken: MechlikeToken? = nil
-//    public lazy var mechlikeToken: MechlikeToken? = { _mechlikeToken?.tower = self; return _mechlikeToken }()
-
 	var upstream: Dendrite = Dendrite()
 	var downstream: Dendrite = Dendrite()
 
@@ -96,7 +90,6 @@ public class Tower: Hashable, CustomStringConvertible {
     
     init(aetherExe: AetherExe, core: Core) {
 		self.aetherExe = aetherExe
-//        self._variableToken = token
 		self.core = core
 	}
 	deinit { AETaskRelease(task) }

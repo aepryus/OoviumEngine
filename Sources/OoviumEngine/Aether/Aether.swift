@@ -21,8 +21,6 @@ import Foundation
 
 	@objc dynamic public var aexels: [Aexel] = []
     
-//    public var state: AetherExe!
-
 	public override init() { super.init() }
 	public required init(attributes: [String:Any], parent: Domain? = nil) { super.init(attributes: attributes, parent: parent) }
 	public init(json: String) {
@@ -30,7 +28,6 @@ import Foundation
 		super.init(attributes: attributes)
 		load(attributes: attributes)
 	}
-
     
     func newNo(type: String) -> Int { (aexels.filter({ $0.type == type }).map({ $0.no }).max() ?? 0) + 1 }
     
@@ -42,13 +39,10 @@ import Foundation
 		aexels.append(aexel)
 	}
     public func remove(aexels: [Aexel]) {
-//        let removed: [Tower] = []
         aexels.forEach({
-//            removed.append(contentsOf: $0.towers)
             self.aexels.remove(object: $0)
             remove($0)
         })
-//        state.destroy(towers: removed)
     }
 	public func remove(aexel: Aexel) { remove(aexels: [aexel]) }
 	public func removeAllAexels() { remove(aexels: aexels) }
@@ -66,21 +60,9 @@ import Foundation
     public func createEdge(parent: Text, child: Text) -> Edge { Edge(parent: parent, child: child) }
 	public func outputEdges(for text: Text) -> [Edge] { aexels.compactMap { ($0 as? Text)?.edgeFor(text: text) } }
 	
-// Chains ==========================================================================================
-    func inject(chain: Chain, tag: String) {
-//        chain.tower = state.createTower(tag: tag, towerDelegate: chain)
-    }
-    
 // Functions =======================================================================================
 	public func functionExists(name: String) -> Bool { aexels.first { $0 is Mechlike && $0.name == name } != nil }
 
-// Events ==========================================================================================
-//    public override func onLoad() {
-//        state = AetherExe(aether: self)
-//        state.evaluate()
-//        print(unload().toJSON())
-//    }
-	
 // Domain ==========================================================================================
     public override var properties: [String] { super.properties + ["name", "width", "height", "xOffset", "yOffset", "readOnly", "version"] }
     public override var children: [String] { super.children + ["aexels"] }

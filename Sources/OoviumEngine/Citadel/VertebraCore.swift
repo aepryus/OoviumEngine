@@ -8,19 +8,15 @@
 
 import Foundation
 
-class VertebraCore: Core, VariableTokenDelegate {
+class VertebraCore: Core {
     let vertebra: Vertebra
     
     init(vertebra: Vertebra) { self.vertebra = vertebra }
 
 // Core ============================================================================================
-//    override func createTower(_ aetherExe: AetherExe) -> Tower { aetherExe.createTower(key: key, core: self, variableTokenDelegate: self) }
-
     override var key: TokenKey { vertebra.tokenKey }
     override var fog: TokenKey? { vertebra.tail.mechlikeTokenKey }
 
+    override func createTowerTokens(_ aetherExe: AetherExe) -> [TowerToken] { [aetherExe.towerToken(key: key, delegate: vertebra)] }
     override func renderDisplay(tower: Tower) -> String { vertebra.name }
-    
-// VariableTokenDelegate ===========================================================================
-    public var alias: String? { vertebra.name }
 }

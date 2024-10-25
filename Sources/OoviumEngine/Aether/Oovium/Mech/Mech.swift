@@ -91,5 +91,5 @@ public class Mech: Aexel, Mechlike, VariableTokenDelegate {
 	public override var children: [String] { super.children + ["inputs"] }
 	
 // VariableTokenDelegate ===========================================================================
-    var alias: String? { "\(name)" }
+    var alias: String? { name }
 }

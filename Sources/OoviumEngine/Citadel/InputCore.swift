@@ -8,19 +8,15 @@
 
 import Foundation
 
-class InputCore: Core, VariableTokenDelegate {
+class InputCore: Core {
     let input: Input
     
     init(input: Input) { self.input = input }
     
 // Core ============================================================================================
-//    override func createTower(_ aetherExe: AetherExe) -> Tower { aetherExe.createTower(key: key, core: self, variableTokenDelegate: self) }
-
     override var key: TokenKey { input.tokenKey }
     override var fog: TokenKey? { input.mech.mechlikeTokenKey }
 
+    override func createTowerTokens(_ aetherExe: AetherExe) -> [TowerToken] { [aetherExe.towerToken(key: key, delegate: input)] }
     override func renderDisplay(tower: Tower) -> String { input.name }
-    
-// VariableTokenDelegate ===========================================================================
-    public var alias: String? { input.name }
 }

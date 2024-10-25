@@ -68,7 +68,7 @@ public class ChainCore: Core, CustomStringConvertible {
             AEMemorySetName(memory, m, $0.toInt8())
             AEMemorySet(memory, m, obj)
             m += 1
-            let token = aetherExe.variableToken(tag: $0)
+            let token = aetherExe.towerToken(key: TokenKey(code: .va, tag: $0))
             token.def = Def.def(obj: obj)
         }
         self.aetherExe = aetherExe
@@ -98,7 +98,6 @@ public class ChainCore: Core, CustomStringConvertible {
 // Core ===================================================================================
     override var key: TokenKey { chain.key! }
     
-//    override func createTower(_ aetherExe: AetherExe) -> Tower { aetherExe.createTower(key: key, core: self, variableTokenDelegate: variableTokenDelegate) }
     override func aetherExeCompleted(_ aetherExe: AetherExe) { loadTokens() }
 
     override func buildUpstream(tower: Tower) {

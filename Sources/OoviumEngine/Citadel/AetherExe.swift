@@ -47,13 +47,13 @@ public class AetherExe {
     }
     private func build() {
         plugIn(aexons: aether.aexels)
-        buildMemory()
         Tower.evaluate(towers: Set(towers))
     }
+    
+// Listeners =======================================================================================
+    public func notifyListeners() { Tower.notifyListeners(towers: Set<Tower>(towers)) }
 
 // Methods =========================================================================================
-    public func notifyListeners() { Tower.notifyListeners(towers: Set<Tower>(towers)) }
-    
     public func canBeAdded(thisKey: TokenKey, to thatKey: TokenKey) -> Bool {
         let that: Tower = towerLookup[tokens[thatKey]!]!
         guard let thisToken: TowerToken = tokens[thisKey] else { return true }
@@ -100,27 +100,42 @@ public class AetherExe {
 
     public func token(key: TokenKey) -> Token { tokens[key] ?? Token.token(key: key)! }
     public func value(key: TokenKey) -> String? { (token(key: key) as? VariableToken)?.value }
-    func variableToken(tag: String, delegate: VariableTokenDelegate? = nil) -> VariableToken {
-        let key: TokenKey = TokenKey(code: .va, tag: tag)
-        if let token: VariableToken = tokens[key] as? VariableToken { return token }
-        let token: VariableToken = VariableToken(tag: tag, delegate: delegate)
+    
+    func towerToken(key: TokenKey, delegate: VariableTokenDelegate? = nil) -> TowerToken {
+        if let tower: TowerToken = tokens[key] { return tower }
+        let token: TowerToken
+        switch key.code {
+            case .va: token = VariableToken(tag: key.tag, delegate: delegate)
+            case .ml: token = MechlikeToken(tag: key.tag, delegate: delegate)
+            case .cl: token = ColumnToken(tag: key.tag, delegate: delegate)
+            default: fatalError()
+        }
         tokens[key] = token
         return token
     }
-    func mechlikeToken(tag: String, delegate: VariableTokenDelegate? = nil) -> MechlikeToken {
-        let key: TokenKey = TokenKey(code: .ml, tag: tag)
-        if let token: MechlikeToken = tokens[key] as? MechlikeToken { return token }
-        let token: MechlikeToken = MechlikeToken(tag: tag, delegate: delegate)
-        tokens[key] = token
-        return token
-    }
-    func columnToken(tag: String) -> ColumnToken {
-        let key: TokenKey = TokenKey(code: .cl, tag: tag)
-        if let token: ColumnToken = tokens[key] as? ColumnToken { return token }
-        let token: ColumnToken = ColumnToken(tag: tag)
-        tokens[key] = token
-        return token
-    }
+    
+    
+//    func variableToken(tag: String, delegate: VariableTokenDelegate? = nil) -> VariableToken {
+//        let key: TokenKey = TokenKey(code: .va, tag: tag)
+//        if let token: VariableToken = tokens[key] as? VariableToken { return token }
+//        let token: VariableToken = VariableToken(tag: tag, delegate: delegate)
+//        tokens[key] = token
+//        return token
+//    }
+//    func mechlikeToken(tag: String, delegate: VariableTokenDelegate? = nil) -> MechlikeToken {
+//        let key: TokenKey = TokenKey(code: .ml, tag: tag)
+//        if let token: MechlikeToken = tokens[key] as? MechlikeToken { return token }
+//        let token: MechlikeToken = MechlikeToken(tag: tag, delegate: delegate)
+//        tokens[key] = token
+//        return token
+//    }
+//    func columnToken(tag: String) -> ColumnToken {
+//        let key: TokenKey = TokenKey(code: .cl, tag: tag)
+//        if let token: ColumnToken = tokens[key] as? ColumnToken { return token }
+//        let token: ColumnToken = ColumnToken(tag: tag)
+//        tokens[key] = token
+//        return token
+//    }
 
     public func tower(key: TokenKey) -> Tower? {
         guard let token: TowerToken = tokens[key] else { return nil }
@@ -149,10 +164,32 @@ public class AetherExe {
         let towers: [Tower] = aexons.flatMap({ harvest(aexon: $0) })
         cores.values.forEach { $0.aetherExe = self }
         towers.forEach { $0.buildStream() }
+        buildMemory()
     }
-    public func plugIn(aexon: Aexon) { plugIn(aexons: [aexon]) }
+//    public func plugIn(aexon: Aexon) { plugIn(aexons: [aexon]) }
     
     public func inAFog(key: TokenKey) -> Bool { tower(key: key)?.fog != nil }
+    
+    public func trigger(keys: [TokenKey]) {
+        let towersArray: [Tower] = keys.map({ tower(key: $0)! })
+        var towersSet: Set<Tower> = Set()
+        towersArray.forEach { towersSet.formUnion($0.allDownstream()) }
+        buildMemory()
+        Tower.evaluate(towers: towersSet)
+    }
+    public func trigger(key: TokenKey) { trigger(keys: [key]) }
+
+    private func buildMemory() {
+        var vars: [String] = ["k"]
+        vars += tokens.values.filter { $0.code == .va && $0.status != .deleted }.map { $0.tag }
+        vars.sort(by: { $0.uppercased() < $1.uppercased() })
+
+        let oldMemory: UnsafeMutablePointer<Memory> = memory
+        memory = AEMemoryCreate(vars.count)
+        vars.enumerated().forEach { AEMemorySetName(memory, UInt16($0), $1.toInt8()) }
+        AEMemoryLoad(memory, oldMemory)
+        AEMemoryRelease(oldMemory)
+    }
     
     public func paste(array: [[String:Any]]) -> [Aexel] {
         var substitutions: [TokenKey:TokenKey] = [:]
@@ -184,26 +221,5 @@ public class AetherExe {
         return aexels
     }
     
-    public func trigger(keys: [TokenKey]) {
-        let towersArray: [Tower] = keys.map({ tower(key: $0)! })
-        var towersSet: Set<Tower> = Set()
-        towersArray.forEach { towersSet.formUnion($0.allDownstream()) }
-        buildMemory()
-        Tower.evaluate(towers: towersSet)
-    }
-    public func trigger(key: TokenKey) { trigger(keys: [key]) }
-
-    public func buildMemory() {
-        var vars: [String] = ["k"]
-        vars += tokens.values.filter { $0.code == .va && $0.status != .deleted }.map { $0.tag }
-        vars.sort(by: { $0.uppercased() < $1.uppercased() })
-
-        let oldMemory: UnsafeMutablePointer<Memory> = memory
-        memory = AEMemoryCreate(vars.count)
-        vars.enumerated().forEach { AEMemorySetName(memory, UInt16($0), $1.toInt8()) }
-        AEMemoryLoad(memory, oldMemory)
-        AEMemoryRelease(oldMemory)
-    }
-
     public func printTowers() { Tower.printTowers(towers) }
 }
