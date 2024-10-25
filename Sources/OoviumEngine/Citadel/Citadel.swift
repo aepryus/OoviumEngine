@@ -143,7 +143,6 @@ public class Citadel {
         towers.forEach { $0.buildStream() }
         buildMemory()
     }
-//    public func plugIn(aexon: Aexon) { plugIn(aexons: [aexon]) }
     
     public func inAFog(key: TokenKey) -> Bool { tower(key: key)?.fog != nil }
     

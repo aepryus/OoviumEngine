@@ -18,7 +18,7 @@ public class Object: Aexel, VariableTokenDelegate {
 // Inits ===========================================================================================
     public required init(at: V2, aether: Aether) {
         super.init(at: at, aether: aether)
-        chain = Chain(key: TokenKey(code: .va, tag: key))
+        chain = Chain(key: tokenKey)
     }
     public required init(attributes: [String:Any], parent: Domain?) {
         super.init(attributes: attributes, parent: parent)
