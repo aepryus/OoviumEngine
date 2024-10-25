@@ -10,18 +10,17 @@ import Aegean
 import Acheron
 import Foundation
 
-@objc public enum OOEndMode: Int {
-	case stop, `repeat`, bounce, endless, `while`
-}
 
 public class Cron: Aexel {
-	@objc public var startChain: Chain!
+    @objc public enum EndMode: Int { case stop, `repeat`, bounce, endless, `while` }
+
+    @objc public var startChain: Chain!
 	@objc public var stopChain: Chain!
 	@objc public var stepsChain: Chain!
 	@objc public var rateChain: Chain!
 	@objc public var deltaChain: Chain!
 	@objc public var whileChain: Chain!
-	@objc public var endMode: OOEndMode = .stop
+	@objc public var endMode: EndMode = .stop
 	@objc public var exposed: Bool = true
 
 

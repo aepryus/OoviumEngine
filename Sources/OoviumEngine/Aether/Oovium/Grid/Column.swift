@@ -10,19 +10,16 @@ import Aegean
 import Acheron
 import Foundation
 
-@objc public enum OOAggregate: Int {
-	case none, sum, average, running, count, match
-}
-@objc public enum OOJustify: Int {
-	case left, center, right
-}
 
 public class Column: Aexon, VariableTokenDelegate {
-	@objc public var name: String = ""
+    @objc public enum Aggregate: Int { case none, sum, average, running, count, match }
+    @objc public enum Justify: Int { case left, center, right }
+
+    @objc public var name: String = ""
 	var def: Def = RealDef.def
 	@objc public var chain: Chain!
-	@objc public var aggregate: OOAggregate = .none
-	@objc public var justify: OOJustify = .right
+	@objc public var aggregate: Aggregate = .none
+	@objc public var justify: Justify = .right
 	@objc public var format: String = ""
     @objc public lazy var footerChain: Chain = Chain(key: footerTokenKey)
     
