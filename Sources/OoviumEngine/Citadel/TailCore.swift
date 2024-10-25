@@ -35,7 +35,7 @@ class TailCore: Core {
         n += 1
         
         for vertebra in tail.vertebras {
-            let vertebraTower: Tower = aetherExe.tower(key: vertebra.chain.key!)!
+            let vertebraTower: Tower = citadel.tower(key: vertebra.chain.key!)!
             additional = vertebraTower.stronglyLinked()
             n = MechCore.program(tasks: &tasks, tail: vertebraTower, memory: memory, additional: additional, completed: completed, n: n)
             completed.formUnion(additional)
@@ -43,10 +43,10 @@ class TailCore: Core {
         
         for vertebra in tail.vertebras {
             tasks.append(AETaskCreateAssign(
-                AEMemoryIndexForName(memory, aetherExe.tower(key: vertebra.chain.key!)!.name.toInt8()),
-                AEMemoryIndexForName(memory, aetherExe.tower(key: vertebra.tokenKey)!.name.toInt8())
+                AEMemoryIndexForName(memory, citadel.tower(key: vertebra.chain.key!)!.name.toInt8()),
+                AEMemoryIndexForName(memory, citadel.tower(key: vertebra.tokenKey)!.name.toInt8())
             ));
-            AETaskSetLabels(tasks[n], "".toInt8(), "\(aetherExe.tower(key: vertebra.tokenKey)!.name) = \(aetherExe.tower(key: vertebra.chain.key!)!.name)".toInt8())
+            AETaskSetLabels(tasks[n], "".toInt8(), "\(citadel.tower(key: vertebra.tokenKey)!.name) = \(citadel.tower(key: vertebra.chain.key!)!.name)".toInt8())
             n += 1
         }
         
@@ -73,9 +73,9 @@ class TailCore: Core {
     }
 
     private func compileRecipe() {
-        let memory: UnsafeMutablePointer<Memory> = AEMemoryCreateClone(aetherExe.memory)
+        let memory: UnsafeMutablePointer<Memory> = AEMemoryCreateClone(citadel.memory)
         AEMemoryClear(memory)
-        tail.vertebras.forEach { AEMemorySetValue(memory, aetherExe.tower(key: $0.tokenKey)!.index, 0) }
+        tail.vertebras.forEach { AEMemorySetValue(memory, citadel.tower(key: $0.tokenKey)!.index, 0) }
         AERecipeRelease(recipe)
         recipe = compile(memory: memory)
         AERecipeSignature(recipe, AEMemoryIndexForName(memory, "\(tail.key).result".toInt8()), UInt8(tail.vertebras.count))
@@ -91,18 +91,18 @@ class TailCore: Core {
 // Core ===================================================================================
     override var key: TokenKey { tail.variableTokenKey }
     
-    override func createTowerTokens(_ aetherExe: AetherExe) -> [TowerToken] { [
-        aetherExe.towerToken(key: tail.variableTokenKey, delegate: tail),
-        aetherExe.towerToken(key: tail.mechlikeTokenKey, delegate: tail)
+    override func createTowerTokens(_ citadel: Citadel) -> [TowerToken] { [
+        citadel.towerToken(key: tail.variableTokenKey, delegate: tail),
+        citadel.towerToken(key: tail.mechlikeTokenKey, delegate: tail)
     ] }
-    override func aetherExeCompleted(_ aetherExe: AetherExe) {
-        whileTower = aetherExe.tower(key: tail.whileChain.key!)
-        resultTower = aetherExe.tower(key: tail.resultChain.key!)
+    override func citadelCompleted(_ citadel: Citadel) {
+        whileTower = citadel.tower(key: tail.whileChain.key!)
+        resultTower = citadel.tower(key: tail.resultChain.key!)
     }
     
     override func buildUpstream(tower: Tower) {
         whileTower.attach(tower)
-        tail.vertebras.forEach { aetherExe.tower(key: $0.chain.key!)!.attach(tower) }
+        tail.vertebras.forEach { citadel.tower(key: $0.chain.key!)!.attach(tower) }
         resultTower.attach(tower)
     }
     override func renderDisplay(tower: Tower) -> String {

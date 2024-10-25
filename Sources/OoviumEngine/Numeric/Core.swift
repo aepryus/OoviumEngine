@@ -12,7 +12,7 @@ import Foundation
 public class Core: Hashable {
     var key: TokenKey { fatalError() }
 
-    var aetherExe: AetherExe! { didSet { aetherExeCompleted(aetherExe) } }
+    var citadel: Citadel! { didSet { citadelCompleted(citadel) } }
     var tower: Tower!
     var fog: TokenKey? { nil }
     var isFogFirewall: Bool { false }
@@ -21,8 +21,8 @@ public class Core: Hashable {
     public var valueDisplay: String { "not implemented yet" }
     public var naturalDisplay: String { "not implemented yet" }
 
-    func createTowerTokens(_ aetherExe: AetherExe) -> [TowerToken] { [aetherExe.towerToken(key: key)] }
-    func aetherExeCompleted(_ aetherExe: AetherExe) {}
+    func createTowerTokens(_ citadel: Citadel) -> [TowerToken] { [citadel.towerToken(key: key)] }
+    func citadelCompleted(_ citadel: Citadel) {}
     
     func buildUpstream(tower: Tower) {}
     func renderDisplay(tower: Tower) -> String { "---" }

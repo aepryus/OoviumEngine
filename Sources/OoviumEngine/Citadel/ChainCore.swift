@@ -24,7 +24,7 @@ public class ChainCore: Core, CustomStringConvertible {
     
     override var fog: TokenKey? {
         if let _fog { return _fog }
-        let upstreamTowers: [Tower] = tokens.compactMap({ aetherExe.tower(key: $0.key) })
+        let upstreamTowers: [Tower] = tokens.compactMap({ citadel.tower(key: $0.key) })
         return upstreamTowers.first(where: { $0.fog != nil })?.fog
     }
     override var isFogFirewall: Bool { _fog != nil }
@@ -55,12 +55,12 @@ public class ChainCore: Core, CustomStringConvertible {
 
 // Calculate =======================================================================================
     func loadTokens() {
-        guard let aetherExe else { return }
-        tokens = chain.tokenKeys.map({ (key: TokenKey) in aetherExe.token(key: key) })
+        guard let citadel else { return }
+        tokens = chain.tokenKeys.map({ (key: TokenKey) in citadel.token(key: key) })
     }
     public func calculate(vars: [String:Obje] = [:]) -> Obj? {
         let aether: Aether = Aether()
-        let aetherExe: AetherExe = aether.compile()
+        let citadel: Citadel = aether.compile()
         let memory: UnsafeMutablePointer<Memory> = AEMemoryCreate(vars.count)
         var m: mnimi = 0
         vars.keys.forEach {
@@ -68,10 +68,10 @@ public class ChainCore: Core, CustomStringConvertible {
             AEMemorySetName(memory, m, $0.toInt8())
             AEMemorySet(memory, m, obj)
             m += 1
-            let token = aetherExe.towerToken(key: TokenKey(code: .va, tag: $0))
+            let token = citadel.towerToken(key: TokenKey(code: .va, tag: $0))
             token.def = Def.def(obj: obj)
         }
-        self.aetherExe = aetherExe
+        self.citadel = citadel
         
         if let lambda: UnsafeMutablePointer<Lambda> = Parser.compile(tokens: tokens, tokenKey: chain.key, memory: memory).0 {
             return AELambdaExecute(lambda, memory)
@@ -98,10 +98,10 @@ public class ChainCore: Core, CustomStringConvertible {
 // Core ===================================================================================
     override var key: TokenKey { chain.key! }
     
-    override func aetherExeCompleted(_ aetherExe: AetherExe) { loadTokens() }
+    override func citadelCompleted(_ citadel: Citadel) { loadTokens() }
 
     override func buildUpstream(tower: Tower) {
-        aetherExe.nukeUpstream(key: chain.key!)
+        citadel.nukeUpstream(key: chain.key!)
         tokens.compactMap { $0 as? TowerToken }.forEach {
             $0.tower.attach(tower)
         }

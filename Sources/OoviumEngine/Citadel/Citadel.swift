@@ -1,5 +1,5 @@
 //
-//  AetherExe.swift
+//  Citadel.swift
 //  OoviumEngine
 //
 //  Created by Joe Charlier on 7/6/24.
@@ -10,7 +10,7 @@ import Acheron
 import Aegean
 import Foundation
 
-public class AetherExe {
+public class Citadel {
     unowned let aether: Aether
     
     private var tokens: [TokenKey:TowerToken] = [:]
@@ -145,7 +145,7 @@ public class AetherExe {
     private func harvest(aexon: Aexon) -> [Tower] {
         var towers: [Tower] = []
         aexon.createCores().forEach { (core: Core) in
-            let tower: Tower = Tower(aetherExe: self, core: core)
+            let tower: Tower = Tower(citadel: self, core: core)
             core.tower = tower
             let towerTokens: [TowerToken] = core.createTowerTokens(self)
             towerTokens.forEach { (token: TowerToken) in
@@ -162,7 +162,7 @@ public class AetherExe {
     }
     public func plugIn(aexons: [Aexon]) {
         let towers: [Tower] = aexons.flatMap({ harvest(aexon: $0) })
-        cores.values.forEach { $0.aetherExe = self }
+        cores.values.forEach { $0.citadel = self }
         towers.forEach { $0.buildStream() }
         buildMemory()
     }

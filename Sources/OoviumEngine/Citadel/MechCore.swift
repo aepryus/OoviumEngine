@@ -103,9 +103,9 @@ class MechCore: Core {
     }
 
     private func compileRecipe() {
-        let memory: UnsafeMutablePointer<Memory> = AEMemoryCreateClone(aetherExe.memory)
+        let memory: UnsafeMutablePointer<Memory> = AEMemoryCreateClone(citadel.memory)
         AEMemoryClear(memory)
-        mech.inputs.forEach { AEMemorySetValue(memory, aetherExe.tower(key: $0.tokenKey)!.index, 0) }
+        mech.inputs.forEach { AEMemorySetValue(memory, citadel.tower(key: $0.tokenKey)!.index, 0) }
         AERecipeRelease(recipe)
         recipe = compile(memory: memory)
         AERecipeSignature(recipe, AEMemoryIndexForName(memory, "\(mech.key).result".toInt8()), UInt8(mech.inputs.count))
@@ -145,13 +145,13 @@ class MechCore: Core {
 // Core ===================================================================================
     override var key: TokenKey { mech.variableTokenKey }
     
-//    override func createTower(_ aetherExe: AetherExe) -> Tower { aetherExe.createMechlikeTower(tag: key.tag, core: self, tokenDelegate: mech) }
-    override func createTowerTokens(_ aetherExe: AetherExe) -> [TowerToken] { [
-        aetherExe.towerToken(key: mech.variableTokenKey, delegate: mech),
-        aetherExe.towerToken(key: mech.mechlikeTokenKey, delegate: mech)
+//    override func createTower(_ citadel: Citadel) -> Tower { citadel.createMechlikeTower(tag: key.tag, core: self, tokenDelegate: mech) }
+    override func createTowerTokens(_ citadel: Citadel) -> [TowerToken] { [
+        citadel.towerToken(key: mech.variableTokenKey, delegate: mech),
+        citadel.towerToken(key: mech.mechlikeTokenKey, delegate: mech)
     ] }
-    override func aetherExeCompleted(_ aetherExe: AetherExe) {
-        resultTower = aetherExe.tower(key: mech.resultChain.key!)
+    override func citadelCompleted(_ citadel: Citadel) {
+        resultTower = citadel.tower(key: mech.resultChain.key!)
     }
 
     override func buildUpstream(tower: Tower) {

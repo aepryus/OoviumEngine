@@ -110,10 +110,10 @@ class MathTests: XCTestCase {
         object3.chain.post(key: Token.divide.key)
         object3.chain.post(key: object2.chain.key!)
         
-        let aetherExe: AetherExe = aether.compile()
+        let citadel: Citadel = aether.compile()
 
         let key = TokenKey(code: .va, tag: object3.key)
-        let tower = aetherExe.tower(key: key)!
+        let tower = citadel.tower(key: key)!
 		XCTAssertEqual(tower.value, 47)
 	}
 	func test_AetherJSONBasic() {
@@ -164,9 +164,9 @@ class MathTests: XCTestCase {
 		"""
 
 		let aether = Aether(json: json)
-        let aetherExe: AetherExe = aether.compile()
+        let citadel: Citadel = aether.compile()
         let key: TokenKey = TokenKey(code: .va, tag: "Ob3")
-        XCTAssertEqual(aetherExe.tower(key: key)?.value, 47)
+        XCTAssertEqual(citadel.tower(key: key)?.value, 47)
 	}
 	func test_AetherJSONCatSkinTSF() {
         let json = """
@@ -285,9 +285,9 @@ class MathTests: XCTestCase {
         """
 
         let aether = Aether(json: json)
-        let aetherExe: AetherExe = aether.compile()
+        let citadel: Citadel = aether.compile()
         let key: TokenKey = TokenKey(code: .va, tag: "Ob4")
-        XCTAssertEqual(aetherExe.tower(key: key)?.value, 19)
+        XCTAssertEqual(citadel.tower(key: key)?.value, 19)
 	}
     func test_AetherJSONCatSkinISF() {
         let json = """
@@ -415,9 +415,9 @@ class MathTests: XCTestCase {
         """
 
         let aether = Aether(json: json)
-        let aetherExe: AetherExe = aether.compile()
+        let citadel: Citadel = aether.compile()
         let key: TokenKey = TokenKey(code: .va, tag: "Ob5")
-        XCTAssertEqual(aetherExe.tower(key: key)?.value, 19)
+        XCTAssertEqual(citadel.tower(key: key)?.value, 19)
     }
     func test_AetherJSONCatSkinRSF() {
         let json = """
@@ -573,9 +573,9 @@ class MathTests: XCTestCase {
         """
 
         let aether = Aether(json: json)
-        let aetherExe: AetherExe = aether.compile()
+        let citadel: Citadel = aether.compile()
         let key: TokenKey = TokenKey(code: .va, tag: "Ob2")
-        XCTAssertEqual(aetherExe.tower(key: key)?.value, 19)
+        XCTAssertEqual(citadel.tower(key: key)?.value, 19)
     }
     func test_AetherJSONSUM() {
         let json = """
@@ -636,8 +636,8 @@ class MathTests: XCTestCase {
         """
         
         let aether = Aether(json: json)
-        let aetherExe: AetherExe = aether.compile()
+        let citadel: Citadel = aether.compile()
         let key: TokenKey = TokenKey(code: .va, tag: "Ob5")
-        XCTAssertEqual(aetherExe.tower(key: key)?.value, 45)
+        XCTAssertEqual(citadel.tower(key: key)?.value, 45)
     }
 }

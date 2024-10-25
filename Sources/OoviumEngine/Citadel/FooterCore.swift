@@ -17,12 +17,12 @@ class FooterCore: Core {
     
 // Compiling =======================================================================================
     private func compileNON() -> UnsafeMutablePointer<Lambda>? {
-        let memory: UnsafeMutablePointer<Memory> = aetherExe.memory
+        let memory: UnsafeMutablePointer<Memory> = citadel.memory
         let vi: mnimi = AEMemoryIndexForName(memory, column.footerTokenKey.tag.toInt8())
         return AELambdaCreate(vi, nil, 0, nil, 0, nil, 0, nil)
     }
     private func compileSUM() -> UnsafeMutablePointer<Lambda>? {
-        let memory: UnsafeMutablePointer<Memory> = aetherExe.memory
+        let memory: UnsafeMutablePointer<Memory> = citadel.memory
         let vi: mnimi = AEMemoryIndexForName(memory, column.footerTokenKey.tag.toInt8())
         
         let vn: Int = column.grid.rows
@@ -46,7 +46,7 @@ class FooterCore: Core {
         return AELambdaCreate(mnimi(vi), nil, 0, v, UInt8(vn), m, UInt8(mn), nil)
     }
     private func compileAVG() -> UnsafeMutablePointer<Lambda>? {
-        let memory: UnsafeMutablePointer<Memory> = aetherExe.memory
+        let memory: UnsafeMutablePointer<Memory> = citadel.memory
         let vi: mnimi = AEMemoryIndexForName(memory, column.footerTokenKey.tag.toInt8())
         
         let cn: Int = 1
@@ -77,9 +77,9 @@ class FooterCore: Core {
         return AELambdaCreate(mnimi(vi), c, UInt8(cn), v, UInt8(vn), m, UInt8(mn), nil)
     }
     private func compileMTC() -> UnsafeMutablePointer<Lambda>? {
-        guard let tower: Tower = aetherExe.tower(key: column.footerTokenKey) else { return nil }
+        guard let tower: Tower = citadel.tower(key: column.footerTokenKey) else { return nil }
         let chain: Chain = column.footerChain
-        tokens = chain.tokenKeys.map({ (key: TokenKey) in aetherExe.token(key: key) })
+        tokens = chain.tokenKeys.map({ (key: TokenKey) in citadel.token(key: key) })
         let (lambda, lastMorphNo) = Parser.compile(tokens: tokens, tokenKey: chain.key, memory: tower.memory)
         if let lambda {
             if tower.variableToken.status == .invalid { tower.variableToken.status = .ok }
@@ -95,7 +95,7 @@ class FooterCore: Core {
         }
     }
     private func compileCNT() -> UnsafeMutablePointer<Lambda>? {
-        let memory: UnsafeMutablePointer<Memory> = aetherExe.memory
+        let memory: UnsafeMutablePointer<Memory> = citadel.memory
         let vi: mnimi = AEMemoryIndexForName(memory, column.footerTokenKey.tag.toInt8())
         
         let cn: Int = 1
@@ -127,22 +127,22 @@ class FooterCore: Core {
         }
     }
     func loadTokens() {
-        guard let aetherExe else { return }
-        tokens = column.footerChain.tokenKeys.map({ (key: TokenKey) in aetherExe.token(key: key) })
+        guard let citadel else { return }
+        tokens = column.footerChain.tokenKeys.map({ (key: TokenKey) in citadel.token(key: key) })
     }
 
     // Core ========================================================================================
     override var key: TokenKey { column.footerTokenKey }
     override var valueDisplay: String { tower?.obje.display ?? "" }
 
-//    override func createTower(_ aetherExe: AetherExe) -> Tower { aetherExe.createTower(key: key, core: self) }
+//    override func createTower(_ citadel: Citadel) -> Tower { citadel.createTower(key: key, core: self) }
     override func buildUpstream(tower: Tower) {
-        tower.aetherExe.nukeUpstream(key: column.footerTokenKey)
+        tower.citadel.nukeUpstream(key: column.footerTokenKey)
         switch column.aggregate {
             case .sum, .average, .count:
                 for rowNo: Int in 1...column.grid.rows {
                     let cell: Cell = column.grid.cell(colNo: column.colNo, rowNo: rowNo)
-                    let cellTower: Tower = tower.aetherExe.tower(key: cell.chain.key!)!
+                    let cellTower: Tower = tower.citadel.tower(key: cell.chain.key!)!
                     cellTower.attach(tower)
                 }
             case .match:

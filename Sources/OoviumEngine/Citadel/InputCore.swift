@@ -17,6 +17,6 @@ class InputCore: Core {
     override var key: TokenKey { input.tokenKey }
     override var fog: TokenKey? { input.mech.mechlikeTokenKey }
 
-    override func createTowerTokens(_ aetherExe: AetherExe) -> [TowerToken] { [aetherExe.towerToken(key: key, delegate: input)] }
+    override func createTowerTokens(_ citadel: Citadel) -> [TowerToken] { [citadel.towerToken(key: key, delegate: input)] }
     override func renderDisplay(tower: Tower) -> String { input.name }
 }

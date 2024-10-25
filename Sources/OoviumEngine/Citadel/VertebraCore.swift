@@ -17,6 +17,6 @@ class VertebraCore: Core {
     override var key: TokenKey { vertebra.tokenKey }
     override var fog: TokenKey? { vertebra.tail.mechlikeTokenKey }
 
-    override func createTowerTokens(_ aetherExe: AetherExe) -> [TowerToken] { [aetherExe.towerToken(key: key, delegate: vertebra)] }
+    override func createTowerTokens(_ citadel: Citadel) -> [TowerToken] { [citadel.towerToken(key: key, delegate: vertebra)] }
     override func renderDisplay(tower: Tower) -> String { vertebra.name }
 }

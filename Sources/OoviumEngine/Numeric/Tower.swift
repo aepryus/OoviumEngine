@@ -65,7 +65,7 @@ class Dendrite: Sequence {
 }
 
 public class Tower: Hashable, CustomStringConvertible {
-    public unowned let aetherExe: AetherExe
+    public unowned let citadel: Citadel
     public let core: Core?
 
     var variableToken: VariableToken!
@@ -86,19 +86,19 @@ public class Tower: Hashable, CustomStringConvertible {
 	var task: UnsafeMutablePointer<Task>? = nil
 	
     var name: String { variableToken.tag }
-    var memory: UnsafeMutablePointer<Memory> { aetherExe.memory }
+    var memory: UnsafeMutablePointer<Memory> { citadel.memory }
     
-    init(aetherExe: AetherExe, core: Core) {
-		self.aetherExe = aetherExe
+    init(citadel: Citadel, core: Core) {
+		self.citadel = citadel
 		self.core = core
 	}
 	deinit { AETaskRelease(task) }
 
 	public var index: mnimi {
-        AEMemoryIndexForName(aetherExe.memory, variableToken.tag.toInt8())
+        AEMemoryIndexForName(citadel.memory, variableToken.tag.toInt8())
     }
-    public var value: Double { AEMemoryValue(aetherExe.memory, index) }
-    public var obje: Obje { Obje(memory: aetherExe.memory, index: index) }
+    public var value: Double { AEMemoryValue(citadel.memory, index) }
+    public var obje: Obje { Obje(memory: citadel.memory, index: index) }
 	
 	func taskCompleted(askedBy: Tower) -> Bool { core?.taskCompleted(tower: self, askedBy: askedBy) ?? true }
 
@@ -193,7 +193,7 @@ public class Tower: Hashable, CustomStringConvertible {
 		AETaskRelease(task)
         task = core.renderTask(tower: self)
 	}
-    var calced: Bool { variableToken.code != .va || AEMemoryLoaded(aetherExe.memory, index) != 0 }
+    var calced: Bool { variableToken.code != .va || AEMemoryLoaded(citadel.memory, index) != 0 }
 	func attemptToCalculate() -> Bool {
         guard let core else { return false }
 		guard !taskCompleted(askedBy: self),
@@ -212,7 +212,7 @@ public class Tower: Hashable, CustomStringConvertible {
 
 		if (fog != nil && variableToken.def !== LambdaDef.def) || variableToken.status != .ok {
 			variableToken.details = core.renderDisplay(tower: self)
-            AEMemorySetValue(aetherExe.memory, index, 0)
+            AEMemorySetValue(citadel.memory, index, 0)
 			return true
         } else { variableToken.details = nil }
 		

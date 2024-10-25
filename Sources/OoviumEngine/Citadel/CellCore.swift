@@ -21,7 +21,7 @@ class CellCore: ChainCore {
         
         guard cell.column.calculated else { return }
         
-        let headerTower: Tower = aetherExe.tower(key: cell.column.chain.key!)!
+        let headerTower: Tower = citadel.tower(key: cell.column.chain.key!)!
         tower.attach(headerTower)
     }
 }

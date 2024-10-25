@@ -61,13 +61,13 @@ public class CronCore: Core {
 // Core ===================================================================================
     override var key: TokenKey { cron.tokenKey }
 
-    override func aetherExeCompleted(_ aetherExe: AetherExe) {
-        startTower = aetherExe.tower(key: cron.startChain.key!)
-        stopTower = aetherExe.tower(key: cron.stopChain.key!)
-        stepsTower = aetherExe.tower(key: cron.stepsChain.key!)
-        rateTower = aetherExe.tower(key: cron.rateChain.key!)
-        deltaTower = aetherExe.tower(key: cron.deltaChain.key!)
-        whileTower = aetherExe.tower(key: cron.whileChain.key!)
+    override func citadelCompleted(_ citadel: Citadel) {
+        startTower = citadel.tower(key: cron.startChain.key!)
+        stopTower = citadel.tower(key: cron.stopChain.key!)
+        stepsTower = citadel.tower(key: cron.stepsChain.key!)
+        rateTower = citadel.tower(key: cron.rateChain.key!)
+        deltaTower = citadel.tower(key: cron.deltaChain.key!)
+        whileTower = citadel.tower(key: cron.whileChain.key!)
     }
     
     override func renderDisplay(tower: Tower) -> String {

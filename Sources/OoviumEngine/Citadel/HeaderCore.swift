@@ -24,19 +24,19 @@ class HeaderCore: Core, VariableTokenDelegate {
     }
     
     func loadTokens() {
-        guard let aetherExe else { return }
-        tokens = column.chain.tokenKeys.map({ (key: TokenKey) in aetherExe.token(key: key) })
+        guard let citadel else { return }
+        tokens = column.chain.tokenKeys.map({ (key: TokenKey) in citadel.token(key: key) })
     }
 
 // Core ============================================================================================
     override var key: TokenKey { column.headerTokenKey }
     
-//    override func createTower(_ aetherExe: AetherExe) -> Tower { aetherExe.createHeaderTower(tag: key.tag, core: self, tokenDelegate: self) }
-    override func createTowerTokens(_ aetherExe: AetherExe) -> [TowerToken] { [aetherExe.towerToken(key: key, delegate: self)] }
-    override func aetherExeCompleted(_ aetherExe: AetherExe) { loadTokens() }
+//    override func createTower(_ citadel: Citadel) -> Tower { citadel.createHeaderTower(tag: key.tag, core: self, tokenDelegate: self) }
+    override func createTowerTokens(_ citadel: Citadel) -> [TowerToken] { [citadel.towerToken(key: key, delegate: self)] }
+    override func citadelCompleted(_ citadel: Citadel) { loadTokens() }
 
     override func buildUpstream(tower: Tower) {
-        aetherExe.nukeUpstream(key: column.chain.key!)
+        citadel.nukeUpstream(key: column.chain.key!)
         tokens.compactMap { $0 as? TowerToken }.forEach {
             $0.tower.attach(tower)
         }

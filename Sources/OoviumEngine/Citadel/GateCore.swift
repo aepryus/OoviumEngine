@@ -22,10 +22,10 @@ class GateCore: Core {
     override var key: TokenKey { gate.tokenKey }
     override var fog: TokenKey? { ifTower.fog ?? thenTower.fog ?? elseTower.fog }
 
-    override func aetherExeCompleted(_ aetherExe: AetherExe) {
-        ifTower = aetherExe.tower(key: gate.ifChain.key!)
-        thenTower = aetherExe.tower(key: gate.thenChain.key!)
-        elseTower = aetherExe.tower(key: gate.elseChain.key!)
+    override func citadelCompleted(_ citadel: Citadel) {
+        ifTower = citadel.tower(key: gate.ifChain.key!)
+        thenTower = citadel.tower(key: gate.thenChain.key!)
+        elseTower = citadel.tower(key: gate.elseChain.key!)
         
         ifTower.gateTo = tower
         ifTower.thenTo = thenTower
