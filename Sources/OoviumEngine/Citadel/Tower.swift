@@ -221,7 +221,7 @@ public class Tower: Hashable, CustomStringConvertible {
 		return true
 	}
     public func trigger() {
-        Tower.evaluate(towers: allDownstream())
+        Citadel.evaluate(towers: allDownstream())
     }
 	
 // Hashable ========================================================================================
@@ -241,50 +241,5 @@ public class Tower: Hashable, CustomStringConvertible {
 			{sb.append("\t\t\(tower.name)\n")}
 
 		return sb;
-	}
-	
-// Static ==========================================================================================
-    public static func allDownstream(towers: Set<Tower>) -> Set<Tower> {
-        var result: Set<Tower> = Set<Tower>()
-        towers.forEach { result.formUnion($0.allDownstream()) }
-        return result
-    }
-    public static func evaluate(towers: Set<Tower>) {
-        towers.forEach { $0.core?.resetTask(tower: $0) }
-        var progress: Bool
-        repeat {
-            progress = false
-            towers.forEach { if $0.attemptToCalculate() { progress = true } }
-        } while progress
-        notifyListeners(towers: towers)
-    }
-    public static func trigger(towers: Set<Tower>) {
-        var evaluate: Set<Tower> = Set(towers)
-        towers.forEach({ evaluate.formUnion($0.allDownstream()) })
-        Tower.evaluate(towers: evaluate)
-    }
-    
-    private static var listeners: [TokenKey:WeakListener] = [:]
-    public static func startListening(to key: TokenKey, listener: TowerListener) { listeners[key] = WeakListener(listener) }
-    static func cleanupListeners() { listeners = listeners.filter({ $1.value != nil }) }
-    public static func notifyListeners(towers: Set<Tower>) {
-        cleanupListeners()
-        towers.compactMap({ listeners[$0.variableToken.key]?.value }).forEach { $0.onTriggered() }
-    }
-
-	public static func printTowers(_ towers: WeakSet<Tower>) {
-		print("[ Towers =================================== ]\n")
-		for tower in towers { print("\(tower)") }
-		print("[ ========================================== ]\n\n")
-	}
-    public static func printTowers(_ towers: Set<Tower>) {
-        print("[ Towers =================================== ]\n")
-        for tower in towers { print("\(tower)") }
-        print("[ ========================================== ]\n\n")
-    }
-	static func printTowers(_ towers: [Tower]) {
-		print("[ Towers =================================== ]\n")
-		towers.forEach { print("\($0)") }
-		print("[ ========================================== ]\n\n")
-	}
+	}	
 }

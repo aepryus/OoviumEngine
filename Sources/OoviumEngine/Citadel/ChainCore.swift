@@ -35,7 +35,7 @@ public class ChainCore: Core, CustomStringConvertible {
     public override var naturalDisplay: String { fatalError() }
     public func edit() {
         guard let tower else { return }
-        Tower.notifyListeners(towers: [tower])
+        Citadel.notifyListeners(towers: [tower])
         AETaskRelease(tower.task)
         tower.task = AETaskCreateNull()
     }

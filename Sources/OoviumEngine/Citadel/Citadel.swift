@@ -47,13 +47,26 @@ public class Citadel {
     }
     private func build() {
         plugIn(aexons: aether.aexels)
-        Tower.evaluate(towers: Set(towers))
+        Citadel.evaluate(towers: Set(towers))
     }
-    
-// Listeners =======================================================================================
-    public func notifyListeners() { Tower.notifyListeners(towers: Set<Tower>(towers)) }
+    private func buildMemory() {
+        var vars: [String] = ["k"]
+        vars += tokens.values.filter { $0.code == .va && $0.status != .deleted }.map { $0.tag }
+        vars.sort(by: { $0.uppercased() < $1.uppercased() })
+
+        let oldMemory: UnsafeMutablePointer<Memory> = memory
+        memory = AEMemoryCreate(vars.count)
+        vars.enumerated().forEach { AEMemorySetName(memory, UInt16($0), $1.toInt8()) }
+        AEMemoryLoad(memory, oldMemory)
+        AEMemoryRelease(oldMemory)
+    }
+
 
 // Methods =========================================================================================
+    // Listeners ===================================================================================
+    public func notifyListeners() { Citadel.notifyListeners(towers: Set<Tower>(towers)) }
+    
+    // =============================================================================================
     public func canBeAdded(thisKey: TokenKey, to thatKey: TokenKey) -> Bool {
         let that: Tower = towerLookup[tokens[thatKey]!]!
         guard let thisToken: TowerToken = tokens[thisKey] else { return true }
@@ -151,21 +164,9 @@ public class Citadel {
         var towersSet: Set<Tower> = Set()
         towersArray.forEach { towersSet.formUnion($0.allDownstream()) }
         buildMemory()
-        Tower.evaluate(towers: towersSet)
+        Citadel.evaluate(towers: towersSet)
     }
     public func trigger(key: TokenKey) { trigger(keys: [key]) }
-
-    private func buildMemory() {
-        var vars: [String] = ["k"]
-        vars += tokens.values.filter { $0.code == .va && $0.status != .deleted }.map { $0.tag }
-        vars.sort(by: { $0.uppercased() < $1.uppercased() })
-
-        let oldMemory: UnsafeMutablePointer<Memory> = memory
-        memory = AEMemoryCreate(vars.count)
-        vars.enumerated().forEach { AEMemorySetName(memory, UInt16($0), $1.toInt8()) }
-        AEMemoryLoad(memory, oldMemory)
-        AEMemoryRelease(oldMemory)
-    }
     
     public func paste(array: [[String:Any]]) -> [Aexel] {
         var substitutions: [TokenKey:TokenKey] = [:]
@@ -197,5 +198,50 @@ public class Citadel {
         return aexels
     }
     
-    public func printTowers() { Tower.printTowers(towers) }
+    public func printTowers() { Citadel.printTowers(towers) }
+    
+// Static ==========================================================================================
+    public static func allDownstream(towers: Set<Tower>) -> Set<Tower> {
+        var result: Set<Tower> = Set<Tower>()
+        towers.forEach { result.formUnion($0.allDownstream()) }
+        return result
+    }
+    public static func evaluate(towers: Set<Tower>) {
+        towers.forEach { $0.core?.resetTask(tower: $0) }
+        var progress: Bool
+        repeat {
+            progress = false
+            towers.forEach { if $0.attemptToCalculate() { progress = true } }
+        } while progress
+        notifyListeners(towers: towers)
+    }
+    public static func trigger(towers: Set<Tower>) {
+        var evaluate: Set<Tower> = Set(towers)
+        towers.forEach({ evaluate.formUnion($0.allDownstream()) })
+        Citadel.evaluate(towers: evaluate)
+    }
+    
+    private static var listeners: [TokenKey:WeakListener] = [:]
+    public static func startListening(to key: TokenKey, listener: TowerListener) { listeners[key] = WeakListener(listener) }
+    static func cleanupListeners() { listeners = listeners.filter({ $1.value != nil }) }
+    public static func notifyListeners(towers: Set<Tower>) {
+        cleanupListeners()
+        towers.compactMap({ listeners[$0.variableToken.key]?.value }).forEach { $0.onTriggered() }
+    }
+
+    public static func printTowers(_ towers: WeakSet<Tower>) {
+        print("[ Towers =================================== ]\n")
+        for tower in towers { print("\(tower)") }
+        print("[ ========================================== ]\n\n")
+    }
+    public static func printTowers(_ towers: Set<Tower>) {
+        print("[ Towers =================================== ]\n")
+        for tower in towers { print("\(tower)") }
+        print("[ ========================================== ]\n\n")
+    }
+    static func printTowers(_ towers: [Tower]) {
+        print("[ Towers =================================== ]\n")
+        towers.forEach { print("\($0)") }
+        print("[ ========================================== ]\n\n")
+    }
 }
