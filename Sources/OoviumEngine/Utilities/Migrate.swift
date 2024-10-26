@@ -551,6 +551,7 @@ public class Migrate {
                             }
                         case "grid":
                             if var subArray: [[String:Any]] = aexelAtts["columns"] as? [[String:Any]] {
+                                var colNo: Int = 0
                                 for (subIndex, var subAtts): (Int, [String:Any]) in subArray.enumerated() {
                                     guard let subNo: Int = subAtts["no"] as? Int else { continue }
                                     if let tokens: String = subAtts["chain"] as? String { subAtts["chain"] = "cl:Gr\(no).Co\(subNo)::\(tokens)" }
@@ -560,7 +561,7 @@ public class Migrate {
                                         var filteredArray: [[String:Any]] = []
                                         for var cellAtts: [String:Any] in cellArray {
                                             guard let cellNo: Int = cellAtts["no"] as? Int,
-                                                  cellAtts["colNo"] as! Int == subNo - 1
+                                                  cellAtts["colNo"] as! Int == colNo
                                             else { continue }
                                             cellAtts["no"] = newCellNo
                                             if let tokens: String = cellAtts["chain"] as? String { cellAtts["chain"] = "Gr\(no).Co\(subNo).Ce\(newCellNo)::\(tokens)" }
@@ -569,6 +570,7 @@ public class Migrate {
                                             newCellNo += 1
                                         }
                                         subAtts["cells"] = filteredArray
+                                        colNo += 1
                                     }
                                     
                                     subArray[subIndex] = subAtts
@@ -583,6 +585,7 @@ public class Migrate {
                 attributes["aexels"] = aexelArray
             }
             
+            print(attributes.toJSON())
             attributes = attributes.modify(query: chainNames, convert: { (value: Any) in
                 Migrate.migrateChainTo31(value as! String, subs: subs)
             })

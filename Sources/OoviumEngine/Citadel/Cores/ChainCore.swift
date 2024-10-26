@@ -98,6 +98,7 @@ public class ChainCore: Core, CustomStringConvertible {
 // Core ===================================================================================
     override var key: TokenKey { chain.key! }
     
+    override func createTowerTokens(_ citadel: Citadel) -> [TowerToken] { [citadel.towerToken(key: key, delegate: variableTokenDelegate)] }
     override func citadelCompleted(_ citadel: Citadel) { loadTokens() }
 
     override func buildUpstream(tower: Tower) {
