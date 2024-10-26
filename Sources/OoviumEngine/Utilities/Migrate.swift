@@ -585,7 +585,6 @@ public class Migrate {
                 attributes["aexels"] = aexelArray
             }
             
-            print(attributes.toJSON())
             attributes = attributes.modify(query: chainNames, convert: { (value: Any) in
                 Migrate.migrateChainTo31(value as! String, subs: subs)
             })
