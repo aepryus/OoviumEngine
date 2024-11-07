@@ -9,8 +9,9 @@
 import Acheron
 import Foundation
 
-enum AetherLoadingError: Error {
+public enum AetherLoadingError: Error {
     case fromNewerVersion(currentVersion: String, fileVersion: String)
+    case notFound
 }
 
 fileprivate struct Subs {
