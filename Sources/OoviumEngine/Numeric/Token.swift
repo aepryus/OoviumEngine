@@ -67,7 +67,10 @@ public struct TokenKey: Hashable, CustomStringConvertible {
     public func hash(into hasher: inout Hasher) { hasher.combine(description) }
     
 // CustomStringConvertible =========================================================================
-    public var description: String { "\(code):\(tag)" }
+    public var description: String {
+        guard self != Token.neg.key else { return Token.subtract.key.description }
+        return "\(code):\(tag)"
+    }
 }
 
 public class Token: Hashable {

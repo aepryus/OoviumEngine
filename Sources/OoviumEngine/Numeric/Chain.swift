@@ -102,7 +102,6 @@ public class Chain: NSObject, Packable {
         else if noOfParams > 0 { return Token.comma.key }
         return nil
     }
-    private func minusKey(at cursor: Int) -> TokenKey { isNewSection(at: cursor) ? Token.neg.key : Token.subtract.key }
     private func isWithinBracket() -> Bool {
         var p: Int = 0
         tokenKeys.forEach { (key: TokenKey) in
@@ -125,7 +124,6 @@ public class Chain: NSObject, Packable {
     }
     public func removeKey() { tokenKeys.removeLast() }
     
-    public func minusSign(at cursor: Int) { post(key: minusKey(at: cursor), at: cursor) }
     public func parenthesis(at cursor: Int) {
         guard let parenKey = parenKey(at: cursor) else { return }
         post(key: parenKey, at: cursor)

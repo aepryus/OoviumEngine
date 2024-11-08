@@ -199,9 +199,17 @@ class Parser {
         var i: Int = i
         var token: Token = tokens[i]
 
+        /* The Token.neg / Token.subtract has gone through numerous iterations and caused major head aches.
+         Going forward Token.subtract will be the only TokenKey stored in the json documents.  Token.neg
+         will then be swapped in right here, but will only be used internal to this Parser class.
+         
+         This code will continue to check for .neg for the foreseeable future however so that old files that
+         still have it stored in the json can be handled. -- jjc 11/8/24 */
+        
         var unary: UnaryToken?
-        if let ut = token as? UnaryToken {
-            unary = ut
+        if let ut = token as? UnaryToken { unary = ut }
+        else if token == .subtract { unary = .neg }
+        if unary != nil {
             i += 1
             if (i == tokens.count) { throw ParseError.general }
             token = tokens[i]
