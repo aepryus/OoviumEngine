@@ -554,6 +554,10 @@ public class Migrate {
                             if var subArray: [[String:Any]] = aexelAtts["columns"] as? [[String:Any]] {
                                 var colNo: Int = 1
                                 for (subIndex, var subAtts): (Int, [String:Any]) in subArray.enumerated() {
+                                    guard let subNo: Int = subAtts["no"] as? Int else { continue }
+                                    
+                                    subs.append(Subs(from: "Gr\(no).Ft\(subNo)", to: "Gr\(no).Ft\(colNo)"))
+
                                     subAtts["no"] = colNo
                                     if let tokens: String = subAtts["chain"] as? String { subAtts["chain"] = "cl:Gr\(no).Co\(colNo)::\(tokens)" }
                                     
