@@ -552,22 +552,22 @@ public class Migrate {
                             }
                         case "grid":
                             if var subArray: [[String:Any]] = aexelAtts["columns"] as? [[String:Any]] {
-                                var colNo: Int = 0
+                                var colNo: Int = 1
                                 for (subIndex, var subAtts): (Int, [String:Any]) in subArray.enumerated() {
-                                    guard let subNo: Int = subAtts["no"] as? Int else { continue }
-                                    if let tokens: String = subAtts["chain"] as? String { subAtts["chain"] = "cl:Gr\(no).Co\(subNo)::\(tokens)" }
+                                    subAtts["no"] = colNo
+                                    if let tokens: String = subAtts["chain"] as? String { subAtts["chain"] = "cl:Gr\(no).Co\(colNo)::\(tokens)" }
                                     
                                     var newCellNo: Int = 1
                                     if let cellArray: [[String:Any]] = aexelAtts["cells"] as? [[String:Any]] {
                                         var filteredArray: [[String:Any]] = []
                                         for var cellAtts: [String:Any] in cellArray {
                                             guard let cellNo: Int = cellAtts["no"] as? Int,
-                                                  cellAtts["colNo"] as! Int == colNo
+                                                  cellAtts["colNo"] as! Int == colNo-1
                                             else { continue }
                                             cellAtts["no"] = newCellNo
-                                            if let tokens: String = cellAtts["chain"] as? String { cellAtts["chain"] = "Gr\(no).Co\(subNo).Ce\(newCellNo)::\(tokens)" }
+                                            if let tokens: String = cellAtts["chain"] as? String { cellAtts["chain"] = "Gr\(no).Co\(colNo).Ce\(newCellNo)::\(tokens)" }
                                             filteredArray.append(cellAtts)
-                                            subs.append(Subs(from: "Gr\(no).Ce\(cellNo)", to: "Gr\(no).Co\(subNo).Ce\(newCellNo)"))
+                                            subs.append(Subs(from: "Gr\(no).Ce\(cellNo)", to: "Gr\(no).Co\(colNo).Ce\(newCellNo)"))
                                             newCellNo += 1
                                         }
                                         subAtts["cells"] = filteredArray

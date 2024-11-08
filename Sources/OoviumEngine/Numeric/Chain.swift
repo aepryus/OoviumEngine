@@ -87,21 +87,22 @@ public class Chain: NSObject, Packable {
         guard let last: TokenKey = tokenKeys.last else { return true }
         return last.code == .op
     }
-    private var isNewSection: Bool {
-        guard let last: TokenKey = tokenKeys.last else { return true }
-        return last.tag == "(" || last.tag == "[" || last.tag == "," || last.code == .fn || last.code == .ml || last.code == .op
+    private func isNewSection(at cursor: Int) -> Bool {
+        guard tokenKeys.indices ~= (cursor - 1) else { return true }
+        let lastKey: TokenKey = tokenKeys[cursor-1]
+        return lastKey.tag == "(" || lastKey.tag == "[" || lastKey.tag == "," || lastKey.code == .fn || lastKey.code == .ml || lastKey.code == .op
     }
     private var isComplete: Bool {
         guard noOfParams > 0 else { return false }
         return currentParam == noOfParams
     }
-    private func parenKey() -> TokenKey? {
-        if lastIsOperator || isNewSection { return Token.leftParen.key }
+    private func parenKey(at cursor: Int) -> TokenKey? {
+        if lastIsOperator || isNewSection(at: cursor) { return Token.leftParen.key }
         else if isComplete { return Token.rightParen.key }
         else if noOfParams > 0 { return Token.comma.key }
         return nil
     }
-    private func minusKey() -> TokenKey { isNewSection ? Token.neg.key : Token.subtract.key }
+    private func minusKey(at cursor: Int) -> TokenKey { isNewSection(at: cursor) ? Token.neg.key : Token.subtract.key }
     private func isWithinBracket() -> Bool {
         var p: Int = 0
         tokenKeys.forEach { (key: TokenKey) in
@@ -110,8 +111,8 @@ public class Chain: NSObject, Packable {
         }
         return p != 0
     }
-    private func braketKey() -> TokenKey? {
-        if lastIsOperator || isNewSection { return Token.bra.key }
+    private func braketKey(at cursor: Int) -> TokenKey? {
+        if lastIsOperator || isNewSection(at: cursor) { return Token.bra.key }
         else if isWithinBracket() { return Token.ket.key }
         else { return nil }
     }
@@ -124,13 +125,13 @@ public class Chain: NSObject, Packable {
     }
     public func removeKey() { tokenKeys.removeLast() }
     
-    public func minusSign(at cursor: Int) { post(key: minusKey(), at: cursor) }
+    public func minusSign(at cursor: Int) { post(key: minusKey(at: cursor), at: cursor) }
     public func parenthesis(at cursor: Int) {
-        guard let parenKey = parenKey() else { return }
+        guard let parenKey = parenKey(at: cursor) else { return }
         post(key: parenKey, at: cursor)
     }
     public func braket(at cursor: Int) {
-        guard let braketKey = braketKey() else { return }
+        guard let braketKey = braketKey(at: cursor) else { return }
         post(key: braketKey, at: cursor)
     }
     private func removeKey(at cursor: Int) -> TokenKey? {
