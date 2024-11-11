@@ -74,12 +74,12 @@ public struct TokenKey: Hashable, CustomStringConvertible {
 }
 
 public class Token: Hashable {
-    public var tag: String
+    public var key: TokenKey
 
-    fileprivate init(tag: String) { self.tag = tag }
+    fileprivate init(key: TokenKey) { self.key = key }
 
-    public var code: TokenCode { fatalError() }
-    public var key: TokenKey { TokenKey(code: code, tag: tag) }
+    public var code: TokenCode { key.code }
+    public var tag: String { key.tag }
     public var display: String { tag }
 
 // Hashable ========================================================================================
@@ -208,24 +208,23 @@ public protocol Paramsable: Token { var params: Int { get set } }
 public protocol Defable: Token { var def: Def? { get set } }
 
 public class DigitToken: Token {
-    public override var code: TokenCode { .dg }
+    init(tag: String) { super.init(key: TokenKey(code: .dg, tag: tag)) }
 }
 public class CharacterToken: Token {
-    public override var code: TokenCode { .ch }
+    init(tag: String) { super.init(key: TokenKey(code: .ch, tag: tag)) }
 }
 public class SeparatorToken: Token {
-    public override var code: TokenCode { .sp }
+    init(tag: String) { super.init(key: TokenKey(code: .sp, tag: tag)) }
 }
 public class UnaryToken: Token {
-    public override var code: TokenCode { .un }
+    init(tag: String) { super.init(key: TokenKey(code: .un, tag: tag)) }
 }
 public class ConstantToken: Token, Defable {
 	public var def: Def? = nil
-    public override var code: TokenCode { .cn }
+    init(tag: String) { super.init(key: TokenKey(code: .cn, tag: tag)) }
 }
 public class KToken: Token {
-    public init() { super.init(tag: "k") }
-    public override var code: TokenCode { .va }
+    public init() { super.init(key: TokenKey(code: .va, tag: "k")) }
 }
 public class OperatorToken: Token {
     public enum Level: Int { case add, multiply, power, compare, gate }
@@ -234,9 +233,8 @@ public class OperatorToken: Token {
 	init(tag: String, alias: String? = nil, level: Level) {
 		self.alias = alias
 		self.level = level
-		super.init(tag: tag)
+        super.init(key: TokenKey(code: .op, tag: tag))
 	}
-    public override var code: TokenCode { .op }
 	public override var display: String { alias ?? tag }
 }
 public class FunctionToken: Token, Defable, Paramsable {
@@ -244,9 +242,8 @@ public class FunctionToken: Token, Defable, Paramsable {
     public var params: Int
     init(tag: String, params: Int = 1) {
         self.params = params
-        super.init(tag: tag)
+        super.init(key: TokenKey(code: .fn, tag: tag))
     }
-    public override var code: TokenCode { .fn }
     public override var display: String { "\(tag)(" }
 }
 
@@ -255,9 +252,9 @@ public class TowerToken: Token, Defable {
     public weak var tower: Tower!
     public var status: Status = .ok
     public var def: Def? = nil
-    fileprivate init(tower: Tower?, tag: String) {
+    fileprivate init(tower: Tower?, key: TokenKey) {
         self.tower = tower
-        super.init(tag: tag)
+        super.init(key: key)
     }
 }
 
@@ -275,13 +272,12 @@ public class VariableToken: TowerToken {
     var details: String?
     init(tower: Tower? = nil, tag: String, delegate: VariableTokenDelegate? = nil) {
         self.delegate = delegate
-        super.init(tower: tower, tag: tag)
+        super.init(tower: tower, key: TokenKey(code: .va, tag: tag))
     }
     
     public var value: String? { tower?.obje.display ?? "DELETED" }
     
 // Token ===========================================================================================
-    public override var code: TokenCode { .va }
     public override var display: String { details ?? alias ?? value ?? tag }
 }
 public class ColumnToken: VariableToken {
@@ -303,10 +299,9 @@ public class MechlikeToken: TowerToken, Paramsable {
 	public var params: Int = 1
     init(tower: Tower? = nil, tag: String, delegate: VariableTokenDelegate? = nil) {
         self.delegate = delegate
-        super.init(tower: tower, tag: tag)
+        super.init(tower: tower, key: TokenKey(code: .ml, tag: tag))
 	}
     
 // Token ===========================================================================================
-    public override var code: TokenCode { .ml }
 	public override var display: String { "\(alias ?? tag)(" }
 }

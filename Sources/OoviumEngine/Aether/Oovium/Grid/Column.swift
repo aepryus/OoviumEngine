@@ -110,18 +110,13 @@ public class Column: Aexon, VariableTokenDelegate {
     func addRow() -> Cell {
         let cell: Cell = Cell(column: self)
         cells.append(cell)
-        if calculated { disseminate() }
         return cell
     }
     public func move(rowNo: Int, toRowNo: Int) {
         let cell: Cell = cells.remove(at: rowNo-1)
         cells.insert(cell, at: toRowNo-1)
     }
-    func delete(rowNo: Int) -> [TokenKey] {
-        let key: TokenKey = cells[rowNo-1].chain.key!
-        cells.remove(at: rowNo-1)
-        return [key]
-    }
+    func delete(rowNo: Int) { cells.remove(at: rowNo-1) }
 
 // Aexon ===========================================================================================
     override var code: String { "Co" }

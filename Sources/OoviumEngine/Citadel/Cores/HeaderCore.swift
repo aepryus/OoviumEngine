@@ -25,7 +25,7 @@ class HeaderCore: Core {
     
     func loadTokens() {
         guard let citadel else { return }
-        tokens = column.chain.tokenKeys.map({ (key: TokenKey) in citadel.token(key: key) })
+        tokens = column.chain.tokenKeys.map({ (key: TokenKey) in citadel.anyToken(key: key) })
     }
 
 // Core ============================================================================================

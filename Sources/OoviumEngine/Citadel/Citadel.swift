@@ -13,13 +13,12 @@ import Foundation
 public class Citadel {
     unowned let aether: Aether
     
-    private var tokens: [TokenKey:TowerToken] = [:]
     private var towers: [Tower] = []
-    private var towerLookup: [TowerToken:Tower] = [:]
+    private var tokens: [TokenKey:TowerToken] = [:]
+    private var cores: [TokenKey:Core] = [:]
+    
     public private(set) var memory: UnsafeMutablePointer<Memory> = AEMemoryCreate(0)
     
-    var cores: [TokenKey:Core] = [:]
-
     init(aether: Aether) {
         self.aether = aether
         build()
@@ -27,9 +26,8 @@ public class Citadel {
     deinit { AEMemoryRelease(memory) }
 
 // Computed ========================================================================================
-    private func tower(for token: TowerToken) -> Tower { towerLookup[token]! }
-    private func token(for key: TokenKey) -> TowerToken { tokens[key]! }
-    private func tower(for key: TokenKey) -> Tower { tower(for: token(for: key)) }
+    private func towerToken(key: TokenKey) -> TowerToken { tokens[key]! }
+    public func tower(key: TokenKey) -> Tower? { tokens[key]?.tower }
 
 // TokenKeys =======================================================================================
     public func chainCore(key: TokenKey) -> ChainCore { (cores[key] as! ChainCore) }
@@ -41,7 +39,6 @@ public class Citadel {
     private func reset() {
         tokens = [:]
         towers = []
-        towerLookup = [:]
         AEMemoryRelease(memory)
         memory = AEMemoryCreate(0)
     }
@@ -59,7 +56,6 @@ public class Citadel {
                 if let variableToken: VariableToken = token as? VariableToken { tower.variableToken = variableToken }
                 else if let mechlikeToken: MechlikeToken = token as? MechlikeToken { tower.mechlikeToken = mechlikeToken }
                 token.tower = tower
-                towerLookup[token] = tower
             }
             self.towers.append(tower)
             towers.append(tower)
@@ -79,7 +75,7 @@ public class Citadel {
         AEMemoryRelease(oldMemory)
     }
 
-    private func nukeUpstrean(tower: Tower) {
+    private func nukeUpstream(tower: Tower) {
         tower.upstream.forEach { $0.downstream.nuke(tower: tower) }
         tower.upstream.nukeAll()
     }
@@ -96,40 +92,57 @@ public class Citadel {
         buildMemory()
     }
     public func increment(key: TokenKey, dependenceOn: TokenKey) {
-        let keyTower: Tower = tower(for: key)
-        let dependsOnTower: Tower = tower(for: dependenceOn)
+        let keyTower: Tower = tower(key: key)!
+        let dependsOnTower: Tower = tower(key: dependenceOn)!
         keyTower.upstream.increment(tower: dependsOnTower)
         dependsOnTower.downstream.increment(tower: keyTower)
     }
     public func decrement(key: TokenKey, dependenceOn: TokenKey) {
-        let keyTower: Tower = tower(for: key)
-        let dependsOnTower: Tower = tower(for: dependenceOn)
+        let keyTower: Tower = tower(key: key)!
+        let dependsOnTower: Tower = tower(key: dependenceOn)!
         keyTower.upstream.decrement(tower: dependsOnTower)
         dependsOnTower.downstream.decrement(tower: keyTower)
     }
     
-    public func nukeUpstream(key: TokenKey) { nukeUpstrean(tower: tower(for: key)) }
+    public func nukeUpstream(key: TokenKey) { nukeUpstream(tower: tower(key: key)!) }
     public func nuke(key: TokenKey) {
-        guard let token: TowerToken = tokens[key],
-              let tower: Tower = towerLookup[token]
-        else { fatalError() }
-
-        nukeUpstrean(tower: tower)
+        let tower: Tower = tower(key: key)!
+        nukeUpstream(tower: tower)
         towers.remove(object: tower)
-        towerLookup[token] = nil
         tokens[key] = nil
         cores[key] = nil
     }
     public func nuke(keys: [TokenKey]) { keys.forEach { nuke(key: $0) } }
+    public func rekey(subs: [TokenKey:TokenKey?]) {
+        var newTokens: [TokenKey:TowerToken] = [:]
+        var newCores: [TokenKey:Core] = [:]
+        subs.forEach { (tokenKey: TokenKey, value: TokenKey?) in
+            if let newTokenKey: TokenKey = value {
+                let token: TowerToken = tokens[tokenKey]!
+                token.key = newTokenKey
+                newTokens[newTokenKey] = token
+                tokens[tokenKey] = nil
+                newCores[newTokenKey] = cores[tokenKey]
+                cores[tokenKey] = nil
+                
+            } else { nuke(key: tokenKey) }
+        }
+        tokens.merge(newTokens) { (_,_) in fatalError() }
+        cores.merge(newCores) { (_,_) in fatalError() }
+    }
+    public func reevaluate() {
+        reset()
+        build()
+    }
 
     // Query =======================================================================================
-    public func token(key: TokenKey) -> Token { tokens[key] ?? Token.token(key: key) ?? .zero }
-    public func value(key: TokenKey) -> String? { (token(key: key) as? VariableToken)?.value }
+    public func anyToken(key: TokenKey) -> Token { tokens[key] ?? Token.token(key: key) ?? .zero }
+    public func value(key: TokenKey) -> String? { (anyToken(key: key) as? VariableToken)?.value }
     public func inAFog(key: TokenKey) -> Bool { tower(key: key)?.fog != nil }
     public func canBeAdded(thisKey: TokenKey, to thatKey: TokenKey) -> Bool {
-        let that: Tower = towerLookup[tokens[thatKey]!]!
-        guard let thisToken: TowerToken = tokens[thisKey] else { return true }
-        let this: Tower = towerLookup[thisToken]!
+        guard let that: Tower = tower(key: thatKey),
+              let this: Tower = tower(key: thisKey)
+        else { return true }
         if that.downstream(contains: this) { return false }
         guard let thisFog: TokenKey = this.fog, let thatFog: TokenKey = that.fog else { return true }
         return thisFog == thatFog
@@ -195,10 +208,6 @@ public class Citadel {
         }
         tokens[key] = token
         return token
-    }
-    public func tower(key: TokenKey) -> Tower? {
-        guard let token: TowerToken = tokens[key] else { return nil }
-        return towerLookup[token]
     }
     
 // Static ==========================================================================================

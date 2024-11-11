@@ -17,7 +17,7 @@ public class Cell: Aexon {
 // Inits ===========================================================================================
 	public required init(column: Column) {
         super.init(parent: column)
-        chain = Chain(key: tokenKey)
+        chain = Chain(key: TokenKey(code: .va, tag: "\(column.fullKey).\(code)\(column.cells.count+1)"))
 	}
 	public required init(attributes: [String:Any], parent: Domain?) {
 		super.init(attributes: attributes, parent: parent)
@@ -32,6 +32,7 @@ public class Cell: Aexon {
 
 // Aexon ===========================================================================================
     override var code: String { "Ce" }
+    override var key: String { "\(code)\(rowNo)" }
     public override var tokenKeys: [TokenKey] { [tokenKey] }
     override func createCores() -> [Core] { [ChainCore(chain: chain)] }
     public override var chains: [Chain] { [chain] }

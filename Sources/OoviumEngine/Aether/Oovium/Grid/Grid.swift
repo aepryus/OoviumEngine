@@ -55,14 +55,27 @@ public class Grid: Aexel {
     public func cellsForColumn(colNo: Int) -> [Cell] { column(colNo: colNo).cells }
     public func addRow() -> [Cell] {
         rows += 1
-
-        return columns.map({ $0.addRow() })
+        let cells: [Cell] = columns.map({ $0.addRow() })
+        columns.forEach { $0.disseminate() }
+        return cells
     }
-    public func delete(rowNo: Int) -> [TokenKey] {
+    public func delete(rowNo: Int) -> [TokenKey:TokenKey?] {
+        var subs: [TokenKey:TokenKey?] = [:]
+        columns.forEach {
+            subs[$0.cell(rowNo: rowNo).chain.key!] = TokenKey?.none
+            $0.delete(rowNo: rowNo)
+        }
         rows -= 1
-        var keys: [TokenKey] = []
-        columns.forEach { keys += $0.delete(rowNo: rowNo) }
-        return keys
+        if rowNo <= rows {
+            columns.forEach {
+                for j in rowNo...rows {
+                    let cell: Cell = $0.cell(rowNo: j)
+                    subs[cell.chain.key!] = cell.tokenKey
+                }
+            }
+        }
+        aether.rekey(subs: subs)
+        return subs
     }
     public func move(rowNo: Int, toRowNo: Int) { columns.forEach { $0.move(rowNo: rowNo, toRowNo: toRowNo) } }
 	

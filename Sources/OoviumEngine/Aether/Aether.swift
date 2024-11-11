@@ -29,9 +29,28 @@ import Foundation
 		load(attributes: attributes)
 	}
     
+    var chains: [Chain] { aexels.flatMap({ $0.chains }) }
+    
     func newNo(type: String) -> Int { (aexels.filter({ $0.type == type }).map({ $0.no }).max() ?? 0) + 1 }
     
     public func compile() -> Citadel { Citadel(aether: self) }
+    
+    func rekey(subs: [TokenKey:TokenKey?]) {
+        chains.forEach { (chain: Chain) in
+            chain.key = subs[chain.key!] ?? chain.key
+            chain.tokenKeys = chain.tokenKeys.map({ (tokenKey: TokenKey) in
+                if let subNil: TokenKey? = subs[tokenKey] {
+                    if let sub: TokenKey = subNil {
+                        return sub
+                    } else {
+                        fatalError()
+                    }
+                } else {
+                    return tokenKey
+                }
+            })
+        }
+    }
 
 // Aexels ==========================================================================================
 	public func addAexel(_ aexel: Aexel) {

@@ -56,7 +56,7 @@ public class ChainCore: Core, CustomStringConvertible {
 // Calculate =======================================================================================
     func loadTokens() {
         guard let citadel else { return }
-        tokens = chain.tokenKeys.map({ (key: TokenKey) in citadel.token(key: key) })
+        tokens = chain.tokenKeys.map({ (key: TokenKey) in citadel.anyToken(key: key) })
     }
     public func calculate(vars: [String:Obje] = [:]) -> Obj? {
         let aether: Aether = Aether()

@@ -79,7 +79,7 @@ class FooterCore: Core {
     private func compileMTC() -> UnsafeMutablePointer<Lambda>? {
         guard let tower: Tower = citadel.tower(key: column.footerTokenKey) else { return nil }
         let chain: Chain = column.footerChain
-        tokens = chain.tokenKeys.map({ (key: TokenKey) in citadel.token(key: key) })
+        tokens = chain.tokenKeys.map({ (key: TokenKey) in citadel.anyToken(key: key) })
         let (lambda, lastMorphNo) = Parser.compile(tokens: tokens, tokenKey: chain.key, memory: tower.memory)
         if let lambda {
             if tower.variableToken.status == .invalid { tower.variableToken.status = .ok }
@@ -128,7 +128,7 @@ class FooterCore: Core {
     }
     func loadTokens() {
         guard let citadel else { return }
-        tokens = column.footerChain.tokenKeys.map({ (key: TokenKey) in citadel.token(key: key) })
+        tokens = column.footerChain.tokenKeys.map({ (key: TokenKey) in citadel.anyToken(key: key) })
     }
 
     // Core ========================================================================================
