@@ -31,9 +31,7 @@ public class Grid: Aexel {
 	
 	public var equalMode: EqualMode = .close
 	
-	public var hasFooter: Bool {
-		return columns.first { $0.aggregate != .none && $0.aggregate != .running } != nil
-	}
+    public var hasFooter: Bool { columns.first { $0.aggregate != .none && $0.aggregate != .running } != nil }
 
 // Inits ===========================================================================================
 	public required init(at: V2, aether: Aether) {
@@ -77,22 +75,61 @@ public class Grid: Aexel {
         aether.rekey(subs: subs)
         return subs
     }
-    public func move(rowNo: Int, toRowNo: Int) { columns.forEach { $0.move(rowNo: rowNo, toRowNo: toRowNo) } }
+    public func move(rowNo: Int, toRowNo: Int) -> [TokenKey:TokenKey?] {
+        columns.forEach { $0.move(rowNo: rowNo, toRowNo: toRowNo) }
+        
+        var subs: [TokenKey:TokenKey?] = [:]
+        columns.forEach { (column: Column) in
+            for i: Int in min(rowNo, toRowNo)...max(rowNo, toRowNo) {
+                let cell: Cell = column.cells[i-1]
+                subs[cell.chain.key!] = cell.tokenKey
+            }
+        }
+        
+        aether.rekey(subs: subs)
+        
+        return subs
+
+    }
 	
 	public func addColumn() -> Column {
         let column: Column = Column(grid: self)
         columns.append(column)
         return column
 	}
-	public func deleteColumn(_ column: Column) -> [TokenKey] {
-        let keys: [TokenKey] = column.tokenKeys
-        columns.remove(object: column)
-        return keys
+	public func deleteColumn(_ column: Column) -> [TokenKey:TokenKey?] {
+        var subs: [TokenKey:TokenKey?] = [:]
+
+        column.tokenKeys.forEach { subs[$0] = TokenKey?.none }
+        var i: Int = columns.firstIndex(of: column)!
+        columns.remove(at: i)
+        
+        while i < columns.count {
+            let column: Column = columns[i]
+            subs[column.chain.key!] = column.headerTokenKey
+            subs[column.footerChain.key!] = column.footerTokenKey
+            column.cells.forEach { subs[$0.chain.key!] = $0.tokenKey }
+            i += 1
+        }
+
+        aether.rekey(subs: subs)
+        
+        return subs
 	}
-	public func move(column: Column, to: Int) {
+	public func move(column: Column, to: Int) -> [TokenKey:TokenKey?] {
 		let from = column.colNo
 		columns.remove(at: from-1)
 		columns.insert(column, at: to)
+        
+        var subs: [TokenKey:TokenKey?] = [:]
+        for i: Int in min(from, to)...max(from, to) {
+            let column: Column = columns[i-1]
+            subs[column.chain.key!] = column.headerTokenKey
+            subs[column.footerChain.key!] = column.footerTokenKey
+            column.cells.forEach { subs[$0.chain.key!] = $0.tokenKey }
+        }
+        aether.rekey(subs: subs)
+        return subs
 	}
 	
     public func cell(colNo: Int, rowNo: Int) -> Cell { columns[colNo-1].cells[rowNo-1] }

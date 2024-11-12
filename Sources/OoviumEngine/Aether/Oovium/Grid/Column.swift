@@ -30,20 +30,19 @@ public class Column: Aexon, VariableTokenDelegate {
 	public var _footerWidth: Double? = nil
     
     public var headerTokenKey: TokenKey { TokenKey(code: .cl, tag: fullKey) }
-    public var footerTokenKey: TokenKey { TokenKey(code: .va, tag: "\(grid.key).Ft\(no)") }
+    public var footerTokenKey: TokenKey { TokenKey(code: .va, tag: "\(grid.key).Ft\(colNo)") }
     
 	public var grid: Grid { parent as! Grid }
     public var calculated: Bool = false
 	public var hasFooter: Bool { aggregate != .none && aggregate != .running }
-    public var colNo: Int { grid.columns.firstIndex(of: self)! + 1 }
+    public var colNo: Int { (grid.columns.firstIndex(of: self) ?? grid.columns.count) + 1 }
 	
 // Inits ===========================================================================================
 	public init(grid: Grid) {
         super.init(parent: grid)
-		parent = grid
         name = Grid.name(n: no)
         chain = Chain(key: headerTokenKey)
-        
+
         for _ in 0..<grid.rows { cells.append(Cell(column: self)) }
 	}
 	public required init(attributes: [String:Any], parent: Domain?) {
@@ -106,7 +105,7 @@ public class Column: Aexon, VariableTokenDelegate {
     }
     public func cellKeys() -> [TokenKey] { cells.map({ $0.chain.key! }) }
     
-    func rowNo(for cell: Cell) -> Int { cells.firstIndex(of: cell)!+1 }
+    func rowNo(for cell: Cell) -> Int { (cells.firstIndex(of: cell) ?? cells.count) + 1 }
     func addRow() -> Cell {
         let cell: Cell = Cell(column: self)
         cells.append(cell)
@@ -120,6 +119,7 @@ public class Column: Aexon, VariableTokenDelegate {
 
 // Aexon ===========================================================================================
     override var code: String { "Co" }
+    override var key: String { "\(code)\(colNo)" }
     public override var tokenKeys: [TokenKey] {
         cells.flatMap({ $0.tokenKeys }) + [
             headerTokenKey,
@@ -131,7 +131,7 @@ public class Column: Aexon, VariableTokenDelegate {
          FooterCore(column: self)
         ] + cells.flatMap({ $0.createCores() })
     }
-    override var chains: [Chain] { [chain] + cells.map({ $0.chain }) }
+    override var chains: [Chain] { [chain, footerChain] + cells.map({ $0.chain }) }
     public override func newNo(type: String) -> Int { maxCellNo + 1 }
 
 // Domain ==========================================================================================
