@@ -119,7 +119,7 @@ public class Grid: Aexel {
 	public func move(column: Column, to: Int) -> [TokenKey:TokenKey?] {
 		let from = column.colNo
 		columns.remove(at: from-1)
-		columns.insert(column, at: to)
+		columns.insert(column, at: to-1)
         
         var subs: [TokenKey:TokenKey?] = [:]
         for i: Int in min(from, to)...max(from, to) {
