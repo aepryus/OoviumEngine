@@ -18,6 +18,8 @@ public class Text: Aexel, NSCopying {
 	@objc public var shape: Shape = .ellipse
 	
 	@objc public var edges: [Edge] = []
+    
+    public var tokenKey: TokenKey { TokenKey(code: .tx, tag: key) }
 	
 	public var outputEdges: [Edge] { aether.outputEdges(for: self) }
 	
@@ -36,6 +38,10 @@ public class Text: Aexel, NSCopying {
 	public override func onDelete() {
         outputEdges.forEach { if let text = $0.text { text.unlinkTo(self) } }
 	}
+    
+// Aexon ===========================================================================================
+    public override var code: String { "Tx" }
+    public override var tokenKeys: [TokenKey] { [tokenKey] }
 
 // Domain ==========================================================================================
 	public override var properties: [String] { super.properties + ["color", "shape"] }

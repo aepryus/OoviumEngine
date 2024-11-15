@@ -30,13 +30,13 @@ import Acheron
 import Foundation
 
 public enum TokenCode: CaseIterable {
-    case dg, ch, sp, cn, un, op, fn, va, cl, ml, pr
+    case dg, ch, sp, cn, un, op, fn, va, cl, ml, pr, tx
     
     var hasTower: Bool {
         switch self {
             case .va, .cl, .ml, .pr:
                 return true
-            case .dg, .ch, .sp, .cn, .un, .op, .fn:
+            case .dg, .ch, .sp, .cn, .un, .op, .fn, .tx:
                 return false
         }
     }
