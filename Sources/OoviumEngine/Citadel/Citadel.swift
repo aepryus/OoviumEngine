@@ -106,7 +106,7 @@ public class Citadel {
     
     public func nukeUpstream(key: TokenKey) { nukeUpstream(tower: tower(key: key)!) }
     public func nuke(key: TokenKey) {
-        let tower: Tower = tower(key: key)!
+        guard let tower: Tower = tower(key: key) else { return }
         nukeUpstream(tower: tower)
         towers.remove(object: tower)
         tokens[key] = nil
@@ -148,7 +148,7 @@ public class Citadel {
         return thisFog == thatFog
     }
     public func nukable(keys: [TokenKey]) -> Bool {
-        let towers: Set<Tower> = Set(keys.map({ tower(key: $0)! }))
+        let towers: Set<Tower> = Set(keys.compactMap({ tower(key: $0) }))
         let downstream: Set<Tower> = Set(towers.flatMap({ $0.downstream.towersSet }))
         return downstream.isSubset(of: towers)
     }
@@ -187,6 +187,19 @@ public class Citadel {
             $0.key = substitutions[$0.key!] ?? $0.key
             $0.tokenKeys = $0.tokenKeys.map({ substitutions[$0] ?? $0 })
         })
+        
+        // Handling Text Links
+        let texts: [Text] = aexels.compactMap({ $0 as? Text })
+        var textsLookup: [TokenKey:Text] = [:]
+        texts.forEach({ textsLookup[$0.tokenKey] = $0 })
+        texts.forEach { (text: Text) in
+            text.edges.forEach({ (edge: Edge) in
+                let oldKey: TokenKey = TokenKey(code: .tx, tag: "Tx\(edge.textNo)")
+                if let newKey: TokenKey = substitutions[oldKey], let newText: Text = textsLookup[newKey] {
+                    edge.textNo = newText.no
+                }
+            })
+        }
         
         reset()
         build()
