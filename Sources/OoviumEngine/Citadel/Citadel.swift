@@ -164,18 +164,31 @@ public class Citadel {
     public func trigger(key: TokenKey) { trigger(keys: [key]) }
 
     // Utility =====================================================================================
-    public func paste(array: [[String:Any]]) -> [Aexel] {
+    public func paste(array: [[String:Any]], at v2: V2) -> [Aexel] {
         var substitutions: [TokenKey:TokenKey] = [:]
         var aexels: [Aexel] = []
         let tempAether: Aether = Aether()
+        
+        var minX: Double! = nil
+        var maxX: Double! = nil
+        var minY: Double! = nil
+        var maxY: Double! = nil
+        array.forEach { (attributes: [String:Any]) in
+            let x: Double = attributes["x"] as! Double
+            let y: Double = attributes["y"] as! Double
+            if minX == nil || x < minX { minX = x }
+            if maxX == nil || x > maxX { maxX = x }
+            if minY == nil || y < minY { minY = y }
+            if maxY == nil || y > maxY { maxY = y }
+        }
         array.forEach { (attributes: [String:Any]) in
             var attributes = attributes
             var aexel: Aexel = Loom.domain(attributes: attributes, parent: tempAether) as! Aexel
             let fromKeys: [TokenKey] = aexel.tokenKeys.sorted(by: { $0.description < $1.description })
             attributes["no"] = aether.newNo(type: aexel.type)
             aexel = Loom.domain(attributes: attributes, parent: aether, replicate: true) as! Aexel
-            aexel.x += 25
-            aexel.y += 25
+            aexel.x = v2.x - (maxX-minX)/2 + (aexel.x-minX)
+            aexel.y = v2.y - (maxY-minY)/2 + (aexel.y-minY)
             let toKeys: [TokenKey] = aexel.tokenKeys.sorted(by: { $0.description < $1.description })
             aether.addAexel(aexel)
             for i in 0..<fromKeys.count { substitutions[fromKeys[i]] = toKeys[i] }
@@ -247,6 +260,7 @@ public class Citadel {
     private static var listeners: [TokenKey:WeakListener] = [:]
     public static func startListening(to key: TokenKey, listener: TowerListener) { listeners[key] = WeakListener(listener) }
     static func cleanupListeners() { listeners = listeners.filter({ $1.value != nil }) }
+    public static func nukeListeners() { listeners = [:] }
     public static func notifyListeners(towers: Set<Tower>) {
         cleanupListeners()
         towers.compactMap({ listeners[$0.variableToken.key]?.value }).forEach { $0.onTriggered() }
