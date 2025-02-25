@@ -93,6 +93,8 @@ enum ParseError: Error {
 }
 
 public final class Chain: NSObject, Packable, TowerDelegate {
+    public var key: String? = nil
+    
 	public var tokens: [Token] = []
 	public var tower: Tower!
 	
@@ -116,16 +118,21 @@ public final class Chain: NSObject, Packable, TowerDelegate {
 	}
 
 // Packable ========================================================================================
-	public init(_ tokensString: String) {
-		guard !tokensString.isEmpty else { return }
-		loadedKeys = tokensString.components(separatedBy: ";")
+	public init(_ chainString: String) {
+        var chainString = chainString
+        if let index = chainString.loc(of: "::") {
+            key = chainString[..<index]
+            chainString.removeFirst(index+2)
+        } else { key = nil }
+		guard !chainString.isEmpty else { return }
+        if !chainString.isEmpty { loadedKeys = chainString.components(separatedBy: ";").map({ $0 }) }
 		cursor = loadedKeys!.count
 	}
 	public func pack() -> String {
-		var sb: String = ""
-		tokens.forEach { sb.append("\($0.key);") }
-		if sb.count > 0 { sb.remove(at: sb.index(before: sb.endIndex)) }
-		return sb
+        var chainString: String = ""
+        if let key { chainString += "\(key)::" }
+        chainString += tokens.map({ $0.key }).joined(separator: ";")
+        return chainString
 	}
 	
 // Private =========================================================================================
