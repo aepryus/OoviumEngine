@@ -31,3 +31,7 @@ public struct V2 {
 
 	public static let zero: V2 = V2(0, 0)
 }
+
+public extension CGPoint {
+    var v2: V2 { V2(x, y) }
+}

@@ -41,6 +41,8 @@ Obj AEObjString(char* string) {
     // Added because of a crash when using strings in an if() function.  This can be removed when the if is fixed.
     if (strlen(string) > 0)
         strcpy(obj.a.p, string);
+    else
+        ((char*)obj.a.p)[0] = 0;
 	obj.type = AETypeString;
 	return obj;
 }
@@ -335,7 +337,7 @@ Lambda* AELambdaCreate(mnimi vi, Obj* constants, byte cn, mnimi* variables, byte
 		lambda->variables = (mnimi*)malloc(0);
 		lambda->vn = 0;
 		lambda->morphs = (byte*)malloc(sizeof(byte));
-		lambda->morphs[0] = AEMorphNumCns;
+		lambda->morphs[0] = MorphNumCns;
 		lambda->mn = 1;
 		lambda->label = 0;
 	}
@@ -409,207 +411,207 @@ Obj AELambdaExecute(Lambda* lambda, Memory* memory) {
 	
 	for (int i=0;i<lambda->mn;i++) {
 		switch (lambda->morphs[i]) {
-			case AEMorphAdd: {
+			case MorphAdd: {
 				lmb->stack[lmb->sp-2].a.x += lmb->stack[lmb->sp-1].a.x;
 				lmb->sp--;
 			} break;
 
-			case AEMorphSub: {
+			case MorphSub: {
 				lmb->stack[lmb->sp-2].a.x -= lmb->stack[lmb->sp-1].a.x;
 				lmb->sp--;
 			} break;
 
-			case AEMorphMul: {
+			case MorphMul: {
 				lmb->stack[lmb->sp-2].a.x *= lmb->stack[lmb->sp-1].a.x;
 				lmb->sp--;
 			} break;
 
-			case AEMorphDiv: {
+			case MorphDiv: {
 				lmb->stack[lmb->sp-2].a.x /= lmb->stack[lmb->sp-1].a.x;
 				lmb->sp--;
 			} break;
 
-			case AEMorphMod: {
+			case MorphMod: {
 				lmb->stack[lmb->sp-2].a.x = (int)lmb->stack[lmb->sp-2].a.x % (int)lmb->stack[lmb->sp-1].a.x;
 				lmb->sp--;
 			} break;
 				
-			case AEMorphPow: {
+			case MorphPow: {
 				lmb->stack[lmb->sp-2].a.x = pow(lmb->stack[lmb->sp-2].a.x,lmb->stack[lmb->sp-1].a.x);
 				lmb->sp--;
 			} break;
 
-			case AEMorphEqual: {
+			case MorphEqual: {
 				lmb->stack[lmb->sp-2].a.x = (lmb->stack[lmb->sp-2].a.x == lmb->stack[lmb->sp-1].a.x);
 				lmb->sp--;
 			} break;
 
-			case AEMorphNotEqual: {
+			case MorphNotEqual: {
 				lmb->stack[lmb->sp-2].a.x = (lmb->stack[lmb->sp-2].a.x != lmb->stack[lmb->sp-1].a.x);
 				lmb->sp--;
 			} break;
 				
-			case AEMorphLessThan: {
+			case MorphLessThan: {
 				lmb->stack[lmb->sp-2].a.x = (lmb->stack[lmb->sp-2].a.x < lmb->stack[lmb->sp-1].a.x);
 				lmb->sp--;
 			} break;
 
-			case AEMorphLessThanOrEqual: {
+			case MorphLessThanOrEqual: {
 				lmb->stack[lmb->sp-2].a.x = (lmb->stack[lmb->sp-2].a.x <= lmb->stack[lmb->sp-1].a.x);
 				lmb->sp--;
 			} break;
 
-			case AEMorphGreaterThan: {
+			case MorphGreaterThan: {
 				lmb->stack[lmb->sp-2].a.x = (lmb->stack[lmb->sp-2].a.x > lmb->stack[lmb->sp-1].a.x);
 				lmb->sp--;
 			} break;
 
-			case AEMorphGreaterThanOrEqual: {
+			case MorphGreaterThanOrEqual: {
 				lmb->stack[lmb->sp-2].a.x = (lmb->stack[lmb->sp-2].a.x >= lmb->stack[lmb->sp-1].a.x);
 				lmb->sp--;
 			} break;
 				
-			case AEMorphAnd: {
+			case MorphAnd: {
 				lmb->stack[lmb->sp-2].a.x = (lmb->stack[lmb->sp-2].a.x && lmb->stack[lmb->sp-1].a.x);
 				lmb->sp--;
 			} break;
 
-			case AEMorphOr: {
+			case MorphOr: {
 				lmb->stack[lmb->sp-2].a.x = (lmb->stack[lmb->sp-2].a.x || lmb->stack[lmb->sp-1].a.x);
 				lmb->sp--;
 			} break;
 
-			case AEMorphNeg: {
+			case MorphNeg: {
 				lmb->stack[lmb->sp-1].a.x = -lmb->stack[lmb->sp-1].a.x;
 			} break;
 
-			case AEMorphNot: {
+			case MorphNot: {
 				lmb->stack[lmb->sp-1].a.x = !lmb->stack[lmb->sp-1].a.x;
 			} break;
 				
-			case AEMorphAbs: {
+			case MorphAbs: {
 				lmb->stack[lmb->sp-1].a.x = fabs(lmb->stack[lmb->sp-1].a.x);
 			} break;
 				
-			case AEMorphRound: {
+			case MorphRound: {
 				lmb->stack[lmb->sp-1].a.x = round(lmb->stack[lmb->sp-1].a.x);
 			} break;
 				
-			case AEMorphFloor: {
+			case MorphFloor: {
 				lmb->stack[lmb->sp-1].a.x = floor(lmb->stack[lmb->sp-1].a.x);
 			} break;
 				
-			case AEMorphSqrt: {
+			case MorphSqrt: {
 				lmb->stack[lmb->sp-1].a.x = sqrt(lmb->stack[lmb->sp-1].a.x);
 			} break;
 				
-			case AEMorphFac: {
+			case MorphFac: {
 				int i = lmb->stack[lmb->sp-1].a.x;
 				double n = 1;
 				while (i>1) n *= i--;
 				lmb->stack[lmb->sp-1].a.x = n;
 			} break;
 				
-			case AEMorphExp: {
+			case MorphExp: {
 				lmb->stack[lmb->sp-1].a.x = exp(lmb->stack[lmb->sp-1].a.x);
 			} break;
 				
-			case AEMorphLn: {
+			case MorphLn: {
 				lmb->stack[lmb->sp-1].a.x = log(lmb->stack[lmb->sp-1].a.x);
 			} break;
 				
-			case AEMorphLog: {
+			case MorphLog: {
 				lmb->stack[lmb->sp-1].a.x = log10(lmb->stack[lmb->sp-1].a.x);
 			} break;
 				
-			case AEMorphTen: {
+			case MorphTen: {
 				lmb->stack[lmb->sp-1].a.x = pow(10, lmb->stack[lmb->sp-1].a.x);
 			} break;
 				
-			case AEMorphTwo: {
+			case MorphTwo: {
 				lmb->stack[lmb->sp-1].a.x = pow(2, lmb->stack[lmb->sp-1].a.x);
 			} break;
 				
-			case AEMorphLog2: {
+			case MorphLog2: {
 				lmb->stack[lmb->sp-1].a.x = log2(lmb->stack[lmb->sp-1].a.x);
 			} break;
 				
-			case AEMorphSin: {
+			case MorphSin: {
 				lmb->stack[lmb->sp-1].a.x = sin(lmb->stack[lmb->sp-1].a.x);
 			} break;
 				
-			case AEMorphCos: {
+			case MorphCos: {
 				lmb->stack[lmb->sp-1].a.x = cos(lmb->stack[lmb->sp-1].a.x);
 			} break;
 				
-			case AEMorphTan: {
+			case MorphTan: {
 				lmb->stack[lmb->sp-1].a.x = tan(lmb->stack[lmb->sp-1].a.x);
 			} break;
 				
-			case AEMorphAsin: {
+			case MorphAsin: {
 				lmb->stack[lmb->sp-1].a.x = asin(lmb->stack[lmb->sp-1].a.x);
 			} break;
 				
-			case AEMorphAcos: {
+			case MorphAcos: {
 				lmb->stack[lmb->sp-1].a.x = acos(lmb->stack[lmb->sp-1].a.x);
 			} break;
 				
-			case AEMorphAtan: {
+			case MorphAtan: {
 				lmb->stack[lmb->sp-1].a.x = atan(lmb->stack[lmb->sp-1].a.x);
 			} break;
 				
-			case AEMorphSec: {
+			case MorphSec: {
 				lmb->stack[lmb->sp-1].a.x = 1/cos(lmb->stack[lmb->sp-1].a.x);
 			} break;
 				
-			case AEMorphCsc: {
+			case MorphCsc: {
 				lmb->stack[lmb->sp-1].a.x = 1/sin(lmb->stack[lmb->sp-1].a.x);
 			} break;
 				
-			case AEMorphCot: {
+			case MorphCot: {
 				lmb->stack[lmb->sp-1].a.x = 1/tan(lmb->stack[lmb->sp-1].a.x);
 			} break;
 				
-			case AEMorphSinh: {
+			case MorphSinh: {
 				lmb->stack[lmb->sp-1].a.x = sinh(lmb->stack[lmb->sp-1].a.x);
 			} break;
 				
-			case AEMorphCosh: {
+			case MorphCosh: {
 				lmb->stack[lmb->sp-1].a.x = cosh(lmb->stack[lmb->sp-1].a.x);
 			} break;
 				
-			case AEMorphTanh: {
+			case MorphTanh: {
 				lmb->stack[lmb->sp-1].a.x = tanh(lmb->stack[lmb->sp-1].a.x);
 			} break;
 				
-			case AEMorphAsinh: {
+			case MorphAsinh: {
 				lmb->stack[lmb->sp-1].a.x = asinh(lmb->stack[lmb->sp-1].a.x);
 			} break;
 				
-			case AEMorphAcosh: {
+			case MorphAcosh: {
 				lmb->stack[lmb->sp-1].a.x = acosh(lmb->stack[lmb->sp-1].a.x);
 			} break;
 				
-			case AEMorphAtanh: {
+			case MorphAtanh: {
 				lmb->stack[lmb->sp-1].a.x = atanh(lmb->stack[lmb->sp-1].a.x);
 			} break;
 				
-			case AEMorphIf: {
+			case MorphIf: {
 				lmb->stack[lmb->sp-3].a.x = lmb->stack[lmb->sp-3].a.x ? lmb->stack[lmb->sp-2].a.x : lmb->stack[lmb->sp-1].a.x;
 				lmb->sp -= 2;
 			} break;
 
-			case AEMorphMin: {
+			case MorphMin: {
 				lmb->stack[lmb->sp-2].a.x = lmb->stack[lmb->sp-2].a.x < lmb->stack[lmb->sp-1].a.x ? lmb->stack[lmb->sp-2].a.x : lmb->stack[lmb->sp-1].a.x;
 				lmb->sp--;
 			} break;
 				
-			case AEMorphMax: {
+			case MorphMax: {
 				lmb->stack[lmb->sp-2].a.x = lmb->stack[lmb->sp-2].a.x > lmb->stack[lmb->sp-1].a.x ? lmb->stack[lmb->sp-2].a.x : lmb->stack[lmb->sp-1].a.x;
 				lmb->sp--;
 			} break;
 				
-			case AEMorphSum: {
+			case MorphSum: {
 				Recipe* recipe = lmb->stack[lmb->sp-1].a.p;
 				double sum = 0;
 				for (double x = lmb->stack[lmb->sp-3].a.x;x <= lmb->stack[lmb->sp-2].a.x;x++) {
@@ -626,50 +628,50 @@ Obj AELambdaExecute(Lambda* lambda, Memory* memory) {
 				lmb->sp -= 2;
 			} break;
 			
-			case AEMorphRandom: {
+			case MorphRandom: {
 				u_int32_t n = lmb->stack[lmb->sp-1].a.x;
 				lmb->stack[lmb->sp-1].a.x = arc4random() % n;
 			} break;
 
-			case AEMorphNumCns: case AEMorphCpxCns: case AEMorphVctCns: case AEMorphLmbCns: {
+			case MorphNumCns: case MorphCpxCns: case MorphVctCns: case MorphLmbCns: {
 				lmb->stack[lmb->sp] = lambda->constants[cp];
 				lmb->sp++;
 				cp++;
 			} break;
 				
-			case AEMorphNumVar: case AEMorphCpxVar: case AEMorphVctVar: case AEMorphLmbVar: case AEMorphRcpVar: {
+			case MorphNumVar: case MorphCpxVar: case MorphVctVar: case MorphLmbVar: case MorphRcpVar: {
 				lmb->stack[lmb->sp] = AEMemoryGet(memory, lambda->variables[vp]);
 				lmb->sp++;
 				vp++;
 			} break;
 			
-			case AEMorphNumVarForce: {
+			case MorphNumVarForce: {
 				lmb->stack[lmb->sp] = AEMemoryGet(memory, lambda->variables[vp]);
 				lmb->stack[lmb->sp].type = AETypeReal;
 				lmb->sp++;
 				vp++;
 			} break;
 
-			case AEMorphStrCns: {
+			case MorphStrCns: {
 				lmb->stack[lmb->sp] = AEObjMirror(lambda->constants[cp]);
 				lmb->sp++;
 				cp++;
 			} break;
 				
-			case AEMorphStrVar: {
+			case MorphStrVar: {
 				lmb->stack[lmb->sp] = AEObjMirror(AEMemoryGet(memory, lambda->variables[vp]));
 				lmb->sp++;
 				vp++;
 			} break;
 
-			case AEMorphComplex: {
+			case MorphComplex: {
 				lmb->stack[lmb->sp-2].a.x = lmb->stack[lmb->sp-2].a.x;
 				lmb->stack[lmb->sp-2].b.x = lmb->stack[lmb->sp-1].a.x;
 				lmb->stack[lmb->sp-2].type = AETypeComplex;
 				lmb->sp--;
 			} break;
 				
-			case AEMorphCpxAdd: {
+			case MorphCpxAdd: {
 				AECastNumToCpx(&lmb->stack[lmb->sp-2]);
 				AECastNumToCpx(&lmb->stack[lmb->sp-1]);
 				lmb->stack[lmb->sp-2].a.x += lmb->stack[lmb->sp-1].a.x;
@@ -677,7 +679,7 @@ Obj AELambdaExecute(Lambda* lambda, Memory* memory) {
 				lmb->sp--;
 			} break;
 				
-			case AEMorphCpxSub: {
+			case MorphCpxSub: {
 				AECastNumToCpx(&lmb->stack[lmb->sp-2]);
 				AECastNumToCpx(&lmb->stack[lmb->sp-1]);
 				lmb->stack[lmb->sp-2].a.x -= lmb->stack[lmb->sp-1].a.x;
@@ -685,19 +687,20 @@ Obj AELambdaExecute(Lambda* lambda, Memory* memory) {
 				lmb->sp--;
 			} break;
 				
-			case AEMorphCpxMul: {
+			case MorphCpxMul: {
 				AECastNumToCpx(&lmb->stack[lmb->sp-2]);
 				AECastNumToCpx(&lmb->stack[lmb->sp-1]);
 				double Ar = lmb->stack[lmb->sp-2].a.x;
 				double Ai = lmb->stack[lmb->sp-2].b.x;
 				double Br = lmb->stack[lmb->sp-1].a.x;
 				double Bi = lmb->stack[lmb->sp-1].b.x;
+                
 				lmb->stack[lmb->sp-2].a.x = Ar*Br-Ai*Bi;
 				lmb->stack[lmb->sp-2].b.x = Ar*Bi+Br*Ai;
 				lmb->sp--;
 			} break;
 				
-			case AEMorphCpxDiv: {
+			case MorphCpxDiv: {
 				AECastNumToCpx(&lmb->stack[lmb->sp-2]);
 				AECastNumToCpx(&lmb->stack[lmb->sp-1]);
 				double Ar = lmb->stack[lmb->sp-2].a.x;
@@ -710,7 +713,7 @@ Obj AELambdaExecute(Lambda* lambda, Memory* memory) {
 				lmb->sp--;
 			} break;
 				
-			case AEMorphCpxPow: {
+			case MorphCpxPow: {
 				AECastNumToCpx(&lmb->stack[lmb->sp-2]);
 				AECastNumToCpx(&lmb->stack[lmb->sp-1]);
 				double Ar = lmb->stack[lmb->sp-2].a.x;
@@ -726,7 +729,7 @@ Obj AELambdaExecute(Lambda* lambda, Memory* memory) {
 				lmb->sp--;
 			} break;
 
-			case AEMorphCpxEqual: {
+			case MorphCpxEqual: {
 				AECastNumToCpx(&lmb->stack[lmb->sp-2]);
 				AECastNumToCpx(&lmb->stack[lmb->sp-1]);
 				double Ar = lmb->stack[lmb->sp-2].a.x;
@@ -738,7 +741,7 @@ Obj AELambdaExecute(Lambda* lambda, Memory* memory) {
 				lmb->sp--;
 			} break;
 				
-			case AEMorphCpxNotEqual: {
+			case MorphCpxNotEqual: {
 				AECastNumToCpx(&lmb->stack[lmb->sp-2]);
 				AECastNumToCpx(&lmb->stack[lmb->sp-1]);
 				double Ar = lmb->stack[lmb->sp-2].a.x;
@@ -750,7 +753,7 @@ Obj AELambdaExecute(Lambda* lambda, Memory* memory) {
 				lmb->sp--;
 			} break;
 
-			case AEMorphCpxSin: {
+			case MorphCpxSin: {
 				double r = lmb->stack[lmb->sp-1].a.x;
 				double i = lmb->stack[lmb->sp-1].b.x;
 				double x = exp(i);
@@ -759,7 +762,7 @@ Obj AELambdaExecute(Lambda* lambda, Memory* memory) {
 				lmb->stack[lmb->sp-1].b.x = cos(r)*(x-y)/2;
 			} break;
 
-			case AEMorphCpxCos: {
+			case MorphCpxCos: {
 				double r = lmb->stack[lmb->sp-1].a.x;
 				double i = lmb->stack[lmb->sp-1].b.x;
 				double x = exp(i);
@@ -768,7 +771,7 @@ Obj AELambdaExecute(Lambda* lambda, Memory* memory) {
 				lmb->stack[lmb->sp-1].b.x = sin(r)*(y-x)/2;
 			} break;
 
-			case AEMorphCpxTan: {
+			case MorphCpxTan: {
 				double r = lmb->stack[lmb->sp-1].a.x;
 				double i = lmb->stack[lmb->sp-1].b.x;
 				double ei = exp(i);
@@ -784,14 +787,14 @@ Obj AELambdaExecute(Lambda* lambda, Memory* memory) {
 				lmb->stack[lmb->sp-1].b.x = s*d/denom;
 			} break;
 
-			case AEMorphCpxLn: {
+			case MorphCpxLn: {
 				double r = lmb->stack[lmb->sp-1].a.x;
 				double i = lmb->stack[lmb->sp-1].b.x;
 				lmb->stack[lmb->sp-1].a.x = log(sqrt(r*r+i*i));
 				lmb->stack[lmb->sp-1].b.x = atan2(i,r);
 			} break;
 
-			case AEMorphCpxExp: {
+			case MorphCpxExp: {
 				double r = lmb->stack[lmb->sp-1].a.x;
 				double i = lmb->stack[lmb->sp-1].b.x;
 				double x = exp(r);
@@ -799,7 +802,7 @@ Obj AELambdaExecute(Lambda* lambda, Memory* memory) {
 				lmb->stack[lmb->sp-1].b.x = x*sin(i);
 			} break;
 
-			case AEMorphCpxSqrt: {
+			case MorphCpxSqrt: {
 				double r = lmb->stack[lmb->sp-1].a.x;
 				double i = lmb->stack[lmb->sp-1].b.x;
 				double m = sqrt(r*r+i*i);
@@ -807,28 +810,28 @@ Obj AELambdaExecute(Lambda* lambda, Memory* memory) {
 				lmb->stack[lmb->sp-1].b.x = (i<0?-1:1)*sqrt((-r+m)/2);
 			} break;
 
-			case AEMorphCpxAbs: {
+			case MorphCpxAbs: {
 				double r = lmb->stack[lmb->sp-1].a.x;
 				double i = lmb->stack[lmb->sp-1].b.x;
 				lmb->stack[lmb->sp-1].a.x = sqrt(r*r+i*i);
 				lmb->stack[lmb->sp-1].type = AETypeReal;
 			} break;
 
-			case AEMorphCpxRound: {
+			case MorphCpxRound: {
 				double r = lmb->stack[lmb->sp-1].a.x;
 				double i = lmb->stack[lmb->sp-1].b.x;
 				lmb->stack[lmb->sp-1].a.x = round(r);
 				lmb->stack[lmb->sp-1].b.x = round(i);
 			} break;
 
-			case AEMorphCpxFloor: {
+			case MorphCpxFloor: {
 				double r = lmb->stack[lmb->sp-1].a.x;
 				double i = lmb->stack[lmb->sp-1].b.x;
 				lmb->stack[lmb->sp-1].a.x = floor(r);
 				lmb->stack[lmb->sp-1].b.x = floor(i);
 			} break;
 				
-			case AEMorphVector: {
+			case MorphVector: {
 				lmb->stack[lmb->sp-3].a.x = lmb->stack[lmb->sp-3].a.x;
 				lmb->stack[lmb->sp-3].b.x = lmb->stack[lmb->sp-2].a.x;
 				lmb->stack[lmb->sp-3].c.x = lmb->stack[lmb->sp-1].a.x;
@@ -836,7 +839,7 @@ Obj AELambdaExecute(Lambda* lambda, Memory* memory) {
 				lmb->sp -= 2;
 			} break;
 				
-			case AEMorphVctAdd: {
+			case MorphVctAdd: {
 				double Ax = lmb->stack[lmb->sp-2].a.x;
 				double Ay = lmb->stack[lmb->sp-2].b.x;
 				double Az = lmb->stack[lmb->sp-2].c.x;
@@ -849,7 +852,7 @@ Obj AELambdaExecute(Lambda* lambda, Memory* memory) {
 				lmb->sp--;
 			} break;
 
-			case AEMorphVctSub: {
+			case MorphVctSub: {
 				double Ax = lmb->stack[lmb->sp-2].a.x;
 				double Ay = lmb->stack[lmb->sp-2].b.x;
 				double Az = lmb->stack[lmb->sp-2].c.x;
@@ -862,7 +865,7 @@ Obj AELambdaExecute(Lambda* lambda, Memory* memory) {
 				lmb->sp--;
 			} break;
 
-			case AEMorphVctMulL: {
+			case MorphVctMulL: {
 				double a = lmb->stack[lmb->sp-2].a.x;
 				double x = lmb->stack[lmb->sp-1].a.x;
 				double y = lmb->stack[lmb->sp-1].b.x;
@@ -874,7 +877,7 @@ Obj AELambdaExecute(Lambda* lambda, Memory* memory) {
 				lmb->sp--;
 			} break;
 
-			case AEMorphVctMulR: {
+			case MorphVctMulR: {
 				double x = lmb->stack[lmb->sp-2].a.x;
 				double y = lmb->stack[lmb->sp-2].b.x;
 				double z = lmb->stack[lmb->sp-2].c.x;
@@ -885,7 +888,18 @@ Obj AELambdaExecute(Lambda* lambda, Memory* memory) {
 				lmb->sp--;
 			} break;
 				
-			case AEMorphVctDot: {
+            case MorphVctDiv: {
+                double x = lmb->stack[lmb->sp-2].a.x;
+                double y = lmb->stack[lmb->sp-2].b.x;
+                double z = lmb->stack[lmb->sp-2].c.x;
+                double a = lmb->stack[lmb->sp-1].a.x;
+                lmb->stack[lmb->sp-2].a.x = x/a;
+                lmb->stack[lmb->sp-2].b.x = y/a;
+                lmb->stack[lmb->sp-2].c.x = z/a;
+                lmb->sp--;
+            } break;
+                
+			case MorphVctDot: {
 				double Ax = lmb->stack[lmb->sp-2].a.x;
 				double Ay = lmb->stack[lmb->sp-2].b.x;
 				double Az = lmb->stack[lmb->sp-2].c.x;
@@ -897,7 +911,7 @@ Obj AELambdaExecute(Lambda* lambda, Memory* memory) {
 				lmb->sp--;
 			} break;
 
-			case AEMorphVctCross: {
+			case MorphVctCross: {
 				double Ax = lmb->stack[lmb->sp-2].a.x;
 				double Ay = lmb->stack[lmb->sp-2].b.x;
 				double Az = lmb->stack[lmb->sp-2].c.x;
@@ -910,7 +924,7 @@ Obj AELambdaExecute(Lambda* lambda, Memory* memory) {
 				lmb->sp--;
 			} break;
 
-			case AEMorphVctNeg: {
+			case MorphVctNeg: {
 				double x = lmb->stack[lmb->sp-1].a.x;
 				double y = lmb->stack[lmb->sp-1].b.x;
 				double z = lmb->stack[lmb->sp-1].c.x;
@@ -919,7 +933,7 @@ Obj AELambdaExecute(Lambda* lambda, Memory* memory) {
 				lmb->stack[lmb->sp-1].c.x = -z;
 			} break;
 				
-			case AEMorphStrAdd: {
+			case MorphStrAdd: {
 				char* a;
 				if (lmb->stack[lmb->sp-2].type == AETypeString)
 					a = lmb->stack[lmb->sp-2].a.p;
@@ -947,7 +961,7 @@ Obj AELambdaExecute(Lambda* lambda, Memory* memory) {
 				lmb->sp--;
 			} break;
 			
-			case AEMorphLmbIf: {
+			case MorphLmbIf: {
 				Lambda* thenLambda = lmb->stack[lmb->sp-2].a.p;
 				Lambda* elseLambda = lmb->stack[lmb->sp-1].a.p;
 				double ifValue = lmb->stack[lmb->sp-3].a.x;
@@ -958,7 +972,7 @@ Obj AELambdaExecute(Lambda* lambda, Memory* memory) {
 				lmb->sp -= 2;
 			} break;
 			
-			case AEMorphLmbSum: {
+			case MorphLmbSum: {
 				int ki = AEMemoryIndexForName(memory, "k");
 				Lambda* lambda = lmb->stack[lmb->sp-1].a.p;
 				double sum = 0;
@@ -970,7 +984,7 @@ Obj AELambdaExecute(Lambda* lambda, Memory* memory) {
 				lmb->sp -= 2;
 			} break;
 
-			case AEMorphRecipe: {
+			case MorphRecipe: {
 				Obj obj = AEMemoryGet(memory, lambda->variables[vp]);
 				vp++;
 				Recipe* recipe = (Recipe*)obj.a.p;
