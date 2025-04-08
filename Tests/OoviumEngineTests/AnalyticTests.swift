@@ -200,10 +200,19 @@ class AnalyticTests: XCTestCase {
         let x: Expression = VariableExpression(variable: Variable(name: "x"))
         let y: Expression = VariableExpression(variable: Variable(name: "y"))
         
-        let r: Expression = Anain(natural: "sqrt(x^2+y^2)").calculate()!
+        let q1: Expression = PowerExpression(expression: x, power: ValueExpression(value: Rational(2)))
+        let q2: Expression = PowerExpression(expression: y, power: ValueExpression(value: Rational(2)))
+        let q3: Expression = AdditionExpression(expressions: [q1, q2])
+        let q4: Expression = PowerExpression(expression: q3, power: ValueExpression(value: Rational(1, 2)))
+        
+        let r: Expression = q4
         let Q: Expression = Anain(natural: "arctan(y,x)").calculate()!
-
-        let T: Tensor = Tensor(dimensions: 2, rank: 1, components: [r, Q], isCovariant: [false])        
-        let J: Expression = T.calculateJacobian(variables: ["x", "y"])
+//
+//        let T: Tensor = Tensor(dimensions: 2, rank: 1, components: [r, Q], isCovariant: [false])        
+//        let J: Expression = T.calculateJacobian(variables: ["x", "y"])
+//        
+//        let vM: Expression = MultiplicationExpression(expressions: [J, ValueExpression(value: vN)]).reduce()
+//        
+//        print("\(vM)")
     }
 }

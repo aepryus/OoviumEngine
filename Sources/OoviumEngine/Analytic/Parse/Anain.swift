@@ -235,13 +235,16 @@ public final class Anain: NSObject, Packable, TowerDelegate {
                 code = .sp
                 tag = "\""
             } else {
-                code = .fn
-                if let left = natural.loc(of: "(", after: i) {
-                    let end = left - 1
-                    tag = natural[i...end]
-                    i += tag.count
+                tag = ""
+                while natural[i].isLetter {
+                    tag.append(natural[i])
+                    i += 1
+                }
+                if (natural[i] == "(") {
+                    code = .fn
                 } else {
-                    return []
+                    code = .va
+                    i -= 1
                 }
             }
             keys.append("\(code):\(tag)")
