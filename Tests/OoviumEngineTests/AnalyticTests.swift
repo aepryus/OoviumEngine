@@ -10,6 +10,8 @@ import Acheron
 @testable import OoviumEngine
 import XCTest
 
+typealias Expression = OoviumEngine.Expression
+
 class AnalyticTests: XCTestCase {
     
     override func setUp() {
@@ -188,5 +190,20 @@ class AnalyticTests: XCTestCase {
         else { print("Oops") }
         XCTAssert("\(expression!)" == "9/8")
 
+    }
+    
+    func test_Tensors() {
+        let x0: Expression = ValueExpression(value: Rational(3))
+        let y0: Expression = ValueExpression(value: Rational(4))
+        let vN: Tensor = Tensor(dimensions: 2, rank: 1, components: [x0, y0], isCovariant: [false])
+        
+        let x: Expression = VariableExpression(variable: Variable(name: "x"))
+        let y: Expression = VariableExpression(variable: Variable(name: "y"))
+        
+        let r: Expression = Anain(natural: "sqrt(x^2+y^2)").calculate()!
+        let Q: Expression = Anain(natural: "arctan(y,x)").calculate()!
+
+        let T: Tensor = Tensor(dimensions: 2, rank: 1, components: [r, Q], isCovariant: [false])        
+        let J: Expression = T.calculateJacobian(variables: ["x", "y"])
     }
 }

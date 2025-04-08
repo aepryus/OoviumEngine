@@ -430,11 +430,11 @@ public final class Anain: NSObject, Packable, TowerDelegate {
     private func parseOperator(tokens:[Token], i:Int, ops:Ops) throws {
         if let token: OperatorToken = tokens[i] as? OperatorToken {
             switch token.level {
-                case .add:            try ops.aOp(token)
-                case .multiply:        try ops.mOp(token)
-                case .power:        try ops.pOp(token)
-                case .compare:        try ops.cOp(token)
-                case .gate:            try ops.gOp(token)
+                case .add:      try ops.aOp(token)
+                case .multiply: try ops.mOp(token)
+                case .power:    try ops.pOp(token)
+                case .compare:  try ops.cOp(token)
+                case .gate:     try ops.gOp(token)
             }
         }
         else if tokens[i].code == .sp { try ops.end() }

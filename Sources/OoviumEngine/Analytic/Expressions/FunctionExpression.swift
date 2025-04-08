@@ -37,5 +37,5 @@ class FunctionExpression: Expression {
 	}
 
 // CustomStringConvertible =========================================================================
-	override var description: String { "\(function.name)(\(expression)" }
+	override var description: String { "\(function.name)(\(expression))" }
 }

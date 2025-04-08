@@ -59,3 +59,27 @@ class Rational: Value, CustomStringConvertible {
 		else { return "\(numerator)/\(denominator)" }
 	}
 }
+
+class Real: Value, CustomStringConvertible {
+    let expression: Expression
+    
+    init(_ expression: Expression) {
+        self.expression = expression
+    }
+    
+    static prefix func - (lhs: Real) -> Real {
+        Real(MultiplicationExpression(expressions: [lhs.expression, ValueExpression(value: Rational(-1))]))
+    }
+    static func + (_ lhs: Real, _ rhs: Real) -> Real {
+        Real(AdditionExpression(expressions: [lhs.expression, rhs.expression]).reduce())
+    }
+    static func * (_ lhs: Real, _ rhs: Real) -> Real {
+        Real(MultiplicationExpression(expressions: [lhs.expression, rhs.expression]).reduce())
+    }
+    static func *= (lhs: inout Real, rhs: Real) {
+        lhs = lhs * rhs
+    }
+    
+// CustomStringConvertable =========================================================================
+    var description: String { expression.description }
+}

@@ -11,7 +11,7 @@ import Acheron
 @testable import OoviumEngine
 import XCTest
 
-extension Obj: Equatable {
+extension Obj: @retroactive Equatable {
 	public static func == (lhs: Obj, rhs: Obj) -> Bool {
 		guard lhs.type == rhs.type else { return false }
 		switch lhs.type {
