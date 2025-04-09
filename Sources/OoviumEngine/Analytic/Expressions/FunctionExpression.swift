@@ -28,6 +28,12 @@ class FunctionExpression: Expression {
 		}
 	}
 	override func scalar() -> Value { Rational(1) }
+    override func differentiate(with variable: Variable) -> Expression {
+        return MultiplicationExpression(expressions: [
+            function.differentiate(argument: expression),
+            expression.differentiate(with: variable)
+        ]).reduce()
+    }
 
 // Hashable ========================================================================================
 	static func == (lhs: FunctionExpression, rhs: FunctionExpression) -> Bool { lhs.function == rhs.function && rhs.expression == lhs.expression }

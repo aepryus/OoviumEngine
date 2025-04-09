@@ -57,12 +57,21 @@ public class Token: Hashable {
         tokens[token.key] = token
         return token
     }() }
+    // This is only used by Anain to create variables when parsing natural.  I'm adding this while working on the test cases.
+    // I'm not sure where this is going, but it can be deleted if causing problems later.
+    public static func variableToken(tag: String) -> VariableToken { tokens["\(Code.va):\(tag)"] as? VariableToken ?? {
+        let token = VariableToken(tag: tag)
+        tokens[token.key] = token
+        return token
+    }() }
 
     // This is used by Aether.onLoad to initialize all the chains - jjc 10/27/22
     static func token(key: String) -> Token? {
         if let token: Token = tokens[key] { return token }
-        guard key.count > 3 && key[0...1] == "\(Code.ch)" else { return nil }
-        return characterToken(tag: key[3...])
+        guard key.count > 3 else { return nil }
+        if key[0...1] == "\(Code.ch)" { return characterToken(tag: key[3...]) }
+        if key[0...1] == "\(Code.va)" { return variableToken(tag: key[3...]) }
+        return nil
     }
 
     public static let period: DigitToken            = DigitToken(tag: ".")

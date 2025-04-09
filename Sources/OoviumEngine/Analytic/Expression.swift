@@ -15,7 +15,7 @@ public class Expression: Hashable, CustomStringConvertible {
 	func attemptToIsolate(variable: Variable) -> Actor? { nil }
 	func reduce() -> Expression { self }
 	func flavor() -> Expression { self }
-	func scalar() -> Value { Rational(0) }
+	func scalar() -> Value { Rational(1) }
 	func differentiate(with variable: Variable) -> Expression { ValueExpression(value: Rational(0)) }
 
 	var order: Int { 0 }

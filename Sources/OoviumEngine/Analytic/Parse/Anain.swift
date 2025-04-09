@@ -531,13 +531,13 @@ public final class Anain: NSObject, Packable, TowerDelegate {
             try parseTokens(tokens: tokens, start: i, stop: e)
             if let unary = unary { try apply(token: unary) }
             return 2 + e - i + (unary != nil ? 1 : 0)
-//        } else if let token = token as? FunctionToken {
-//            i += 1
-//            let e = try findEnd(i)
-//            try parseTokens(tokens: tokens, start: i, stop: e)
-//            try apply(token: token)
-//            if let unary = unary { try apply(token: unary) }
-//            return 2 + e - i + (unary != nil ? 1 : 0)
+        } else if let token = token as? FunctionToken {
+            i += 1
+            let e = try findEnd(i)
+            try parseTokens(tokens: tokens, start: i, stop: e)
+            try apply(token: token)
+            if let unary = unary { try apply(token: unary) }
+            return 2 + e - i + (unary != nil ? 1 : 0)
 //        } else if let token = token as? MechlikeToken {
 //            i += 1
 //            let e = try findEnd(i)
@@ -555,14 +555,14 @@ public final class Anain: NSObject, Packable, TowerDelegate {
 //            // This needs to be cleaned up. 5/11/20
 //            try addConstant(Obje(AEObjLambda(anain.compile(name: "k"))))
 //            return tokens.count + 2
-//        } else if let token = token as? VariableToken {
-//            let name = token.tag
-//            let type = "var;\(token.def?.key ?? "num");"
-//            variables.append(name)
-//            try addMorph(Math.morph(key: type))
-//            if let unary = unary { try apply(token: unary) }
-//            return 1 + (unary != nil ? 1 : 0)
-//
+        } else if let token = token as? VariableToken {
+            let name = token.tag
+            let type = "var;\(token.def?.key ?? "num");"
+            variables.append(Variable(name: name))
+            try addMorph(Math.morph(key: type))
+            if let unary = unary { try apply(token: unary) }
+            return 1 + (unary != nil ? 1 : 0)
+
 //        } else if let token = token as? KToken {
 //            let name = token.tag
 //            let type = "var;num;"
@@ -637,18 +637,22 @@ public final class Anain: NSObject, Packable, TowerDelegate {
             return nil
         }
         
-        guard variables.count == 0, tokens.count > 0 else { return nil }
+        guard tokens.count > 0 else { return nil }
         
         var stack: [Expression?] = [Expression?](repeating: nil, count: 100)
         var si: Int = 0
         var ci: Int = 0
-//        var vi: Int = 0
+        var vi: Int = 0
         
         for morph in morphs {
             switch morph {
                 case Morph.numCns.rawValue:
                     stack[si] = ValueExpression(value: constants[ci])
                     ci += 1
+                    si += 1
+                case Morph.numVar.rawValue:
+                    stack[si] = VariableExpression(variable: variables[vi])
+                    vi += 1
                     si += 1
                 case Morph.add.rawValue:
                     si -= 1
@@ -677,6 +681,53 @@ public final class Anain: NSObject, Packable, TowerDelegate {
                     si -= 1
                     let numerator: Expression = stack[si]!
                     stack[si] = MultiplicationExpression(expressions: [numerator, denomenator])
+                    si += 1
+                case Morph.pow.rawValue:
+                    si -= 1
+                    let b: Expression = stack[si]!
+                    si -= 1
+                    let a: Expression = stack[si]!
+                    stack[si] = PowerExpression(expression: a, power: b)
+                    si += 1
+                case Morph.sin.rawValue:
+                    si -= 1
+                    let argument: Expression = stack[si]!
+                    stack[si] = FunctionExpression(function: .sine, expression: argument)
+                    si += 1
+                case Morph.cos.rawValue:
+                    si -= 1
+                    let argument: Expression = stack[si]!
+                    stack[si] = FunctionExpression(function: .cosine, expression: argument)
+                    si += 1
+                case Morph.tan.rawValue:
+                    si -= 1
+                    let argument: Expression = stack[si]!
+                    stack[si] = FunctionExpression(function: .tangent, expression: argument)
+                    si += 1
+                case Morph.asin.rawValue:
+                    si -= 1
+                    let argument: Expression = stack[si]!
+                    stack[si] = FunctionExpression(function: .arcSine, expression: argument)
+                    si += 1
+                case Morph.acos.rawValue:
+                    si -= 1
+                    let argument: Expression = stack[si]!
+                    stack[si] = FunctionExpression(function: .arcCosine, expression: argument)
+                    si += 1
+                case Morph.atan.rawValue:
+                    si -= 1
+                    let argument: Expression = stack[si]!
+                    stack[si] = FunctionExpression(function: .arcTangent, expression: argument)
+                    si += 1
+                case Morph.exp.rawValue:
+                    si -= 1
+                    let argument: Expression = stack[si]!
+                    stack[si] = FunctionExpression(function: .exponential, expression: argument)
+                    si += 1
+                case Morph.ln.rawValue:
+                    si -= 1
+                    let argument: Expression = stack[si]!
+                    stack[si] = FunctionExpression(function: .logarithm, expression: argument)
                     si += 1
                 default:
                     fatalError()

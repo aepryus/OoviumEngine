@@ -206,13 +206,38 @@ class AnalyticTests: XCTestCase {
         let q4: Expression = PowerExpression(expression: q3, power: ValueExpression(value: Rational(1, 2)))
         
         let r: Expression = q4
-        let Q: Expression = Anain(natural: "arctan(y,x)").calculate()!
-//
-//        let T: Tensor = Tensor(dimensions: 2, rank: 1, components: [r, Q], isCovariant: [false])        
-//        let J: Expression = T.calculateJacobian(variables: ["x", "y"])
-//        
-//        let vM: Expression = MultiplicationExpression(expressions: [J, ValueExpression(value: vN)]).reduce()
-//        
-//        print("\(vM)")
+        let Q: Expression = Anain(natural: "atan(y/x)").calculate()!
+        
+        print("r = \(r)")
+        print("Q = \(Q)")
+
+        let T: Tensor = Tensor(dimensions: 2, rank: 1, components: [r, Q], isCovariant: [false])
+        
+        print("T = \(T)")
+
+        let J: Expression = T.calculateJacobian(variables: ["x", "y"])
+        
+        print("J = \(J)")
+
+        
+        let vM: Expression = MultiplicationExpression(expressions: [J, ValueExpression(value: vN)]).reduce()
+        
+        print("vM = \(vM)")
+        
+        let C = Anain(natural: "x^2+y^2").calculate()!
+        
+        print("C = \(C)")
+
+        let D = C.reduce()
+        
+        print("D = \(D)")
+        
+        let A = Anain(natural: "(x^2+y^2)^(1/2)").calculate()!.reduce()
+        
+        print("A = \(A)")
+        
+        let B = A.differentiate(with: Variable(name: "x"))
+        
+        print("B = \(B)")
     }
 }
