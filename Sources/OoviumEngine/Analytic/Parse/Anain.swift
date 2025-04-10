@@ -236,11 +236,11 @@ public final class Anain: NSObject, Packable, TowerDelegate {
                 tag = "\""
             } else {
                 tag = ""
-                while natural[i].isLetter {
+                while i < natural.count && natural[i].isLetter {
                     tag.append(natural[i])
                     i += 1
                 }
-                if (natural[i] == "(") {
+                if i < natural.count && natural[i] == "(" {
                     code = .fn
                 } else {
                     code = .va

@@ -21,10 +21,11 @@ class FunctionExpression: Expression {
 	override var order: Int { -1 }
 	override func depends(on variable: Variable) -> Bool { expression.depends(on: variable) }
 	override func reduce() -> Expression {
+        let expression = expression.reduce()
 		if let expression = expression as? FunctionExpression, function.isInverse(expression.function) {
 			return expression.expression
 		} else {
-			return self
+			return FunctionExpression(function: function, expression: expression)
 		}
 	}
 	override func scalar() -> Value { Rational(1) }
@@ -33,6 +34,10 @@ class FunctionExpression: Expression {
             function.differentiate(argument: expression),
             expression.differentiate(with: variable)
         ]).reduce()
+    }
+    
+    override func substitute(variable: String, with value: Value) -> Expression {
+        FunctionExpression(function: function, expression: expression.substitute(variable: variable, with: value))
     }
 
 // Hashable ========================================================================================

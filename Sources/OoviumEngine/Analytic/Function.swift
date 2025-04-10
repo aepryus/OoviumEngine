@@ -45,6 +45,27 @@ class DefinedFunction: Function {
     }
 }
 
+class TensorFunction: Function {
+    let tensor: Tensor
+    
+    init(tensor: Tensor) {
+        self.tensor = tensor
+        super.init(name: "", inverse: "")
+    }
+    
+// Function ========================================================================================
+    override func analytic(values: [Value]) -> Expression {
+        guard values.count == 1,
+              let vector: Tensor = values[0] as? Tensor
+        else { fatalError() }
+        
+        let result: Tensor = tensor.substitute(vector)
+        
+        return ValueExpression(value: result)
+    }
+    override func numeric(values: [Value]) -> Value { Value() }
+}
+
 class SineFunction: Function {
     init() { super.init(name: "sin", inverse: "asin") }
     

@@ -210,6 +210,13 @@ class AnalyticTests: XCTestCase {
         
         print("r = \(r)")
         print("Q = \(Q)")
+        
+        let dQ: Expression = Q.differentiate(with: Variable(name: "x")).reduce()
+        print("dQ = \(dQ)")
+        
+        let Q1: Expression = Anain(natural: "y/x").calculate()!
+        let dQ1: Expression = Q1.differentiate(with: Variable(name: "x")).reduce()
+        print("dQ1 = \(dQ1)")
 
         let T: Tensor = Tensor(dimensions: 2, rank: 1, components: [r, Q], isCovariant: [false])
         
@@ -218,12 +225,18 @@ class AnalyticTests: XCTestCase {
         let J: Expression = T.calculateJacobian(variables: ["x", "y"])
         
         print("J = \(J)")
+        
+        guard let exp = J as? ValueExpression, let JT = exp.value as? Tensor else { return }
+        
+        let JN = ValueExpression(value: JT.substitute(vN))
+        print("JN = \(JN)")
+        
+        let JM = MultiplicationExpression(expressions: [JN, ValueExpression(value: vN)]).reduce()
+        print("JM = \(JM)")
+        
+        let TM = ValueExpression(value: T.substitute(vN))
+        print("TM = \(TM)")
 
-        
-        let vM: Expression = MultiplicationExpression(expressions: [J, ValueExpression(value: vN)]).reduce()
-        
-        print("vM = \(vM)")
-        
         let C = Anain(natural: "x^2+y^2").calculate()!
         
         print("C = \(C)")
@@ -239,5 +252,8 @@ class AnalyticTests: XCTestCase {
         let B = A.differentiate(with: Variable(name: "x"))
         
         print("B = \(B)")
+        
+        let G = Anain(natural: "0").calculate()!.reduce()
+        print("G = \(G)")
     }
 }

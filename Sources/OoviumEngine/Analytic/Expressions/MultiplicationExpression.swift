@@ -35,6 +35,27 @@ class MultiplicationExpression: OperationExpression {
 			return MultiplicationExpression(expressions: [ValueExpression(value: rational)] + others)
 		}
 	}
+    func multiply(tensor: Tensor) -> Expression {
+        var tensor: Tensor  = tensor
+        var others: [Expression] = []
+        
+        for expression in expressions {
+            if let expression = expression as? ValueExpression, let value = expression.value as? Tensor {
+                tensor *= value
+            } else {
+                others.append(expression)
+            }
+        }
+        
+        if others.count == 0 {
+            return ValueExpression(value: tensor)
+//        } else if tensor == Rational(1) {
+//            if others.count == 1 { return others[0] }
+//            else { return MultiplicationExpression(expressions: others) }
+        } else {
+            return MultiplicationExpression(expressions: [ValueExpression(value: tensor)] + others)
+        }
+    }
 	func multiply(powerExpression: PowerExpression) -> Expression {
 		var powerExpressions: [Expression] = [powerExpression.power]
 		var others: [Expression] = []
@@ -55,8 +76,9 @@ class MultiplicationExpression: OperationExpression {
 			return PowerExpression(expression: powerExpression.expression, power: newPower)
 		} else if let npe = newPower as? ValueExpression, let rational = npe.value as? Rational, rational == Rational(0) {
 			return ValueExpression(value: Rational(1))
-		} else if let npe = newPower as? ValueExpression, let rational = npe.value as? Rational, rational == Rational(1) {
-			return powerExpression.expression
+        } else if let npe = newPower as? ValueExpression, let rational = npe.value as? Rational, rational == Rational(1) {
+            if others.count == 0 { return powerExpression.expression }
+            else { return MultiplicationExpression(expressions: others + [powerExpression.expression]) }
 		} else {
 			return MultiplicationExpression(expressions: others + [PowerExpression(expression: powerExpression.expression, power: newPower)])
 		}
@@ -91,13 +113,13 @@ class MultiplicationExpression: OperationExpression {
 			return OperationActor(operation: operation, expression: MultiplicationExpression(expressions: inverse))
 		}
 	}
-	override func reduce() -> Expression {
-		let expressions: [Expression] = expressions.map { $0.reduce() }
+    override func reduce() -> Expression {
+        let expressions: [Expression] = expressions.map { $0.reduce() }
 
-		var reduced: Expression = ValueExpression(value: Rational(1))
-		expressions.forEach { reduced = reduced * $0 }
-		return reduced
-	}
+        var reduced: Expression = ValueExpression(value: Rational(1))
+        expressions.forEach { reduced = reduced * $0 }
+        return reduced
+    }
 	override func flavor() -> Expression {
 		let reduced = reduce()
 		if let multiply = reduced as? MultiplicationExpression {
@@ -117,12 +139,30 @@ class MultiplicationExpression: OperationExpression {
 		} else { return reduced.scalar() }
 	}
 	override func differentiate(with variable: Variable) -> Expression {
-		return AdditionExpression(expressions: expressions.enumerated().map {
-			var expressions = self.expressions
-			expressions.remove(at: $0)
-			return MultiplicationExpression(expressions: [$1.differentiate(with: variable)] + expressions)
-		}).reduce()
+        let A = expressions.enumerated().map {
+            var expressions = self.expressions
+            expressions.remove(at: $0)
+            return MultiplicationExpression(expressions: [$1.differentiate(with: variable)] + expressions)
+        }
+        
+        let B = AdditionExpression(expressions: A)
+        
+        let C = B.reduce()
+        
+        return C
+        
+        
+        
+//		return AdditionExpression(expressions: expressions.enumerated().map {
+//			var expressions = self.expressions
+//			expressions.remove(at: $0)
+//			return MultiplicationExpression(expressions: [$1.differentiate(with: variable)] + expressions)
+//		}).reduce()
 	}
+    
+    override func substitute(variable: String, with value: Value) -> Expression {
+        MultiplicationExpression(expressions: expressions.map { $0.substitute(variable: variable, with: value) })
+    }
 
 // CustomStringConvertible =========================================================================
 	override var description: String {

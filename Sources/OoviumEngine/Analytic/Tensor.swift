@@ -51,6 +51,73 @@ class Tensor: Value, CustomStringConvertible {
         ))
     }
     
+    func substitute(_ vector: Tensor) -> Tensor {
+        // Define variable names (x, y for 2D coordinates)
+        let variableNames = ["x", "y"]
+        
+        // Create substituted components by replacing variables
+        var newComponents: [Expression] = []
+        for component in components {
+            var result = component
+            for (index, name) in variableNames.enumerated() {
+                if index < vector.components.count {
+                    if let valueExpr = vector.components[index] as? ValueExpression {
+                        result = result.substitute(variable: name, with: valueExpr.value)
+                    }
+                }
+            }
+            newComponents.append(result.reduce())
+        }
+        
+        return Tensor(
+            dimensions: dimensions,
+            rank: rank,
+            components: newComponents,
+            isCovariant: isCovariant
+        )
+    }
+    
+//    static prefix func - (a: Tensor) -> Tensor { Tensor(-a.numerator, a.denominator) }
+//    static func + (_ a: Tensor, _ b: Tensor) -> Tensor { Rational(a.numerator*b.denominator + b.numerator*a.denominator, a.denominator*b.denominator).reduced() }
+    
+    static func * (lhs: Tensor, rhs: Rational) -> Tensor {
+        let components = lhs.components.map { MultiplicationExpression(expressions: [$0, ValueExpression(value: rhs)]).reduce()}
+        return Tensor(dimensions: lhs.dimensions, rank: lhs.rank, components: components, isCovariant: lhs.isCovariant)
+    }
+    static func * (lhs: Rational, rhs: Tensor) -> Tensor { rhs * lhs }
+    
+    static func * (lhs: Tensor, rhs: Tensor) -> Tensor {
+        if lhs.rank == 2 && rhs.rank == 1 && lhs.dimensions == rhs.dimensions {
+            var resultComponents: [Expression] = []
+            
+            for i in 0..<lhs.dimensions {
+                var sum: Expression = ValueExpression(value: Rational(0))
+                
+                for j in 0..<lhs.dimensions {
+                    let matrixIndex = i * lhs.dimensions + j
+                    let product = MultiplicationExpression(expressions: [lhs.components[matrixIndex], rhs.components[j]]).reduce()
+                    
+                    sum = AdditionExpression(expressions: [sum, product]).reduce()
+                }
+                
+                resultComponents.append(sum)
+            }
+            
+            return Tensor(dimensions: rhs.dimensions, rank: 1, components: resultComponents, isCovariant: rhs.isCovariant)
+        }
+        
+        fatalError("Unsupported tensor multiplication")
+    }
+    static func *= (lhs: inout Tensor, rhs: Tensor) { lhs = lhs * rhs }
+    
+//    static func / (_ a: Int, _ b: Rational) -> Rational { Rational(a*b.denominator, b.numerator) }
+//    static func == (_ a: Rational, _ b: Rational) -> Bool {
+//        let aR = a.reduced()
+//        let bR = b.reduced()
+//        return aR.numerator == bR.numerator && aR.denominator == bR.denominator
+//    }
+//    static func != (_ a: Rational, _ b: Rational) -> Bool { !(a == b) }
+    
     // CustomStringConvertable =========================================================================
     var description: String {
         if rank == 0 {
