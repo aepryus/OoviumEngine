@@ -209,51 +209,80 @@ class AnalyticTests: XCTestCase {
         let Q: Expression = Anain(natural: "atan(y/x)").calculate()!
         
         print("r = \(r)")
+        
+        XCTAssert("\(r)" == "(x^2 + y^2)^1/2")
+
         print("Q = \(Q)")
+        
+        XCTAssert("\(Q)" == "atan(yx^-1)")
         
         let dQ: Expression = Q.differentiate(with: Variable(name: "x")).reduce()
         print("dQ = \(dQ)")
         
+        XCTAssert("\(dQ)" == "(x^-1y^2x^-1 + 1)^-1-1x^-2y")
+        
         let Q1: Expression = Anain(natural: "y/x").calculate()!
         let dQ1: Expression = Q1.differentiate(with: Variable(name: "x")).reduce()
         print("dQ1 = \(dQ1)")
+        
+        XCTAssert("\(dQ1)" == "-1x^-2y")
 
         let T: Tensor = Tensor(dimensions: 2, rank: 1, components: [r, Q], isCovariant: [false])
         
         print("T = \(T)")
+        
+        XCTAssert("\(T)" == "[(x^2 + y^2)^1/2, atan(yx^-1)]")
 
         let J: Expression = T.calculateJacobian(variables: ["x", "y"])
         
         print("J = \(J)")
+        
+//        XCTAssert("\(J)" == "[[(x^2 + y^2)^-1/2x, (x^2 + y^2)^-1/2y],\n [(x^-1y^2x^-1 + 1)^-1-1x^-2y, (x^-1y^2x^-1 + 1)^-1x^-1]]")
         
         guard let exp = J as? ValueExpression, let JT = exp.value as? Tensor else { return }
         
         let JN = ValueExpression(value: JT.substitute(vN))
         print("JN = \(JN)")
         
+        XCTAssert("\(JN)" == "[[3/5, 4/5],\n [-4/25, 9/75]]")
+        
         let JM = MultiplicationExpression(expressions: [JN, ValueExpression(value: vN)]).reduce()
         print("JM = \(JM)")
         
+        XCTAssert("\(JM)" == "[5, 0]")
+        
         let TM = ValueExpression(value: T.substitute(vN))
         print("TM = \(TM)")
+        
+        XCTAssert("\(TM)" == "[5, atan(4/3)]")
 
         let C = Anain(natural: "x^2+y^2").calculate()!
         
         print("C = \(C)")
+        
+        XCTAssert("\(C)" == "x^2 + y^2")
 
         let D = C.reduce()
         
         print("D = \(D)")
         
+        XCTAssert("\(D)" == "x^2 + y^2" || "\(D)" == "y^2 + x^2")
+        
         let A = Anain(natural: "(x^2+y^2)^(1/2)").calculate()!.reduce()
         
         print("A = \(A)")
+        
+        XCTAssert("\(A)" == "(x^2 + y^2)^1/2" || "\(A)" == "(y^2 + x^2)^1/2")
         
         let B = A.differentiate(with: Variable(name: "x"))
         
         print("B = \(B)")
         
+        XCTAssert("\(B)" == "(x^2 + y^2)^-1/2x" || "\(B)" == "(y^2 + x^2)^-1/2x")
+        
         let G = Anain(natural: "0").calculate()!.reduce()
         print("G = \(G)")
+        
+        XCTAssert("\(G)" == "0")
     }
 }

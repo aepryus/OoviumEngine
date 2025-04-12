@@ -28,34 +28,20 @@ class Tensor: Value, CustomStringConvertible {
     }
     
     func calculateJacobian(variables: [String]) -> Expression {
-        // Create a matrix of derivatives (rank 2 tensor)
         var jacobianComponents: [Expression] = []
         
-        // For each component in the tensor
         for component in components {
-            // For each variable
-            for variableName in variables {
-                let variable = Variable(name: variableName)
-                // Calculate the partial derivative of this component with respect to this variable
-                let derivative = component.differentiate(with: variable)
-                jacobianComponents.append(derivative)
+            for variable in variables {
+                jacobianComponents.append(component.differentiate(with: Variable(name: variable)))
             }
         }
         
-        // Return a tensor representing the Jacobian matrix
-        return ValueExpression(value: Tensor(
-            dimensions: variables.count,
-            rank: 2,
-            components: jacobianComponents,
-            isCovariant: [true, false]
-        ))
+        return ValueExpression(value: Tensor(dimensions: variables.count, rank: 2, components: jacobianComponents, isCovariant: [true, false]))
     }
     
     func substitute(_ vector: Tensor) -> Tensor {
-        // Define variable names (x, y for 2D coordinates)
         let variableNames = ["x", "y"]
         
-        // Create substituted components by replacing variables
         var newComponents: [Expression] = []
         for component in components {
             var result = component
@@ -118,7 +104,7 @@ class Tensor: Value, CustomStringConvertible {
 //    }
 //    static func != (_ a: Rational, _ b: Rational) -> Bool { !(a == b) }
     
-    // CustomStringConvertable =========================================================================
+// CustomStringConvertable =========================================================================
     var description: String {
         if rank == 0 {
             return components[0].description
