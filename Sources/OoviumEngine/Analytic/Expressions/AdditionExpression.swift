@@ -54,11 +54,6 @@ class OperationExpression: Expression {
 class AdditionExpression: OperationExpression {
 
 	init(expressions: [Expression]) {
-        
-        if expressions.count == 0 {
-            print("wtf")
-        }
-        
 		super.init(operation: .addition, expressions: expressions)
 	}
 
