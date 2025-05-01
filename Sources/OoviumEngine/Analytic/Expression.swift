@@ -15,8 +15,10 @@ public class Expression: Hashable, CustomStringConvertible {
 	func attemptToIsolate(variable: Variable) -> Actor? { nil }
 	func reduce() -> Expression { self }
 	func flavor() -> Expression { self }
-	func scalar() -> Value { Rational(0) }
+	func scalar() -> Value { Rational(1) }
 	func differentiate(with variable: Variable) -> Expression { ValueExpression(value: Rational(0)) }
+    
+    func substitute(variable: String, with value: Value) -> Expression { self }
 
 	var order: Int { 0 }
 
@@ -25,6 +27,7 @@ public class Expression: Hashable, CustomStringConvertible {
 	func invert() -> Expression { PowerExpression(expression: self, power: ValueExpression(value: Rational(-1))) }
 
 	static func * (lhs: Expression, rhs: Expression) -> Expression {
+        // Rational ================================================================================
 		if let lhs = lhs as? ValueExpression, let lV = lhs.value as? Rational, lV == Rational(1) {
 			return rhs
 
@@ -39,7 +42,20 @@ public class Expression: Hashable, CustomStringConvertible {
 
 		} else if let lhs = lhs as? MultiplicationExpression, let rhs = rhs as? ValueExpression, let rV = rhs.value as? Rational {
 			return lhs.multiply(rational: rV)
+            
+        // Tensor ==================================================================================
 
+        } else if let lhs = lhs as? ValueExpression, let lV = lhs.value as? Tensor, let rhs = rhs as? ValueExpression, let rV = rhs.value as? Tensor {
+            return ValueExpression(value: lV*rV)
+
+        } else if let lhs = lhs as? ValueExpression, let lV = lhs.value as? Tensor, let rhs = rhs as? MultiplicationExpression {
+            return rhs.multiply(tensor: lV)
+
+        } else if let lhs = lhs as? MultiplicationExpression, let rhs = rhs as? ValueExpression, let rV = rhs.value as? Tensor {
+            return lhs.multiply(tensor: rV)
+
+            
+        // Other ===================================================================================
 		} else if let lhs = lhs as? VariableExpression, let rhs = rhs as? MultiplicationExpression {
 			return rhs.multiply(variableExpression: lhs)
 

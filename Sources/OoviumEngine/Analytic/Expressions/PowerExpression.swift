@@ -31,8 +31,29 @@ class PowerExpression: Expression {
 	override func reduce() -> Expression {
 		let expression = expression.reduce()
 		let power = power.reduce()
+        
+        if let power = power as? ValueExpression,
+           let pRat = power.value as? Rational,
+           let expression = expression as? ValueExpression,
+           let eRat = expression.value as? Rational {
+            
+            let numD: Double = pow(eRat.numeric, abs(pRat.numeric))
+            let numI: Int = Int(numD)
+            
+            if numD == Double(numI) {
+                if pRat.numeric > 0 { return ValueExpression(value: Rational(numI)) }
+                else { return ValueExpression(value: Rational(1, numI)) }
+            }
+        }
+
         if let power = power as? ValueExpression, let rational: Rational = power.value as? Rational, rational == Rational(1) {
             return expression
+        } else if let power = power as? ValueExpression,
+                  let rational: Rational = power.value as? Rational,
+                  rational == Rational(-1),
+                  let expression: ValueExpression = expression as? ValueExpression,
+                  let value: Rational = expression.value as? Rational {
+            return ValueExpression(value: Rational(value.denominator, value.numerator))
         } else if let power = power as? ValueExpression,
                   let expression = expression as? ValueExpression,
                   let powRat: Rational = power.value as? Rational,
@@ -47,9 +68,9 @@ class PowerExpression: Expression {
                 rational = Rational(AnainMath.pow(expRat.denominator, p), AnainMath.pow(expRat.numerator, p))
             }
             return ValueExpression(value: rational)
-		} else { return PowerExpression(expression: expression, power: power) }
+        } else { return PowerExpression(expression: expression, power: power) }
 	}
-	override func differentiate(with variable: Variable) -> Expression {
+    override func differentiate(with variable: Variable) -> Expression {
 		guard depends(on: variable) else { return super.differentiate(with: variable) }
 
 		if !power.depends(on: variable) {
@@ -59,6 +80,13 @@ class PowerExpression: Expression {
 			return super.differentiate(with: variable)
 		}
 	}
+    
+    override func substitute(variable: String, with value: Value) -> Expression {
+        PowerExpression(
+            expression: expression.substitute(variable: variable, with: value),
+            power: power.substitute(variable: variable, with: value)
+        )
+    }
 
 // Hashable ========================================================================================
 	static func == (lhs: PowerExpression, rhs: PowerExpression) -> Bool { lhs.expression == rhs.expression && lhs.power == rhs.power }

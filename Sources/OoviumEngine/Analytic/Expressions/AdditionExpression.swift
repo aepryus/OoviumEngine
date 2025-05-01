@@ -27,7 +27,7 @@ class OperationExpression: Expression {
 //		}
 //		return false
 	}
-
+    
 // Hashable ========================================================================================
 	static func == (lhs: OperationExpression, rhs: OperationExpression) -> Bool {
 		guard lhs.expressions.count == rhs.expressions.count else { return false }
@@ -110,13 +110,18 @@ class AdditionExpression: OperationExpression {
 				results.append(MultiplicationExpression(expressions: [ValueExpression(value: value), $0]))
 			}
 		}
-		if results.count == 1 { return results[0] }
+        if results.count == 0 { return ValueExpression(value: Rational(0)) }
+		else if results.count == 1 { return results[0] }
 		else { return AdditionExpression(expressions: results.sorted(by: { $0.order < $1.order })) }
 	}
 	override func scalar() -> Value { Rational(1) }
 	override func differentiate(with variable: Variable) -> Expression {
 		AdditionExpression(expressions: expressions.map { $0.differentiate(with: variable) }).reduce()
 	}
+    
+    override func substitute(variable: String, with value: Value) -> Expression {
+        AdditionExpression(expressions: expressions.map { $0.substitute(variable: variable, with: value) })
+    }
 
 // CustomStringConvertible =========================================================================
 	override var description: String {

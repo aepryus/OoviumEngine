@@ -27,6 +27,11 @@ class VariableExpression: Expression {
 			return ValueExpression(value: Rational(0))
 		}
 	}
+    
+    override func substitute(variable: String, with value: Value) -> Expression {
+        if variable == self.variable.name { return ValueExpression(value: value) }
+        return self
+    }
 
 // Hashable ========================================================================================
 	static func == (lhs: VariableExpression, rhs: VariableExpression) -> Bool { lhs.variable == rhs.variable }

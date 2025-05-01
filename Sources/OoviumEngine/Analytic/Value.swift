@@ -15,8 +15,8 @@ class Rational: Value, CustomStringConvertible {
 	let denominator: Int
 
 	init(_ numerator: Int, _ denominator: Int = 1) {
-		self.numerator = numerator
-		self.denominator = denominator
+        self.numerator = numerator*denominator >= 0 ? abs(numerator) : -abs(numerator)
+		self.denominator = abs(denominator)
 	}
 
 	func reduced() -> Rational {
@@ -40,6 +40,8 @@ class Rational: Value, CustomStringConvertible {
 
 		return Rational(negative * numerator, denominator)
 	}
+    
+    var numeric: Double { Double(numerator)/Double(denominator) }
 
 	static prefix func - (a: Rational) -> Rational { Rational(-a.numerator, a.denominator) }
 	static func + (_ a: Rational, _ b: Rational) -> Rational { Rational(a.numerator*b.denominator + b.numerator*a.denominator, a.denominator*b.denominator).reduced() }
@@ -58,4 +60,28 @@ class Rational: Value, CustomStringConvertible {
 		if denominator == 1 { return "\(numerator)" }
 		else { return "\(numerator)/\(denominator)" }
 	}
+}
+
+class Real: Value, CustomStringConvertible {
+    let expression: Expression
+    
+    init(_ expression: Expression) {
+        self.expression = expression
+    }
+    
+    static prefix func - (lhs: Real) -> Real {
+        Real(MultiplicationExpression(expressions: [lhs.expression, ValueExpression(value: Rational(-1))]))
+    }
+    static func + (_ lhs: Real, _ rhs: Real) -> Real {
+        Real(AdditionExpression(expressions: [lhs.expression, rhs.expression]).reduce())
+    }
+    static func * (_ lhs: Real, _ rhs: Real) -> Real {
+        Real(MultiplicationExpression(expressions: [lhs.expression, rhs.expression]).reduce())
+    }
+    static func *= (lhs: inout Real, rhs: Real) {
+        lhs = lhs * rhs
+    }
+    
+// CustomStringConvertable =========================================================================
+    var description: String { expression.description }
 }
