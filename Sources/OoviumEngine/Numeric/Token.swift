@@ -206,8 +206,9 @@ public class Token: Hashable {
     
     public static func token(key: TokenKey) -> Token? {
         if let token: Token = tokens[key] { return token }
-        guard key.code == .ch else { return nil }
-        return Token.characterToken(tag: key.tag)
+        if key.code == .ch { return Token.characterToken(tag: key.tag) }
+        else if key.code == .va { return Token.variableToken(tag: key.tag) }
+        return nil
     }
     static func start() {
         [   period, zero, one, two, three, four, five, six, seven, eight, nine, e, i, pi, yes, no,

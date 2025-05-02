@@ -127,7 +127,13 @@ public class Citadel {
                 
             } else { nuke(key: tokenKey) }
         }
-        tokens.merge(newTokens) { (_,_) in fatalError() }
+        tokens.merge(newTokens) { (a: TowerToken, b: TowerToken) in
+            print("a: \(a)")
+            print("b: \(b)")
+
+            fatalError()
+        }
+            
         cores.merge(newCores) { (_,_) in fatalError() }
     }
     public func reevaluate() {
