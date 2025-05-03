@@ -24,7 +24,7 @@ public class Aexon: Domain {
     }
     public required init(attributes: [String:Any], parent: Domain?) {
         super.init(attributes: attributes, parent: parent)
-        load(attributes: attributes)
+//        load(attributes: attributes)
     }
     
 // Computed ========================================================================================

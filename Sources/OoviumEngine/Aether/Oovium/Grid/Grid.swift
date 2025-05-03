@@ -140,43 +140,23 @@ public class Grid: Aexel {
     public func rekey(aether: Aether) {
         var subs: [TokenKey:TokenKey?] = [:]
         
-        print("====================================================================================================")
-
-        
         for i in 0..<columns.count {
             let no: Int = i + 1
             let column: Column = columns[i]
             
-            print("\(column.no) =? \(no)")
-            print("header: \(column.headerTokenKey)")
-            print(" key: \(column.chain.key!)")
-            
             column.no = no
-            
             if column.headerTokenKey != column.chain.key { subs[column.chain.key!] = column.headerTokenKey }
-            
-            print("footer: \(column.footerTokenKey)")
-            print(" key: \(column.footerChain.key!)")
-            
             if column.footerTokenKey != column.footerChain.key { subs[column.footerChain.key!] = column.footerTokenKey }
-
-            for cell in column.cells {
-                print("\tcolNo: \(cell.colNo)")
-                print("\trowNo: \(cell.rowNo)")
-                print("\tcell: \(cell.tokenKey)")
-                print("\tkey: \(cell.chain.key!)")
-                print("=============")
-                
-                if cell.tokenKey != cell.chain.key! { subs[cell.chain.key!] = cell.tokenKey }
-            }
+            for cell in column.cells { if cell.tokenKey != cell.chain.key! { subs[cell.chain.key!] = cell.tokenKey } }
         }
         
         aether.rekey(subs: subs)
-        
     }
 
 // Events ==========================================================================================
-	public override func onLoad() {}
+	public override func onLoad() {
+        print("onLoad")
+    }
 	public override func onCreate() {
 		exposed = true
 	}

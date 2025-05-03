@@ -47,7 +47,6 @@ public class Column: Aexon, VariableTokenDelegate {
 	}
 	public required init(attributes: [String:Any], parent: Domain?) {
 		super.init(attributes: attributes, parent: parent)
-        calculated = !chain.isEmpty
 	}
     
     public var maxCellNo: Int { cells.maximum({ $0.no }) ?? 0 }
@@ -116,6 +115,11 @@ public class Column: Aexon, VariableTokenDelegate {
         cells.insert(cell, at: toRowNo-1)
     }
     func delete(rowNo: Int) { cells.remove(at: rowNo-1) }
+    
+// Events ==========================================================================================
+    public override func onLoad() {
+        calculated = !chain.isEmpty
+    }
 
 // Aexon ===========================================================================================
     override var code: String { "Co" }
