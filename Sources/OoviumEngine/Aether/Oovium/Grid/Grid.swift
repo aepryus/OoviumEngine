@@ -154,9 +154,7 @@ public class Grid: Aexel {
     }
 
 // Events ==========================================================================================
-	public override func onLoad() {
-        print("onLoad")
-    }
+	public override func onLoad() {}
 	public override func onCreate() {
 		exposed = true
 	}
