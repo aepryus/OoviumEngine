@@ -445,7 +445,10 @@ public class Migrate {
     }
 	public static func migrateAether(json: String) throws -> String {
 		var attributes: [String:Any] = json.toAttributes()
-		let fileVersion: String = attributes["version"] as? String ?? "2.0.2"
+        
+		let fileVersion: String
+        if let version: String = attributes["version"] as? String, !version.isEmpty { fileVersion = version }
+        else { fileVersion = "2.0.2" }
         
         let result: ComparisonResult =  fileVersion.compare(Aether.engineVersion, options: .numeric)
         
