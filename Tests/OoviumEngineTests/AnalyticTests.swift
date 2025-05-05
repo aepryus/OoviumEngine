@@ -143,7 +143,7 @@ class AnalyticTests: XCTestCase {
     
     func test_Anain() {
         var anain: Anain = Anain(natural: "3")
-        var expression: Expression? = anain.calculate()
+        var expression: OoviumEngine.Expression? = anain.calculate()
         if let expression { print("############################     [ \(expression) ]") }
         else { print("Oops") }
         XCTAssert("\(expression!)" == "3")
