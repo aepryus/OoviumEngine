@@ -17,6 +17,13 @@ public enum AetherLoadingError: Error {
 fileprivate struct Subs {
     let from: String
     let to: String
+    let isColumnToken: Bool
+    
+    init(from: String, to: String, isColumnToken: Bool = false) {
+        self.from = from
+        self.to = to
+        self.isColumnToken = isColumnToken
+    }
 }
 
 public extension Dictionary where Key == String {
@@ -420,13 +427,15 @@ public class Migrate {
 
         var sb: String = "\(key)::"
         keys.forEach {
-            sb.append($0[0...2])
+            let tag: String = $0[3...]
+            let sub: Subs? = subs.first(where: { $0.from == tag })
             
-            var tag: String = $0[3...]
-            
-            subs.forEach { if tag == $0.from { tag = $0.to } }
+            if let sub {
+                if sub.isColumnToken { sb.append("cl:") }
+                else { sb.append($0[0...2]) }
+                sb.append(sub.to)
+            } else { sb.append($0) }
 
-            sb.append(tag)
             sb.append(";")
         }
 
@@ -559,7 +568,10 @@ public class Migrate {
                                     subs.append(Subs(from: "Gr\(no).Ft\(subNo)", to: "Gr\(no).Ft\(colNo)"))
 
                                     subAtts["no"] = colNo
-                                    if let tokens: String = subAtts["chain"] as? String { subAtts["chain"] = "cl:Gr\(no).Co\(colNo)::\(tokens)" }
+                                    if let tokens: String = subAtts["chain"] as? String {
+                                        subs.append(Subs(from: "Gr\(no).Co\(subNo)", to: "Gr\(no).Co\(colNo)", isColumnToken: true))
+                                        subAtts["chain"] = "cl:Gr\(no).Co\(colNo)::\(tokens)"
+                                    }
                                     
                                     var newCellNo: Int = 1
                                     if let cellArray: [[String:Any]] = aexelAtts["cells"] as? [[String:Any]] {

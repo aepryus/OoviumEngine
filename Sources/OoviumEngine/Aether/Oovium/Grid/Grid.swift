@@ -145,12 +145,21 @@ public class Grid: Aexel {
             let column: Column = columns[i]
             
             column.no = no
-            if column.headerTokenKey != column.chain.key { subs[column.chain.key!] = column.headerTokenKey }
-            if column.footerTokenKey != column.footerChain.key { subs[column.footerChain.key!] = column.footerTokenKey }
-            for cell in column.cells { if cell.tokenKey != cell.chain.key! { subs[cell.chain.key!] = cell.tokenKey } }
+            if column.headerTokenKey != column.chain.key {
+                subs[column.chain.key!] = column.headerTokenKey
+                column.chain.key = column.headerTokenKey
+            }
+            if column.footerTokenKey != column.footerChain.key {
+                subs[column.footerChain.key!] = column.footerTokenKey
+                column.footerChain.key = column.footerTokenKey
+            }
+            for cell in column.cells { if cell.tokenKey != cell.chain.key! {
+                subs[cell.chain.key!] = cell.tokenKey
+                cell.chain.key = cell.tokenKey
+            } }
         }
         
-        aether.rekey(subs: subs)
+        aether.rekeyOther(subs: subs)
     }
 
 // Events ==========================================================================================

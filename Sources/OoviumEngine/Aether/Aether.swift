@@ -51,6 +51,21 @@ import Foundation
             })
         }
     }
+    func rekeyOther(subs: [TokenKey:TokenKey?]) {
+        chains.forEach { (chain: Chain) in
+            chain.tokenKeys = chain.tokenKeys.map({ (tokenKey: TokenKey) in
+                if let subNil: TokenKey? = subs[tokenKey] {
+                    if let sub: TokenKey = subNil {
+                        return sub
+                    } else {
+                        fatalError()
+                    }
+                } else {
+                    return tokenKey
+                }
+            })
+        }
+    }
 
 // Aexels ==========================================================================================
 	public func addAexel(_ aexel: Aexel) {

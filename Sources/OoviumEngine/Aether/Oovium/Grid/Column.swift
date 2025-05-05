@@ -118,7 +118,8 @@ public class Column: Aexon, VariableTokenDelegate {
     
 // Events ==========================================================================================
     public override func onLoad() {
-        calculated = !chain.isEmpty
+        if let chain { calculated = !chain.isEmpty }
+        else { calculated = false }
     }
 
 // Aexon ===========================================================================================
