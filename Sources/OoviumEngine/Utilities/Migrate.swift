@@ -562,6 +562,13 @@ public class Migrate {
                                 }
                                 aexelAtts["vertebras"] = subArray
                             }
+                        case "auto":
+                            aexelAtts["type"] = "automata"
+                            if let tokens: String = aexelAtts["statesChain"] as? String { aexelAtts["statesChain"] = "Au\(no).states::\(tokens)" }
+                            if let tokens: String = aexelAtts["resultChain"] as? String { aexelAtts["resultChain"] = "Au\(no).result::\(tokens)" }
+                        case "automata":
+                            if let tokens: String = aexelAtts["statesChain"] as? String { aexelAtts["statesChain"] = "Au\(no).states::\(tokens)" }
+                            if let tokens: String = aexelAtts["resultChain"] as? String { aexelAtts["resultChain"] = "Au\(no).result::\(tokens)" }
                         case "grid":
                             if var subArray: [[String:Any]] = aexelAtts["columns"] as? [[String:Any]] {
                                 var colNo: Int = 1

@@ -10,12 +10,13 @@ import Aegean
 import Acheron
 import Foundation
 
-public class Automata: Aexel {
+public class Automata: Aexel, VariableTokenDelegate {
 	@objc public var statesChain: Chain!
 	@objc public var resultChain: Chain!
 	
 	@objc public var states: [State] = []
 	
+    public var selfTokenKey: TokenKey { TokenKey(code: .va, tag: "\(key).Self") }
     public var aTokenKey: TokenKey { TokenKey(code: .va, tag: "\(key).A") }
     public var bTokenKey: TokenKey { TokenKey(code: .va, tag: "\(key).B") }
     public var cTokenKey: TokenKey { TokenKey(code: .va, tag: "\(key).C") }
@@ -24,13 +25,15 @@ public class Automata: Aexel {
     public var fTokenKey: TokenKey { TokenKey(code: .va, tag: "\(key).F") }
     public var gTokenKey: TokenKey { TokenKey(code: .va, tag: "\(key).G") }
     public var hTokenKey: TokenKey { TokenKey(code: .va, tag: "\(key).H") }
-    public var selfTokenKey: TokenKey { TokenKey(code: .va, tag: "\(key).Self") }
+    
+    public var statesTokenKey: TokenKey { TokenKey(code: .va, tag: "\(key).states") }
+    public var resultTokenKey: TokenKey { TokenKey(code: .va, tag: "\(key).result") }
 
-//	public var statesTower: Tower { statesChain.tower }
-//	public var resultTower: Tower { resultChain.tower }
-	public var spaceTowers: [Tower] = []
-	
+    public var mechlikeTokenKey: TokenKey { TokenKey(code: .ml, tag: key) }
+    public var variableTokenKey: TokenKey { TokenKey(code: .va, tag: key) }
+
     private let tokenDelegates: [StaticVariableTokenDelegate] = {[
+        StaticVariableTokenDelegate("Self"),
         StaticVariableTokenDelegate("A"),
         StaticVariableTokenDelegate("B"),
         StaticVariableTokenDelegate("C"),
@@ -38,16 +41,15 @@ public class Automata: Aexel {
         StaticVariableTokenDelegate("E"),
         StaticVariableTokenDelegate("F"),
         StaticVariableTokenDelegate("G"),
-        StaticVariableTokenDelegate("H"),
-        StaticVariableTokenDelegate("Self"),
+        StaticVariableTokenDelegate("H")
     ]}()
     
 // Inits ===========================================================================================
 	public required init(at: V2, aether: Aether) {
 		super.init(at:at, aether: aether)
         
-        statesChain = Chain(key: TokenKey(code: .va, tag: "\(key).states"))
-        resultChain = Chain(key: TokenKey(code: .va, tag: "\(key).result"))
+        statesChain = Chain(key: statesTokenKey)
+        resultChain = Chain(key: resultTokenKey)
 
 		add(state: State(no: 0, color: .clear, automata: self))
 		add(state: State(no: 1, color: .lavender, automata: self))
@@ -56,21 +58,8 @@ public class Automata: Aexel {
 		super.init(attributes: attributes, parent: parent)
 	}
 	
-	private func buildSpaceTowers(no: Int) {
-//        spaceTowers.append(aether.state.createTower(tag: "\(key).A", towerDelegate: self, tokenDelegate: tokenDelegates[0]))
-//        spaceTowers.append(aether.state.createTower(tag: "\(key).B", towerDelegate: self, tokenDelegate: tokenDelegates[1]))
-//        spaceTowers.append(aether.state.createTower(tag: "\(key).C", towerDelegate: self, tokenDelegate: tokenDelegates[2]))
-//        spaceTowers.append(aether.state.createTower(tag: "\(key).D", towerDelegate: self, tokenDelegate: tokenDelegates[3]))
-//        spaceTowers.append(aether.state.createTower(tag: "\(key).E", towerDelegate: self, tokenDelegate: tokenDelegates[4]))
-//        spaceTowers.append(aether.state.createTower(tag: "\(key).F", towerDelegate: self, tokenDelegate: tokenDelegates[5]))
-//        spaceTowers.append(aether.state.createTower(tag: "\(key).G", towerDelegate: self, tokenDelegate: tokenDelegates[6]))
-//        spaceTowers.append(aether.state.createTower(tag: "\(key).H", towerDelegate: self, tokenDelegate: tokenDelegates[7]))
-//        spaceTowers.append(aether.state.createTower(tag: "\(key).Self", towerDelegate: self, tokenDelegate: tokenDelegates[8]))
-//
-//        spaceTowers.forEach { $0.web = web }
-	}
-	
 	public func foreshadow(_ memory: UnsafeMutablePointer<Memory>) {
+        AEMemorySetValue(memory, AEMemoryIndexForName(memory, "Au\(no).Self".toInt8()), 0)
 		AEMemorySetValue(memory, AEMemoryIndexForName(memory, "Au\(no).A".toInt8()), 0)
 		AEMemorySetValue(memory, AEMemoryIndexForName(memory, "Au\(no).B".toInt8()), 0)
 		AEMemorySetValue(memory, AEMemoryIndexForName(memory, "Au\(no).C".toInt8()), 0)
@@ -79,7 +68,6 @@ public class Automata: Aexel {
 		AEMemorySetValue(memory, AEMemoryIndexForName(memory, "Au\(no).F".toInt8()), 0)
 		AEMemorySetValue(memory, AEMemoryIndexForName(memory, "Au\(no).G".toInt8()), 0)
 		AEMemorySetValue(memory, AEMemoryIndexForName(memory, "Au\(no).H".toInt8()), 0)
-		AEMemorySetValue(memory, AEMemoryIndexForName(memory, "Au\(no).Self".toInt8()), 0)
 	}
 	
 	public func add(state: State) {
@@ -90,38 +78,51 @@ public class Automata: Aexel {
 		let state = State(no: states.count, color: Text.Color(rawValue: states.count)!, automata: self)
 		add(state: state)
 	}
+    public func buildStates() {
+        let n = 2
+        guard n != states.count else { return }
+
+        if n < states.count { for _ in n..<states.count { states.removeLast() } }
+        else { for _ in states.count..<n { addState() } }
+    }
 	
-	public func buildStates() {
-//		let n = min(max(Int(statesTower.value), 2), 32)
-//		guard n != states.count else { return }
-//
-//		if n < states.count { for _ in n..<states.count { states.removeLast() } }
-//        else { for _ in states.count..<n { addState() } }
-	}
-	
-// Events ==========================================================================================
-	public override func onLoad() {
-//        statesChain.tower = aether.state.createTower(tag: "\(key).states", towerDelegate: statesChain)
-//        resultChain.tower = aether.state.createTower(tag: "\(key).result", towerDelegate: resultChain)
-		
-//		statesTower.tailForWeb = web
-//		resultTower.tailForWeb = web
-		
-		buildSpaceTowers(no: no)
-	}
-	
-// Aexel ===========================================================================================
-//    public var towers: Set<Tower> {
-//        var towers = Set<Tower>()
-//        spaceTowers.forEach { towers.insert($0) }
-//        return towers.union([resultTower, statesTower])
-//    }
-    public override var chains: [Chain] { [statesChain, resultChain] }
-    
 // Aexon ===========================================================================================
     public override var code: String { "Au" }
+    public override var tokenKeys: [TokenKey] { [
+        selfTokenKey,
+        aTokenKey,
+        bTokenKey,
+        cTokenKey,
+        dTokenKey,
+        eTokenKey,
+        fTokenKey,
+        gTokenKey,
+        hTokenKey,
+        statesTokenKey,
+        resultTokenKey,
+        mechlikeTokenKey,
+        variableTokenKey
+    ] }
+    public override func createCores() -> [Core] { [
+        ParameterCore(parameter: StaticParameter(tokenKey: selfTokenKey, fogKey: mechlikeTokenKey, name: "Self")),
+        ParameterCore(parameter: StaticParameter(tokenKey: aTokenKey, fogKey: mechlikeTokenKey, name: "A")),
+        ParameterCore(parameter: StaticParameter(tokenKey: bTokenKey, fogKey: mechlikeTokenKey, name: "B")),
+        ParameterCore(parameter: StaticParameter(tokenKey: cTokenKey, fogKey: mechlikeTokenKey, name: "C")),
+        ParameterCore(parameter: StaticParameter(tokenKey: dTokenKey, fogKey: mechlikeTokenKey, name: "D")),
+        ParameterCore(parameter: StaticParameter(tokenKey: eTokenKey, fogKey: mechlikeTokenKey, name: "E")),
+        ParameterCore(parameter: StaticParameter(tokenKey: fTokenKey, fogKey: mechlikeTokenKey, name: "F")),
+        ParameterCore(parameter: StaticParameter(tokenKey: gTokenKey, fogKey: mechlikeTokenKey, name: "G")),
+        ParameterCore(parameter: StaticParameter(tokenKey: hTokenKey, fogKey: mechlikeTokenKey, name: "H")),
+        ChainCore(chain: statesChain),
+        ChainCore(chain: resultChain, fog: mechlikeTokenKey),
+        AutomataCore(automata: self)
+    ] }
+    public override var chains: [Chain] { [statesChain, resultChain] }
 
 // Domain ==========================================================================================
     public override var properties: [String] { super.properties + ["statesChain", "resultChain"] }
     public override var children: [String] { super.children + ["states"] }
+    
+// VariableTokenDelegate ===========================================================================
+    var alias: String? { nil }
 }

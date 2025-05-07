@@ -9,7 +9,7 @@
 import Acheron
 import Foundation
 
-public class Vertebra: Aexon, VariableTokenDelegate {
+public class Vertebra: Aexon, ParameterDelegate {
     @objc public dynamic var name: String = "" {
         didSet {
             if name == "" { name = oldValue }
@@ -38,15 +38,18 @@ public class Vertebra: Aexon, VariableTokenDelegate {
     public override var tokenKeys: [TokenKey] { [tokenKey, resultTokenKey] }
     public override func createCores() -> [Core] { [
         ChainCore(chain: chain, fog: tail.mechlikeTokenKey),
-        VertebraCore(vertebra: self)
+        ParameterCore(parameter: self)
     ] }
     public override var chains: [Chain] { [chain] }
 
 // Domain ==========================================================================================
 	public override var properties: [String] { super.properties + ["name", "no", "chain"] }
 	
-// Core ===================================================================================
+// Core ============================================================================================
     func renderDisplay(tower: Tower) -> String { name }
+    
+// ParameterDelegate ===============================================================================
+    var fogKey: TokenKey? { tail.mechlikeTokenKey }
     
 // VariableTokenDelegate ===========================================================================
     public var alias: String? { name }

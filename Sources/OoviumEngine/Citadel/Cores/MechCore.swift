@@ -9,7 +9,7 @@
 import Aegean
 import Foundation
 
-class MechCore: Core {
+public class MechCore: Core {
     let mech: Mech
 
     var recipe: UnsafeMutablePointer<Recipe>? = nil

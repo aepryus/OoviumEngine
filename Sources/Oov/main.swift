@@ -5,6 +5,25 @@ import OoviumEngine
 
 Math.start()
 
+enum Color {
+    case reset, black, red, green, yellow, blue, magenta, cyan, white, bold
+    
+    var code: String {
+        switch self {
+            case .reset:    return "\u{001B}[0m"
+            case .black:    return "\u{001B}[30m"
+            case .red:      return "\u{001B}[31m"
+            case .green:    return "\u{001B}[32m"
+            case .yellow:   return "\u{001B}[33m"
+            case .blue:     return "\u{001B}[34m"
+            case .magenta:  return "\u{001B}[35m"
+            case .cyan:     return "\u{001B}[36m"
+            case .white:    return "\u{001B}[37m"
+            case .bold:     return "\u{001B}[1m"
+        }
+    }
+}
+
 let isNotRunningInXcode: Bool = ProcessInfo.processInfo.environment["XPC_SERVICE_NAME"]?.contains("com.apple.dt.Xcode") == false
 
 func enableRawMode() {
@@ -55,6 +74,11 @@ func formatForExpression(_ obje: Obje) -> String {
     }
 }
 
+func C(_ color: Color) -> String {
+    guard isNotRunningInXcode else { return "" }
+    return color.code
+}
+
 if CommandLine.arguments.count > 1 {
 
     let natural: String = CommandLine.arguments.dropFirst().joined(separator: " ")
@@ -63,7 +87,7 @@ if CommandLine.arguments.count > 1 {
 
 } else {
     
-    print("Oovium =====================================================================")
+    print("\n\(C(.green))[ \(C(.white))\(C(.bold))Oovium \(Aether.engineVersion) \(C(.reset))\(C(.green))] ==============================================================\(C(.reset))\n")
 
     var previousObje: Obje?
         
@@ -71,7 +95,7 @@ if CommandLine.arguments.count > 1 {
     defer { disableRawMode() }
     
     while true {
-        print("Oov> ", terminator: "")
+        print("\(C(.green))Oov> \(C(.white))", terminator: "")
         fflush(stdout)
         var input = ""
         
@@ -103,7 +127,10 @@ if CommandLine.arguments.count > 1 {
             }
         } else { input = readLine()! }
         
-        if input == "exit" { break }
+        if input == "exit" {
+            print("\(C(.reset))")
+            break
+        }
         
         let chain = Chain(natural: input)
         let chainExe: ChainCore = chain.compile()

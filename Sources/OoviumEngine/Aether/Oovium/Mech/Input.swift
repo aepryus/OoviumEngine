@@ -9,7 +9,7 @@
 import Acheron
 import Foundation
 
-public class Input: Aexon, VariableTokenDelegate {
+public class Input: Aexon, ParameterDelegate {
     @objc public dynamic var name: String = "" {
         didSet {
             if name == "" { name = oldValue }
@@ -32,10 +32,13 @@ public class Input: Aexon, VariableTokenDelegate {
 // Aexon ===========================================================================================
     public override var code: String { "i" }
     public override var tokenKeys: [TokenKey] { [tokenKey] }
-    public override func createCores() -> [Core] { [InputCore(input: self)] }
+    public override func createCores() -> [Core] { [ParameterCore(parameter: self)] }
 
 // Domain ==========================================================================================
 	public override var properties: [String] { super.properties + ["name"] }
+    
+// ParameterDelegate ===============================================================================
+    var fogKey: TokenKey? { mech.mechlikeTokenKey }
 
 // VariableTokenDelegate ===========================================================================
     public var alias: String? { name }
