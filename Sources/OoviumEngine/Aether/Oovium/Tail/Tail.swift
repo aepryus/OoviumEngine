@@ -15,8 +15,6 @@ public class Tail: Aexel, Mechlike, VariableTokenDelegate {
 	@objc public var resultChain: Chain!
 	@objc public var vertebras: [Vertebra] = []	
 	
-//	public var tower: Tower!
-
     public var mechlikeTokenKey: TokenKey { TokenKey(code: .ml, tag: key) }
     public var variableTokenKey: TokenKey { TokenKey(code: .va, tag: key) }
     var whileTokenKey: TokenKey { TokenKey(code: .va, tag: "\(key).while") }
