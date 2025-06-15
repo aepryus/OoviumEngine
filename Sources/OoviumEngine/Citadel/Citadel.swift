@@ -21,7 +21,7 @@ public class Citadel {
     
     init(aether: Aether) {
         self.aether = aether
-        build()
+        build(notify: false)
     }
     deinit { AEMemoryRelease(memory) }
 
@@ -42,9 +42,9 @@ public class Citadel {
         AEMemoryRelease(memory)
         memory = AEMemoryCreate(0)
     }
-    private func build() {
+    private func build(notify: Bool = true) {
         plugIn(aexons: aether.aexels)
-        Citadel.evaluate(towers: Set(towers))
+        Citadel.evaluate(towers: Set(towers), notify: notify)
     }
     private func harvest(aexon: Aexon) -> [Tower] {
         var towers: [Tower] = []
@@ -242,14 +242,14 @@ public class Citadel {
         towers.forEach { result.formUnion($0.allDownstream()) }
         return result
     }
-    public static func evaluate(towers: Set<Tower>) {
+    public static func evaluate(towers: Set<Tower>, notify: Bool = true) {
         towers.forEach { $0.core?.resetTask(tower: $0) }
         var progress: Bool
         repeat {
             progress = false
             towers.forEach { if $0.attemptToCalculate() { progress = true } }
         } while progress
-        notifyListeners(towers: towers)
+        if notify { notifyListeners(towers: towers) }
     }
     public static func trigger(towers: Set<Tower>) {
         var evaluate: Set<Tower> = Set(towers)
