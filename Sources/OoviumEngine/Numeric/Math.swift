@@ -43,7 +43,7 @@ public class Math {
 	static func morph(key: String) throws -> UInt32 {
 		guard let morph = morphs[key] else {
 			print("key [\(key)] not found!")
-			throw ParseError.general
+			throw ParseError.morphNotFound
 		}
 		return morph
 	}

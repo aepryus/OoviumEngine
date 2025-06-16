@@ -69,7 +69,7 @@ public class Chain: NSObject, Packable {
         }
         return params.last ?? 0
     }
-    private var noOfParams: Int {
+    private func noOfParams(citadel: Citadel) -> Int {
         var lefts: [TokenKey] = []
         tokenKeys.forEach { (key: TokenKey) in
             if key.code == .fn || key.code == .ml { lefts.append(key) }
@@ -80,7 +80,7 @@ public class Chain: NSObject, Packable {
         }
         guard let last: TokenKey = lefts.last else { return 0 }
         if last.code == .fn { return (Token.token(key: last) as! FunctionToken).params }
-        if last.code == .ml { return (Token.token(key: last) as! MechlikeToken).params }
+        if last.code == .ml { return (citadel.towerToken(key: last) as! MechlikeToken).params }
         return 1
     }
     private var lastIsOperator: Bool {
@@ -92,14 +92,14 @@ public class Chain: NSObject, Packable {
         let lastKey: TokenKey = tokenKeys[cursor-1]
         return lastKey.tag == "(" || lastKey.tag == "[" || lastKey.tag == "," || lastKey.code == .fn || lastKey.code == .ml || lastKey.code == .op
     }
-    private var isComplete: Bool {
-        guard noOfParams > 0 else { return false }
-        return currentParam == noOfParams
+    private func isComplete(citadel: Citadel) -> Bool {
+        guard noOfParams(citadel: citadel) > 0 else { return false }
+        return currentParam == noOfParams(citadel: citadel)
     }
-    private func parenKey(at cursor: Int) -> TokenKey? {
+    private func parenKey(at cursor: Int, citadel: Citadel) -> TokenKey? {
         if lastIsOperator || isNewSection(at: cursor) { return Token.leftParen.key }
-        else if isComplete { return Token.rightParen.key }
-        else if noOfParams > 0 { return Token.comma.key }
+        else if isComplete(citadel: citadel) { return Token.rightParen.key }
+        else if noOfParams(citadel: citadel) > 0 { return Token.comma.key }
         return nil
     }
     private func isWithinBracket() -> Bool {
@@ -124,8 +124,8 @@ public class Chain: NSObject, Packable {
     }
     public func removeKey() { tokenKeys.removeLast() }
     
-    public func parenthesis(at cursor: Int) {
-        guard let parenKey = parenKey(at: cursor) else { return }
+    public func parenthesis(at cursor: Int, citadel: Citadel) {
+        guard let parenKey = parenKey(at: cursor, citadel: citadel) else { return }
         post(key: parenKey, at: cursor)
     }
     public func braket(at cursor: Int) {
@@ -191,7 +191,8 @@ public class Chain: NSObject, Packable {
                 i += 1
                 let end: Int = natural.loc(of: "\"", after: i)!
                 while i < end {
-                    keys.append(TokenKey(code: .ch, tag: "\(natural[i])"))
+                    let code: TokenCode = (natural[i].isWholeNumber || ["."].contains(natural[i])) ? .dg : .ch
+                    keys.append(TokenKey(code: code, tag: "\(natural[i])"))
                     i += 1
                 }
                 code = .sp

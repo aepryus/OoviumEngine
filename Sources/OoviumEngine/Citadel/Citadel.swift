@@ -79,6 +79,11 @@ public class Citadel {
         tower.upstream.forEach { $0.downstream.nuke(tower: tower) }
         tower.upstream.nukeAll()
     }
+    
+    public func setParams(for key: TokenKey, to params: Int) {
+        let mechlikeToken: MechlikeToken = towerToken(key: key) as! MechlikeToken
+        mechlikeToken.params = params
+    }
 
 // Methods =========================================================================================
     // Listeners ===================================================================================
@@ -224,7 +229,7 @@ public class Citadel {
     
     // =============================================================================================
     func towerToken(key: TokenKey, delegate: VariableTokenDelegate? = nil) -> TowerToken {
-        if let tower: TowerToken = tokens[key] { return tower }
+        if let token: TowerToken = tokens[key] { return token }
         let token: TowerToken
         switch key.code {
             case .va: token = VariableToken(tag: key.tag, delegate: delegate)

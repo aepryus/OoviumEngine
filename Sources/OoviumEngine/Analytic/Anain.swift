@@ -440,7 +440,7 @@ public class Anain: NSObject, Packable {
             }
         }
         else if tokens[i].code == .sp { try ops.end() }
-        else { throw ParseError.general }
+        else { throw ParseError.operandExpected }
     }
     
     private func findEnd(_ n: Int) throws -> Int {
@@ -453,7 +453,7 @@ public class Anain: NSObject, Packable {
             else if token === Token.rightParen { p -= 1 }
             i += 1
         }
-        if p != 0 { throw ParseError.general }
+        if p != 0 { throw ParseError.unmatchedParenthesis }
         return i-1
     }
     private func parseNumber(tokens: [Token], i: Int) -> String {
@@ -475,7 +475,7 @@ public class Anain: NSObject, Packable {
             if tokens[i] == .bra { p += 1 }
             else if tokens[i] == .ket { p -= 1}
         }
-        if p > 0 { throw ParseError.general }
+        if p > 0 { throw ParseError.unmatchedParenthesis }
         return result
     }
     private func parseString(tokens: [Token], i: Int) throws -> String  {
@@ -485,12 +485,12 @@ public class Anain: NSObject, Packable {
             if tokens[i] == Token.quote {break}
             sb += tokens[i].tag
             i += 1
-            if i == tokens.count {throw ParseError.general}
+            if i == tokens.count {throw ParseError.unmatchedDoubleQuotes}
         }
         return sb
     }
     private func parseOperand(tokens: [Token], i: Int) throws -> Int {
-        guard tokens.count > i else { throw ParseError.general }
+        guard tokens.count > i else { throw ParseError.operandExpected }
 
         var i: Int = i
         var token: Token = tokens[i]
@@ -506,7 +506,7 @@ public class Anain: NSObject, Packable {
         if let ut = token as? UnaryToken {
             unary = ut
             i += 1
-            if (i == tokens.count) { throw ParseError.general }
+            if (i == tokens.count) { throw ParseError.orphanedUnary }
             token = tokens[i]
         }
         
@@ -605,7 +605,7 @@ public class Anain: NSObject, Packable {
 //            return text.count+2
         }
         
-        throw ParseError.general
+        throw ParseError.unknown
     }
     private func parseTokens(tokens:[Token], start:Int, stop:Int) throws {
         if tokens.count == 0 || start == stop { return }

@@ -91,10 +91,12 @@ class TailCore: Core {
 // Core ===================================================================================
     override var key: TokenKey { tail.variableTokenKey }
     
-    override func createTowerTokens(_ citadel: Citadel) -> [TowerToken] { [
-        citadel.towerToken(key: tail.variableTokenKey, delegate: tail),
-        citadel.towerToken(key: tail.mechlikeTokenKey, delegate: tail)
-    ] }
+    override func createTowerTokens(_ citadel: Citadel) -> [TowerToken] {
+        let variableToken: VariableToken = citadel.towerToken(key: tail.variableTokenKey, delegate: tail) as! VariableToken
+        let mechlikeToken: MechlikeToken = citadel.towerToken(key: tail.mechlikeTokenKey, delegate: tail) as! MechlikeToken
+        mechlikeToken.params = tail.vertebras.count
+        return [variableToken, mechlikeToken]
+    }
     override func citadelCompleted(_ citadel: Citadel) {
         whileTower = citadel.tower(key: tail.whileChain.key!)
         resultTower = citadel.tower(key: tail.resultChain.key!)

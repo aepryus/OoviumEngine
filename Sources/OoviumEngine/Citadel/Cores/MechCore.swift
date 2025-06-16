@@ -145,11 +145,12 @@ public class MechCore: Core {
 // Core ===================================================================================
     override var key: TokenKey { mech.variableTokenKey }
     
-//    override func createTower(_ citadel: Citadel) -> Tower { citadel.createMechlikeTower(tag: key.tag, core: self, tokenDelegate: mech) }
-    override func createTowerTokens(_ citadel: Citadel) -> [TowerToken] { [
-        citadel.towerToken(key: mech.variableTokenKey, delegate: mech),
-        citadel.towerToken(key: mech.mechlikeTokenKey, delegate: mech)
-    ] }
+    override func createTowerTokens(_ citadel: Citadel) -> [TowerToken] {
+        let variableToken: VariableToken = citadel.towerToken(key: mech.variableTokenKey, delegate: mech) as! VariableToken
+        let mechlikeToken: MechlikeToken = citadel.towerToken(key: mech.mechlikeTokenKey, delegate: mech) as! MechlikeToken
+        mechlikeToken.params = mech.inputs.count
+        return [variableToken, mechlikeToken]
+    }
     override func citadelCompleted(_ citadel: Citadel) {
         resultTower = citadel.tower(key: mech.resultChain.key!)
     }

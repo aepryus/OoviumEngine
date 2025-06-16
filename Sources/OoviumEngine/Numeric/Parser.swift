@@ -75,7 +75,17 @@ fileprivate class Ops {
     }
 }
 
-enum ParseError: Error { case general }
+enum ParseError: Error {
+    case unknown,
+         invalidNoOfParams,
+         operatorExpected,
+         operandExpected,
+         unmatchedParenthesis,
+         unmatchedDoubleQuotes,
+         orphanedUnary,
+         lambdaFailedToCompile,
+         morphNotFound
+}
 
 class Parser {
     let tokens: [Token]
@@ -144,7 +154,7 @@ class Parser {
             }
         }
         else if tokens[i].code == .sp { try ops.end() }
-        else { throw ParseError.general }
+        else { throw ParseError.operatorExpected }
     }
     
     private func findEnd(_ n: Int) throws -> Int {
@@ -157,8 +167,26 @@ class Parser {
             else if token === Token.rightParen { p -= 1 }
             i += 1
         }
-        if p != 0 { throw ParseError.general }
+        if p != 0 { throw ParseError.unmatchedParenthesis }
         return i-1
+    }
+    private func countParams(start: Int, stop: Int) throws -> Int {
+        var params: Int = 1
+        var i: Int = start
+        var fresh: Bool = true
+        
+        while i < stop {
+            if tokens[i].code == .sp && tokens[i].tag == "," {
+                if !fresh {
+                    params += 1
+                    fresh = true
+                }
+                else { throw ParseError.operandExpected }
+            } else { fresh = false }
+            i += 1
+        }
+        
+        return params
     }
     private func parseNumber(i: Int) -> String {
         var sb = String()
@@ -179,7 +207,7 @@ class Parser {
             if tokens[i] == .bra { p += 1 }
             else if tokens[i] == .ket { p -= 1}
         }
-        if p > 0 { throw ParseError.general }
+        if p > 0 { throw ParseError.unmatchedParenthesis }
         return result
     }
     private func parseString(i: Int) throws -> String  {
@@ -189,12 +217,12 @@ class Parser {
             if tokens[i] == Token.quote {break}
             sb += tokens[i].tag
             i += 1
-            if i == tokens.count {throw ParseError.general}
+            if i == tokens.count { throw ParseError.unmatchedDoubleQuotes }
         }
         return sb
     }
     private func parseOperand(i: Int) throws -> Int {
-        guard tokens.count > i else { throw ParseError.general }
+        guard tokens.count > i else { throw ParseError.operandExpected }
 
         var i: Int = i
         var token: Token = tokens[i]
@@ -211,7 +239,7 @@ class Parser {
         else if token == .subtract { unary = .neg }
         if unary != nil {
             i += 1
-            if (i == tokens.count) { throw ParseError.general }
+            if (i == tokens.count) { throw ParseError.orphanedUnary }
             token = tokens[i]
         }
         
@@ -237,6 +265,7 @@ class Parser {
         } else if let token = token as? MechlikeToken {
             i += 1
             let e = try findEnd(i)
+            guard try countParams(start: i, stop: e) == token.params else { throw ParseError.invalidNoOfParams }
             try parseTokens(start: i, stop: e)
             variables.append(token.tag)
             addMorph(MorphRecipe.rawValue)
@@ -245,7 +274,7 @@ class Parser {
         } else if token == .bra {
             i += 1
             let tokens: [Token] = try parseChain(i: i)
-            guard let lambda: UnsafeMutablePointer<Lambda> = Parser.compile(tokens: tokens, memory: memory).0 else { throw ParseError.general }
+            guard let lambda: UnsafeMutablePointer<Lambda> = Parser.compile(tokens: tokens, memory: memory).0 else { throw ParseError.lambdaFailedToCompile }
             try addConstant(Obje(AEObjLambda(lambda)))
             return tokens.count + 2
         } else if let token = token as? VariableToken {
@@ -287,7 +316,7 @@ class Parser {
             return text.count+2
         }
         
-        throw ParseError.general
+        throw ParseError.unknown
     }
     private func parseTokens(start:Int, stop:Int) throws {
         if tokens.count == 0 || start == stop { return }
