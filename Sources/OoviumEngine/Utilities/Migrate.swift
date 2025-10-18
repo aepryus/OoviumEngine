@@ -444,7 +444,7 @@ public class Migrate {
         return sb
     }
     fileprivate static func autoCloseChain(_ tokensString: String) -> String {
-        guard !tokensString.isEmpty else { return tokensString }        
+        guard !tokensString.isEmpty else { return tokensString }
         var depth: Int = 0
         let tokens: [String] = tokensString[(tokensString.loc(of: "::")!+2)...].components(separatedBy: ";")
         tokens.forEach { (token: String) in
@@ -636,7 +636,7 @@ public class Migrate {
         
         if fileVersion == "3.1" { migrate = true }
         if migrate {
-            attributes["version"] = "3.1.4"
+            attributes["version"] = "3.1.3"
             attributes = attributes.modify(query: chainNames, convert: { (value: Any) in
                 Migrate.autoCloseChain(value as! String)
             })
