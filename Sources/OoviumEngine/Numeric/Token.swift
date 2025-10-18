@@ -22,6 +22,20 @@ appended to it in order to allow Chain to select the appropriate Morph.
 display is the string representing the Token that is to appear to the user on screen.
 Mostly, this the same as tag and parse, but for Variable it could be the Variable's
 user defined name or else it's formatted value.
+ 
+ TOKEN CODES:
+     dg - digit: numeric digits and decimal point (0-9, .)
+     ch - character: user-defined string characters
+     sp - separator: structural characters (, ) [ ] ")
+     cn - constant: mathematical constants (e, π, i, true, false)
+     un - unary: unary operators (!, −)
+     op - operator: binary operators (+, −, ×, ÷, ^, =, <, >, &&, ||, etc.)
+     fn - function: built-in functions (sin, cos, abs, round, etc.)
+     va - variable: references to objects/values in the aether
+     cl - column: references to grid columns
+     ml - mechlike: references to user-defined functions (MechBubs, TailBubs, AutoBubs and OoviBub)
+     pr - property: references to object properties (not implemented yet)
+     tx - text: never used in chains, but helpful for copy and paste
 
 - jjc 11/5/2010
 ====================================================================================== */

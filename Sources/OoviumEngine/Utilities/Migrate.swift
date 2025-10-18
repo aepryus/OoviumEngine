@@ -443,6 +443,23 @@ public class Migrate {
         
         return sb
     }
+    fileprivate static func autoCloseChain(_ tokensString: String) -> String {
+        guard !tokensString.isEmpty else { return tokensString }        
+        var depth: Int = 0
+        let tokens: [String] = tokensString[(tokensString.loc(of: "::")!+2)...].components(separatedBy: ";")
+        tokens.forEach { (token: String) in
+            if token == "sp:(" || token.hasPrefix("fn:") || token.hasPrefix("ml:") { depth += 1 }
+            else if token == "sp:)" { depth -= 1 }
+        }
+        guard depth > 0 else { return tokensString }
+        var result: String = tokensString
+        while depth > 0 {
+            result += ";sp:)"
+            depth -= 1
+        }
+        return result
+    }
+    
 	public static func migrateAether(json: String) throws -> String {
 		var attributes: [String:Any] = json.toAttributes()
         
@@ -616,7 +633,15 @@ public class Migrate {
                 Migrate.migrateChainTo31(value as! String, subs: subs)
             })
         }
-
+        
+        if fileVersion == "3.1" { migrate = true }
+        if migrate {
+            attributes["version"] = "3.1.4"
+            attributes = attributes.modify(query: chainNames, convert: { (value: Any) in
+                Migrate.autoCloseChain(value as! String)
+            })
+        }
+        
         return attributes.toJSON()
 	}
 }
