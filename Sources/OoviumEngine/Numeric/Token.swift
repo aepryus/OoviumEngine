@@ -255,7 +255,7 @@ public class ConstantToken: Token, Defable {
     init(tag: String) { super.init(key: TokenKey(code: .cn, tag: tag)) }
 }
 public class KToken: Token {
-    public init() { super.init(key: TokenKey(code: .va, tag: "k")) }
+    public init() { super.init(key: TokenKey(code: .cn, tag: "k")) }
 }
 public class OperatorToken: Token {
     public enum Level: Int { case add, multiply, power, compare, gate }
