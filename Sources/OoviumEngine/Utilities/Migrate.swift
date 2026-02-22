@@ -443,6 +443,13 @@ public class Migrate {
         
         return sb
     }
+    fileprivate static func migrateKToken(_ chainString: String) -> String {
+        guard let divider = chainString.loc(of: "::"), chainString.count > divider + 2 else { return chainString }
+        let key: String = chainString[0...(divider-1)]
+        let tokens: String = chainString[(divider+2)...]
+        let migrated: String = tokens.components(separatedBy: ";").map { $0 == "va:k" ? "cn:k" : $0 }.joined(separator: ";")
+        return "\(key)::\(migrated)"
+    }
     fileprivate static func autoCloseChain(_ tokensString: String) -> String {
         guard !tokensString.isEmpty else { return tokensString }
         var depth: Int = 0
@@ -639,6 +646,14 @@ public class Migrate {
             attributes["version"] = "3.1.3"
             attributes = attributes.modify(query: chainNames, convert: { (value: Any) in
                 Migrate.autoCloseChain(value as! String)
+            })
+        }
+        
+        if fileVersion == "3.1.3" { migrate = true }
+        if migrate {
+            attributes["version"] = "3.2"
+            attributes = attributes.modify(query: chainNames, convert: { (value: Any) in
+                Migrate.migrateKToken(value as! String)
             })
         }
         

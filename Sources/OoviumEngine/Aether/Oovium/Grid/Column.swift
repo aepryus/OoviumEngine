@@ -18,10 +18,10 @@ public class Column: Aexon, VariableTokenDelegate {
     @objc public var name: String = ""
 	var def: Def = RealDef.def
 	@objc public var chain: Chain!
+    @objc public var footerChain: Chain!
 	@objc public var aggregate: Aggregate = .none
 	@objc public var justify: Justify = .right
 	@objc public var format: String = ""
-    @objc public lazy var footerChain: Chain = Chain(key: footerTokenKey)
     
     @objc public var cells: [Cell] = []
 
@@ -42,6 +42,7 @@ public class Column: Aexon, VariableTokenDelegate {
         super.init(parent: grid)
         name = Grid.name(n: no)
         chain = Chain(key: headerTokenKey)
+        footerChain = Chain(key: footerTokenKey)
 
         for _ in 0..<grid.rows { cells.append(Cell(column: self)) }
 	}
@@ -120,6 +121,7 @@ public class Column: Aexon, VariableTokenDelegate {
     public override func onLoad() {
         if let chain { calculated = !chain.isEmpty }
         else { calculated = false }
+        if footerChain == nil { footerChain = Chain(key: footerTokenKey) }
     }
 
 // Aexon ===========================================================================================

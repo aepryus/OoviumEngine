@@ -610,7 +610,7 @@ class MathTests: XCTestCase {
                 {
                   "type" : "object",
                   "label" : "",
-                  "chain" : "Ob4::sp:[;va:k;sp:]",
+                  "chain" : "Ob4::sp:[;cn:k;sp:]",
                   "y" : 2102.7734375,
                   "x" : 3699.59375,
                   "iden" : "B2783579-B39E-43E9-8B28-2732A74FB2F5",

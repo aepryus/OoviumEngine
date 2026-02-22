@@ -351,7 +351,7 @@ Lambda* AELambdaCreateClone(Lambda* lambda) {
 	
 	clone->constants = (Obj*)malloc(sizeof(Obj)*lambda->cn);
 	for (int i=0;i<lambda->cn;i++)
-		clone->constants[i] = lambda->constants[i];
+		clone->constants[i] = AEObjMirror(lambda->constants[i]);
 	clone->cn = lambda->cn;
 	
 	clone->variables = (mnimi*)malloc(sizeof(mnimi)*lambda->vn);
@@ -374,6 +374,8 @@ Lambda* AELambdaCreateClone(Lambda* lambda) {
 }
 void AELambdaRelease(Lambda* lambda) {
 	if (lambda == 0) return;
+	for (int i=0;i<lambda->cn;i++)
+		AEObjWipe(&lambda->constants[i]);
 	free(lambda->constants);
 	free(lambda->variables);
 	free(lambda->morphs);
@@ -948,7 +950,7 @@ Obj AELambdaExecute(Lambda* lambda, Memory* memory) {
 				}
 				
 				char* result = (char*)malloc(sizeof(char)*(strlen(a)+strlen(b)+1));
-				strcat(result, a);
+				strcpy(result, a);
 				strcat(result, b);
 				
 				AEObjWipe(&lmb->stack[lmb->sp-2]);
