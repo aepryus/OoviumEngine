@@ -31,6 +31,7 @@ public class Citadel {
 
 // TokenKeys =======================================================================================
     public func chainCore(key: TokenKey) -> ChainCore { (cores[key] as! ChainCore) }
+    public func core(key: TokenKey) -> Core? { cores[key] }
     public func tokenDisplay(key: TokenKey) -> String { cores[key]!.tokensDisplay }
     public func valueDisplay(key: TokenKey) -> String { cores[key]!.valueDisplay }
     public func naturalDisplay(key: TokenKey) -> String { cores[key]!.naturalDisplay }
