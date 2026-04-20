@@ -393,7 +393,9 @@ public class Migrate {
                 case "3":
                     if Token.token(key: TokenKey("fn:\($0[2...])")) != nil { sb.append("fn") }
                     else { sb.append("ml") }
-                case "4": sb.append("va")
+                case "4":
+                    if Token.token(key: TokenKey("cn:\($0[2...])")) != nil { sb.append("cn") }
+                    else { sb.append("va") }
                 case "5": sb.append("pr")
                 case "6": sb.append("cn")
                 case "7": sb.append("ch")
@@ -418,11 +420,11 @@ public class Migrate {
         return sb
     }
     fileprivate static func migrateChainTo31(_ tokensString: String, subs: [Subs]) -> String {
-        
+
         let divider: Int = tokensString.loc(of: "::")!
         let key: String = tokensString[0...(divider-1)]
         let keys: [String] = tokensString[(divider+2)...].components(separatedBy: ";")
-        
+
         guard tokensString.count > divider + 2 else { return tokensString }
 
         var sb: String = "\(key)::"
@@ -593,6 +595,27 @@ public class Migrate {
                         case "automata":
                             if let tokens: String = aexelAtts["statesChain"] as? String { aexelAtts["statesChain"] = "Au\(no).states::\(tokens)" }
                             if let tokens: String = aexelAtts["resultChain"] as? String { aexelAtts["resultChain"] = "Au\(no).result::\(tokens)" }
+                        case "oovi":
+                            subs.append(Subs(from: "Oovi\(no)", to: "Ov\(no)"))
+                            subs.append(Subs(from: "Oovi\(no).speed", to: "Ov\(no).speed"))
+                            subs.append(Subs(from: "Oovi\(no).energy", to: "Ov\(no).energy"))
+                            subs.append(Subs(from: "Oovi\(no).vision", to: "Ov\(no).vision"))
+                            subs.append(Subs(from: "Oovi\(no).attack", to: "Ov\(no).attack"))
+                            subs.append(Subs(from: "Oovi\(no).armor", to: "Ov\(no).armor"))
+                            subs.append(Subs(from: "Oovi\(no).health", to: "Ov\(no).health"))
+                            subs.append(Subs(from: "Oovi\(no).fruits", to: "Ov\(no).fruits"))
+                            subs.append(Subs(from: "Oovi\(no).mates", to: "Ov\(no).mates"))
+                            subs.append(Subs(from: "Oovi\(no).friends", to: "Ov\(no).friends"))
+                            subs.append(Subs(from: "Oovi\(no).enemies", to: "Ov\(no).enemies"))
+                            subs.append(Subs(from: "Oovi\(no).capacity", to: "Ov\(no).capacity"))
+                            subs.append(Subs(from: "Oovi\(no).remaining", to: "Ov\(no).remaining"))
+                            subs.append(Subs(from: "Oovi\(no).used", to: "Ov\(no).used"))
+                            subs.append(Subs(from: "Oovi\(no).hunger", to: "Ov\(no).hunger"))
+                            subs.append(Subs(from: "Oovi\(no).gender", to: "Ov\(no).gender"))
+                            subs.append(Subs(from: "Oovi\(no).pregnant", to: "Ov\(no).pregnant"))
+                            subs.append(Subs(from: "Oovi\(no).damage", to: "Ov\(no).damage"))
+                            if let tokens: String = aexelAtts["stepChain"] as? String { aexelAtts["stepChain"] = "Ov\(no).step::\(tokens)" }
+                            if let tokens: String = aexelAtts["amorousChain"] as? String { aexelAtts["amorousChain"] = "Ov\(no).amorous::\(tokens)" }
                         case "grid":
                             if var subArray: [[String:Any]] = aexelAtts["columns"] as? [[String:Any]] {
                                 var colNo: Int = 1
