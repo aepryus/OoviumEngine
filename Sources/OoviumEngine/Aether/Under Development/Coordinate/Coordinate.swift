@@ -73,13 +73,14 @@ public class Coordinate: Aexel {
         let coordinate: Coordinate = aether.create(at: .zero)
         coordinate.name = "Spherical"
         let k: String = coordinate.key
-        // fromCart is identity placeholder — atan2 isn't a Token; renderer only uses toCart.
+        // TEMP: identity toCart to validate the pipeline. Once verified, restore the
+        // real spherical-to-cartesian conversion (r·sin(θ)·cos(ϕ), r·sin(θ)·sin(ϕ), r·cos(θ)).
         configure(coordinate: coordinate,
                   inputs: ["θ", "ϕ", "r"],
                   toCart: [
-                    "va:\(k).to.r;op:×;fn:sin;va:\(k).to.θ;sp:);op:×;fn:cos;va:\(k).to.ϕ;sp:)",
-                    "va:\(k).to.r;op:×;fn:sin;va:\(k).to.θ;sp:);op:×;fn:sin;va:\(k).to.ϕ;sp:)",
-                    "va:\(k).to.r;op:×;fn:cos;va:\(k).to.θ;sp:)"
+                    "va:\(k).to.θ",
+                    "va:\(k).to.ϕ",
+                    "va:\(k).to.r"
                   ],
                   fromCart: [
                     "va:\(k).from.x",
