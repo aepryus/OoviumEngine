@@ -74,14 +74,15 @@ public class Coordinate: Aexel {
         let coordinate: Coordinate = aether.create(at: .zero)
         coordinate.name = "Spherical"
         let k: String = coordinate.key
-        // ASCII parameter names; non-ASCII tags (θ/ϕ) don't round-trip reliably through
-        // the C-string token-tag plumbing.
+        // Geographic convention: theta = latitude (from equator, [-π/2, π/2]),
+        // phi = longitude/azimuth, r = radius.
+        //   x = r·cos(theta)·cos(phi),  y = r·cos(theta)·sin(phi),  z = r·sin(theta)
         configure(coordinate: coordinate,
                   inputs: ["theta", "phi", "r"],
                   toCart: [
-                    "va:\(k).to.r;op:×;fn:sin;va:\(k).to.theta;sp:);op:×;fn:cos;va:\(k).to.phi;sp:)",
-                    "va:\(k).to.r;op:×;fn:sin;va:\(k).to.theta;sp:);op:×;fn:sin;va:\(k).to.phi;sp:)",
-                    "va:\(k).to.r;op:×;fn:cos;va:\(k).to.theta;sp:)"
+                    "va:\(k).to.r;op:×;fn:cos;va:\(k).to.theta;sp:);op:×;fn:cos;va:\(k).to.phi;sp:)",
+                    "va:\(k).to.r;op:×;fn:cos;va:\(k).to.theta;sp:);op:×;fn:sin;va:\(k).to.phi;sp:)",
+                    "va:\(k).to.r;op:×;fn:sin;va:\(k).to.theta;sp:)"
                   ],
                   fromCart: [
                     "va:\(k).from.x",
