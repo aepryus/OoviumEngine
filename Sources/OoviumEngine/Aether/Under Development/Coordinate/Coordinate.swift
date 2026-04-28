@@ -52,6 +52,7 @@ public class Coordinate: Aexel {
         let coordinate: Coordinate = aether.create(at: .zero)
         coordinate.name = "Cylindrical"
         let k: String = coordinate.key
+        // fromCart is identity placeholder — atan2 isn't a Token; renderer only uses toCart.
         configure(coordinate: coordinate,
                   inputs: ["ρ", "ϕ", "z"],
                   toCart: [
@@ -60,8 +61,8 @@ public class Coordinate: Aexel {
                     "va:\(k).to.z"
                   ],
                   fromCart: [
-                    "fn:sqrt;va:\(k).from.x;op:^;dg:2;op:+;va:\(k).from.y;op:^;dg:2;sp:)",
-                    "fn:atan2;va:\(k).from.y;sp:,;va:\(k).from.x;sp:)",
+                    "va:\(k).from.x",
+                    "va:\(k).from.y",
                     "va:\(k).from.z"
                   ])
         return coordinate
@@ -72,6 +73,7 @@ public class Coordinate: Aexel {
         let coordinate: Coordinate = aether.create(at: .zero)
         coordinate.name = "Spherical"
         let k: String = coordinate.key
+        // fromCart is identity placeholder — atan2 isn't a Token; renderer only uses toCart.
         configure(coordinate: coordinate,
                   inputs: ["θ", "ϕ", "r"],
                   toCart: [
@@ -80,9 +82,9 @@ public class Coordinate: Aexel {
                     "va:\(k).to.r;op:×;fn:cos;va:\(k).to.θ;sp:)"
                   ],
                   fromCart: [
-                    "fn:acos;va:\(k).from.z;op:÷;fn:sqrt;va:\(k).from.x;op:^;dg:2;op:+;va:\(k).from.y;op:^;dg:2;op:+;va:\(k).from.z;op:^;dg:2;sp:);sp:)",
-                    "fn:atan2;va:\(k).from.y;sp:,;va:\(k).from.x;sp:)",
-                    "fn:sqrt;va:\(k).from.x;op:^;dg:2;op:+;va:\(k).from.y;op:^;dg:2;op:+;va:\(k).from.z;op:^;dg:2;sp:)"
+                    "va:\(k).from.x",
+                    "va:\(k).from.y",
+                    "va:\(k).from.z"
                   ])
         return coordinate
     }
