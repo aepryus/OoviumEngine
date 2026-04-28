@@ -52,10 +52,10 @@ public class Coordinate: Aexel {
         let coordinate: Coordinate = aether.create(at: .zero)
         coordinate.name = "Cylindrical"
         let k: String = coordinate.key
-        // Inputs in (theta, h, r) order so graph.fX/fY/fZ map naturally to (theta, h, r).
+        // Inputs in (h, theta, r) order so graph.fX/fY/fZ map naturally to (h, theta, r).
         // toCart: x = r·cos(theta), y = r·sin(theta), z = h.
         configure(coordinate: coordinate,
-                  inputs: ["theta", "h", "r"],
+                  inputs: ["h", "theta", "r"],
                   toCart: [
                     "va:\(k).to.r;op:×;fn:cos;va:\(k).to.theta;sp:)",
                     "va:\(k).to.r;op:×;fn:sin;va:\(k).to.theta;sp:)",
