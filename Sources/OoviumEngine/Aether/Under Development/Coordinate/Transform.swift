@@ -58,10 +58,16 @@ public class Transform: Aexon {
 
     public override func createCores() -> [Core] {
         var cores: [Core] = []
-        for i in 0..<dimensions.count {
-            let key: TokenKey = inputTokenKey(at: i)
-            let param: StaticParameter = StaticParameter(tokenKey: key, fogKey: nil, name: dimensions[i].name)
-            cores.append(ParameterCore(parameter: param))
+        // One ParameterCore per (input × output-mechlike) pairing, matching Graph's fogged-
+        // parameter pattern. The fog isolates each input slot to a specific recipe so
+        // AERecipeExecute reads from the right place.
+        for outIdx in 0..<dimensions.count where dimensions[outIdx].chain != nil {
+            let fogKey: TokenKey = outputMechlikeTokenKey(at: outIdx)
+            for inIdx in 0..<dimensions.count {
+                let inKey: TokenKey = inputTokenKey(at: inIdx)
+                let param: StaticParameter = StaticParameter(tokenKey: inKey, fogKey: fogKey, name: dimensions[inIdx].name)
+                cores.append(ParameterCore(parameter: param))
+            }
         }
         for dim in dimensions where dim.chain != nil {
             cores.append(ChainCore(chain: dim.chain))
