@@ -74,16 +74,14 @@ public class Coordinate: Aexel {
         let coordinate: Coordinate = aether.create(at: .zero)
         coordinate.name = "Spherical"
         let k: String = coordinate.key
-        // ASCII parameter names (theta, phi, r) — the C-string token tag plumbing
-        // doesn't round-trip non-ASCII reliably.
-        // TEMP: identity toCart to validate the pipeline. Once verified, restore the
-        // real spherical-to-cartesian conversion (r·sin(theta)·cos(phi), r·sin(theta)·sin(phi), r·cos(theta)).
+        // ASCII parameter names; non-ASCII tags (θ/ϕ) don't round-trip reliably through
+        // the C-string token-tag plumbing.
         configure(coordinate: coordinate,
                   inputs: ["theta", "phi", "r"],
                   toCart: [
-                    "va:\(k).to.theta",
-                    "va:\(k).to.phi",
-                    "va:\(k).to.r"
+                    "va:\(k).to.r;op:×;fn:sin;va:\(k).to.theta;sp:);op:×;fn:cos;va:\(k).to.phi;sp:)",
+                    "va:\(k).to.r;op:×;fn:sin;va:\(k).to.theta;sp:);op:×;fn:sin;va:\(k).to.phi;sp:)",
+                    "va:\(k).to.r;op:×;fn:cos;va:\(k).to.theta;sp:)"
                   ],
                   fromCart: [
                     "va:\(k).from.x",
