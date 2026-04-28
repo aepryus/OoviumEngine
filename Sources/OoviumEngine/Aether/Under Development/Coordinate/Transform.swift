@@ -32,7 +32,12 @@ public class Transform: Aexon {
     public func inputTokenKey(at i: Int) -> TokenKey {
         TokenKey(code: .va, tag: "\(coordinate.key).\(name).\(dimensions[i].name)")
     }
-    // Target-system result for the i-th output formula.
+    // Chain output for the i-th formula (where the chain's result lands in citadel memory).
+    // Distinct from the recipe's variableTokenKey so ChainCore and RecipeCore don't collide.
+    public func chainOutputTokenKey(at i: Int) -> TokenKey {
+        TokenKey(code: .va, tag: "\(coordinate.key).\(name).f\(i)")
+    }
+    // Recipe output (a separate slot owned by the RecipeCore).
     public func outputVariableTokenKey(at i: Int) -> TokenKey {
         TokenKey(code: .va, tag: "\(coordinate.key).\(name).out\(i)")
     }
@@ -44,6 +49,7 @@ public class Transform: Aexon {
         var keys: [TokenKey] = []
         for i in 0..<dimensions.count {
             keys.append(inputTokenKey(at: i))
+            keys.append(chainOutputTokenKey(at: i))
             keys.append(outputVariableTokenKey(at: i))
             keys.append(outputMechlikeTokenKey(at: i))
         }

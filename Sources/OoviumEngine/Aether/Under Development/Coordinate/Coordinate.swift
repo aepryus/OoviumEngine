@@ -90,7 +90,7 @@ public class Coordinate: Aexel {
     private static func configure(coordinate: Coordinate, inputs: [String], toCart: [String], fromCart: [String]) {
         let toDims: [Dimension] = inputs.enumerated().map { (i, name) in
             let dim: Dimension = Dimension(web: coordinate.toCart, name: name)
-            dim.chain = Chain("va:\(coordinate.key).to.out\(i)::\(toCart[i])")
+            dim.chain = Chain("va:\(coordinate.key).to.f\(i)::\(toCart[i])")
             return dim
         }
         coordinate.toCart.dimensions = toDims
@@ -98,7 +98,7 @@ public class Coordinate: Aexel {
         let fromInputs: [String] = ["x", "y", "z"]
         let fromDims: [Dimension] = fromInputs.enumerated().map { (i, name) in
             let dim: Dimension = Dimension(web: coordinate.fromCart, name: name)
-            dim.chain = Chain("va:\(coordinate.key).from.out\(i)::\(fromCart[i])")
+            dim.chain = Chain("va:\(coordinate.key).from.f\(i)::\(fromCart[i])")
             return dim
         }
         coordinate.fromCart.dimensions = fromDims
