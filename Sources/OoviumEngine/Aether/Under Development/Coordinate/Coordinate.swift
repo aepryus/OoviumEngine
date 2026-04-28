@@ -52,12 +52,13 @@ public class Coordinate: Aexel {
         let coordinate: Coordinate = aether.create(at: .zero)
         coordinate.name = "Cylindrical"
         let k: String = coordinate.key
-        // fromCart is identity placeholder — atan2 isn't a Token; renderer only uses toCart.
+        // ASCII names for C-string safety. fromCart is identity placeholder — atan2 isn't
+        // a Token; renderer only uses toCart.
         configure(coordinate: coordinate,
-                  inputs: ["ρ", "ϕ", "z"],
+                  inputs: ["rho", "phi", "z"],
                   toCart: [
-                    "va:\(k).to.ρ;op:×;fn:cos;va:\(k).to.ϕ;sp:)",
-                    "va:\(k).to.ρ;op:×;fn:sin;va:\(k).to.ϕ;sp:)",
+                    "va:\(k).to.rho;op:×;fn:cos;va:\(k).to.phi;sp:)",
+                    "va:\(k).to.rho;op:×;fn:sin;va:\(k).to.phi;sp:)",
                     "va:\(k).to.z"
                   ],
                   fromCart: [
@@ -73,13 +74,15 @@ public class Coordinate: Aexel {
         let coordinate: Coordinate = aether.create(at: .zero)
         coordinate.name = "Spherical"
         let k: String = coordinate.key
+        // ASCII parameter names (theta, phi, r) — the C-string token tag plumbing
+        // doesn't round-trip non-ASCII reliably.
         // TEMP: identity toCart to validate the pipeline. Once verified, restore the
-        // real spherical-to-cartesian conversion (r·sin(θ)·cos(ϕ), r·sin(θ)·sin(ϕ), r·cos(θ)).
+        // real spherical-to-cartesian conversion (r·sin(theta)·cos(phi), r·sin(theta)·sin(phi), r·cos(theta)).
         configure(coordinate: coordinate,
-                  inputs: ["θ", "ϕ", "r"],
+                  inputs: ["theta", "phi", "r"],
                   toCart: [
-                    "va:\(k).to.θ",
-                    "va:\(k).to.ϕ",
+                    "va:\(k).to.theta",
+                    "va:\(k).to.phi",
                     "va:\(k).to.r"
                   ],
                   fromCart: [
