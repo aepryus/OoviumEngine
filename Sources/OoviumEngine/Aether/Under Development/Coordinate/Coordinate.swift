@@ -52,14 +52,14 @@ public class Coordinate: Aexel {
         let coordinate: Coordinate = aether.create(at: .zero)
         coordinate.name = "Cylindrical"
         let k: String = coordinate.key
-        // ASCII names for C-string safety. fromCart is identity placeholder — atan2 isn't
-        // a Token; renderer only uses toCart.
+        // Inputs in (theta, h, r) order so graph.fX/fY/fZ map naturally to (theta, h, r).
+        // toCart: x = r·cos(theta), y = r·sin(theta), z = h.
         configure(coordinate: coordinate,
-                  inputs: ["rho", "phi", "z"],
+                  inputs: ["theta", "h", "r"],
                   toCart: [
-                    "va:\(k).to.rho;op:×;fn:cos;va:\(k).to.phi;sp:)",
-                    "va:\(k).to.rho;op:×;fn:sin;va:\(k).to.phi;sp:)",
-                    "va:\(k).to.z"
+                    "va:\(k).to.r;op:×;fn:cos;va:\(k).to.theta;sp:)",
+                    "va:\(k).to.r;op:×;fn:sin;va:\(k).to.theta;sp:)",
+                    "va:\(k).to.h"
                   ],
                   fromCart: [
                     "va:\(k).from.x",
