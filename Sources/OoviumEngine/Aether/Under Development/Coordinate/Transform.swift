@@ -13,12 +13,10 @@ import Foundation
 public class Transform: Aexon {
     @objc public var name: String = ""
     @objc public var dimensions: [Dimension] = []
-    
+
     public var token: Token = .add
     public var recipeToken: Token = .add
-    
-//    public lazy var tower: Tower = coordinate.aether.state.createTower(tag: "key", towerDelegate: self)
-    
+
     public init(aexel: Aexel, name: String) {
         self.name = name
         super.init(parent: aexel)
@@ -26,44 +24,46 @@ public class Transform: Aexon {
     public required init(attributes: [String : Any], parent: Domain? = nil) {
         super.init(attributes: attributes, parent: parent)
     }
-    
-    var coordinate: Coordinate { parent as! Coordinate }
-    
-//    public var towers: Set<Tower> {
-//        var towers = Set<Tower>()
-//        dimensions.forEach {
-//            towers.insert($0.tower)
-//            towers.insert($0.chain.tower)
-//        }
-//        return towers.union([tower])
-//    }
-    
-    public var recipes: [UnsafeMutablePointer<Recipe>] = []
-    
-    public func compileRecipes() {
-//        let memory: UnsafeMutablePointer<Memory> = AEMemoryCreateClone(coordinate.aether.state.memory)
-//        AEMemoryClear(memory)
-//        
-//        dimensions.forEach { AEMemorySetValue(memory, $0.tower.index, 0) }
-//        
-//        recipes = []
-//        dimensions.forEach {
-//            let recipe: UnsafeMutablePointer<Recipe> = Math.compile(result: $0.chain.tower, memory: memory)
-//            recipes.append(recipe)
-//            AERecipeSignature(recipe, AEMemoryIndexForName(memory, "\(coordinate.key).\(key).\($0.key)".toInt8()), UInt8(dimensions.count))
-//        }
-//        
-//        let indexes: [mnimi] = dimensions.map {AEMemoryIndexForName(memory, "\(coordinate.key).\(key).\($0.key)".toInt8()) }
-//        
-//        recipes.forEach {
-//            for i in 0...2 { $0.pointee.params[i] = mnimi(indexes[i]) }
-//        }
+
+    public var coordinate: Coordinate { parent as! Coordinate }
+
+// Token keys (Citadel-side wiring) =================================================================
+    // Source-system parameters: e.g. for spherical toCart these are θ, ϕ, r.
+    public func inputTokenKey(at i: Int) -> TokenKey {
+        TokenKey(code: .va, tag: "\(coordinate.key).\(name).\(dimensions[i].name)")
+    }
+    // Target-system result for the i-th output formula.
+    public func outputVariableTokenKey(at i: Int) -> TokenKey {
+        TokenKey(code: .va, tag: "\(coordinate.key).\(name).out\(i)")
+    }
+    public func outputMechlikeTokenKey(at i: Int) -> TokenKey {
+        TokenKey(code: .ml, tag: "\(coordinate.key).\(name).out\(i)")
     }
 
-    
-// Events ==========================================================================================
-    public override func onLoaded() {
-//        dimensions.forEach { $0.chain.tower.tailForWeb = self }
+    public override var tokenKeys: [TokenKey] {
+        var keys: [TokenKey] = []
+        for i in 0..<dimensions.count {
+            keys.append(inputTokenKey(at: i))
+            keys.append(outputVariableTokenKey(at: i))
+            keys.append(outputMechlikeTokenKey(at: i))
+        }
+        return keys
+    }
+
+    public override func createCores() -> [Core] {
+        var cores: [Core] = []
+        for i in 0..<dimensions.count {
+            let key: TokenKey = inputTokenKey(at: i)
+            let param: StaticParameter = StaticParameter(tokenKey: key, fogKey: nil, name: dimensions[i].name)
+            cores.append(ParameterCore(parameter: param))
+        }
+        for dim in dimensions where dim.chain != nil {
+            cores.append(ChainCore(chain: dim.chain))
+        }
+        for i in 0..<dimensions.count where dimensions[i].chain != nil {
+            cores.append(RecipeCore(delegate: TransformRecipeDelegate(transform: self, outputIndex: i)))
+        }
+        return cores
     }
 
 // Aexon ===========================================================================================
@@ -71,4 +71,28 @@ public class Transform: Aexon {
 
 // Domain ==========================================================================================
     public override var properties: [String] { super.properties + ["name", "dimensions"] }
+}
+
+// One per output formula in a Transform. Compiles dimensions[i].chain into a Recipe parameterized
+// by the Transform's input slots; the Recipe writes its result into the i-th output slot.
+class TransformRecipeDelegate: RecipeDelegate {
+    unowned let transform: Transform
+    let outputIndex: Int
+
+    init(transform: Transform, outputIndex: Int) {
+        self.transform = transform
+        self.outputIndex = outputIndex
+    }
+
+// RecipeDelegate ==================================================================================
+    var name: String { "\(transform.coordinate.key).\(transform.name).out\(outputIndex)" }
+    var variableTokenKey: TokenKey { transform.outputVariableTokenKey(at: outputIndex) }
+    var mechlikeTokenKey: TokenKey { transform.outputMechlikeTokenKey(at: outputIndex) }
+    var params: [TokenKey] {
+        (0..<transform.dimensions.count).map { transform.inputTokenKey(at: $0) }
+    }
+    var resultChain: Chain { transform.dimensions[outputIndex].chain }
+
+// VariableTokenDelegate ===========================================================================
+    var alias: String?
 }
